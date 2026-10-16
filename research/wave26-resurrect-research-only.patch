@@ -1,0 +1,42 @@
+--- a/decomp/src/GameSource/src/resurrect.c
++++ b/decomp/src/GameSource/src/resurrect.c
+@@ -578,3 +578,39 @@
+         break;
+     }
+ }
++
++void GetResPt(void)
++{
++    int p,idx;
++    float min,x,y,z,dx,dy,dz,dist;
++    tModelData *m=&model[0];
++    tCarData *gc=&gGameCar[0];
++    x=gc->dr_pos[0];
++    y=gc->dr_pos[1];
++    z=gc->dr_pos[2];
++    min=1.0e20f;
++    for(p=0;p<gResPath.numPts;p++) {
++        dx=gResPath.pts[p][0]-x;
++        dy=gResPath.pts[p][1]-y;
++        dz=gResPath.pts[p][2]-z;
++        dist=dx*dx+dy*dy+dz*dz;
++        if(dist<min) { min=dist;idx=p; }
++    }
++    if(idx&1) {
++        --idx;
++        if(idx>m->obResPt) m->obResPt=idx;
++    } else {
++        signed short x0=gResPath.pts[idx][0],x1=gResPath.pts[idx+1][0];
++        signed short y0=gResPath.pts[idx][1],y1=gResPath.pts[idx+1][1];
++        signed short z0=gResPath.pts[idx][2],z1=gResPath.pts[idx+1][2];
++        z=(float)z1-z0;
++        z*=gc->dr_pos[2]-z0;
++        x=(float)x1-x0;
++        x*=gc->dr_pos[0]-x0;
++        y=(float)y1-y0;
++        y*=gc->dr_pos[1]-y0;
++        dist=z+(x+y);
++        if(dist<0.0f && idx>0) idx-=2;
++        if(idx>m->obResPt) m->obResPt=idx;
++    }
++}

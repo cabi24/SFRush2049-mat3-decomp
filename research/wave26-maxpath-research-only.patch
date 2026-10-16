@@ -1,0 +1,41 @@
+--- a/decomp/src/GameSource/src/maxpath.c
++++ b/decomp/src/GameSource/src/maxpath.c
+@@ -744,7 +744,7 @@
+ }
+ 
+ /* 0x800273c4, 0x6d0 bytes. Complete reconstruction used only as an
+-   uncredited state-layout dependency. The native body still differs in 21
++   uncredited state-layout dependency. The native body still differs in 8
+    instruction words; AvoidAreas remains NonMatching. */
+ static void AvoidAreas(signed short drone_index)
+ {
+@@ -764,9 +764,15 @@
+     float mpos0, mpos1, mpos2;
+     m = &model[drone_index];
+     cp = &gGameCar[drone_index].mpctl;
+-    pos[1] = cp->tgtpos[1] - m->reckon.rwr[1];
+-    pos[2] = cp->tgtpos[2] - m->reckon.rwr[2];
+-    pos[0] = cp->tgtpos[0] - m->reckon.rwr[0];
++    {
++        float c0, m1, c1, c2;
++        c0 = cp->tgtpos[0];
++        c1 = cp->tgtpos[1]; m1 = m->reckon.rwr[1];
++        c2 = cp->tgtpos[2];
++        pos[0] = c0 - m->reckon.rwr[0];
++        pos[1] = c1 - m1;
++        pos[2] = c2 - m->reckon.rwr[2];
++    }
+     BodyVector(pos, rpos, m->reckon.uvs);
+     if (m->idt == 0.0f || m->magvel < 0.1f) {
+         float *ld = last_dir[drone_index];
+@@ -878,9 +884,9 @@
+     }
+     
+         cp->tgtpos[0] = dir0;
++        last_save_dir[drone_index][0] = save_dir0;
+         last_dir[drone_index][0] = dir0;
+         model[drone_index].can_we_cheat = can_we_cheat;
+-        last_save_dir[drone_index][0] = save_dir0;
+ 
+         cp->tgtpos[1] = dir1;
+         last_dir[drone_index][1] = dir1;

@@ -1,0 +1,70 @@
+{
+  "status": "passed",
+  "unit": "resurrect",
+  "new_functions": 0,
+  "new_bytes": 0,
+  "included_in_exact_aggregate": false,
+  "cold_candidate_reproductions": 2,
+  "cold_baseline_reproduced": true,
+  "native_variants": 4,
+  "prior_functions_preserved": 15,
+  "prior_bytes_preserved": 6924,
+  "prior_text_relocations": 197,
+  "prior_referenced_objects": 37,
+  "prior_data_identities_payloads_preserved": true,
+  "reference_indexed_all_three_positive_proofs_identical": true,
+  "full_unmasked_prior_bodies_data_passed": true,
+  "research_function": "GetResPt",
+  "native_body_bytes": 548,
+  "target_body_bytes": 548,
+  "raw_different_word_offsets": [
+    "0x100",
+    "0x104",
+    "0x108",
+    "0x10c",
+    "0x110",
+    "0x114",
+    "0x118",
+    "0x120",
+    "0x124",
+    "0x128",
+    "0x12c",
+    "0x134",
+    "0x1a4",
+    "0x1b4",
+    "0x1c0",
+    "0x1c8",
+    "0x1d4",
+    "0x1f0",
+    "0x1f4"
+  ],
+  "same_extent_different_words": 19,
+  "strict_full_body_overclaim_rejected": true,
+  "overclaim_reason": "('full instruction mismatch', 'GetResPt')",
+  "object_sha256": "e87741ce862f32827d0e38caa7e194e2fc1ae9756161ffb94e4a7a9d49ca8c1c",
+  "C_controls_rejected": 1,
+  "binary_controls_rejected": 2,
+  "controls": [
+    {
+      "control": "prior-C-payload",
+      "rejected": true,
+      "reason": "('full instruction mismatch', 'FindSurfaceUvsFromResPoint')",
+      "object_sha256": "b78961759f986300e4018879f969724d78f08d70484dcbe90b535fe6a4f0e438"
+    },
+    {
+      "control": "prior-body-opcode",
+      "rejected": true,
+      "reason": "('full instruction mismatch', 'FindSurfaceUvsInPlace')",
+      "object_sha256": "0e0187375b857e0420c12c56d74aab911c5bac70f402a6dbddb4c8ce712da805"
+    },
+    {
+      "control": "prior-complete-data-payload",
+      "rejected": true,
+      "reason": "('referenced payload mismatch', '@99', '@261')",
+      "object_sha256": "752aaec1141c15e6be52bdb3893650d3e792d607ab32430dda541d7735a2297d"
+    }
+  ],
+  "diagnostic": null,
+  "full_unit_or_DOL_claim": false,
+  "owned_commands_pending": []
+}

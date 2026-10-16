@@ -1,0 +1,2 @@
+# Preserve reviewed source and patch bytes, including significant mixed endings.
+* -text

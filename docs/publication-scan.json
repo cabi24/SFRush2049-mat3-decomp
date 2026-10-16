@@ -1,0 +1,94 @@
+{
+  "schema": "mat3-source-publication-checks-v1",
+  "status": "passed-local-verification",
+  "reviewed_snapshot": "cumulative wave26",
+  "destination": "https://github.com/cabi24/SFRush2049-mat3-decomp",
+  "observed_visibility": "private",
+  "initial_default_branch": "main",
+  "selected_sealed_files_verified": 205,
+  "source_patch_preimages_and_exact_outputs_verified": 2,
+  "quarantined_research_patch_replays_verified": 4,
+  "asset_payload_hashes_regenerated_locally": 4,
+  "asset_payload_bytes_excluded": 85488,
+  "asset_payloads": [
+    "defaultFontData",
+    "icondata",
+    "playerPixels",
+    "ghostPixels"
+  ],
+  "nonpayload_bytes_in_asset_adapted_sources_preserved": true,
+  "canonical_selected_file_hashes_unchanged": 185,
+  "checks": [
+    {
+      "command": "python -B -m unittest discover -s tools/tests -v",
+      "cwd": "decomp",
+      "result": "OK; Ran 26 tests; skipped=3 (local originals/native artifacts unavailable in source-only tree)"
+    },
+    {
+      "command": "python -B configure.py --help",
+      "cwd": "decomp",
+      "result": "passed"
+    },
+    {
+      "command": "python -B tools/bootstrap_local_assets.py --dol <user-provided-original>",
+      "result": "passed; all four full payload hashes equal the pinned original"
+    },
+    {
+      "command": "compile() all exported Python sources without writing bytecode",
+      "result": "passed"
+    },
+    {
+      "command": "json.loads() all exported JSON files",
+      "result": "passed"
+    },
+    {
+      "command": "git -c core.autocrlf=false apply --whitespace=nowarn <accepted/research patch> in separate scratch copies",
+      "result": "all six replay hashes equal the sealed expected sources"
+    },
+    {
+      "command": "python -B tools/audit_publication.py --git <Git executable>",
+      "result": "passed; exact complete Git index equals the allowlist and working-file Git blob hashes"
+    }
+  ],
+  "scan_policy": {
+    "explicit_file_allowlist": "docs/file-allowlist.json",
+    "binary_checks": [
+      "UTF-8 decoding",
+      "NUL rejection",
+      "known binary signatures",
+      "approved text extensions",
+      "excluded directory names"
+    ],
+    "secret_checks": [
+      "GitHub token indicators",
+      "AWS access-key indicators",
+      "private-key headers",
+      "OpenAI key indicators",
+      "credentials embedded in URLs"
+    ],
+    "payload_checks": [
+      "large base64-like or escaped byte strings",
+      "raw disassembly line signatures",
+      "manual C numeric-array inspection",
+      "manual script and metadata review"
+    ],
+    "private_path_checks": "No user home/workspace absolute paths; original D-drive compiler source identities retained for purpose-specific reconstruction.",
+    "limitations": "Pattern-based scan; not a mathematical proof that no possible secret exists."
+  },
+  "excluded": [
+    "ROM/disc/DOL/ELF/object/archive/executable binaries",
+    "Extracted game artwork, font bitmap and memory-card/save icons, including C initializer encodings",
+    "Raw assembly, DWARF C dump, broad symbol/variable CSV dumps and binary proof payloads",
+    "Proprietary SDK/compiler executables, credentials, private local paths and unrelated files",
+    "Generated build files and outputs, complete private review archives and CI workflows"
+  ],
+  "metadata_review": "Checked symbol/split files and generated C type/declaration metadata: names, declarations, addresses, section extents and register locations; no binary image or asset encoding.",
+  "historical_code_percent": 60.37141324751944,
+  "fresh_native_compilations_during_publication": 0,
+  "fresh_full_game_links_during_publication": 0,
+  "new_accepted_DOL_claim": false,
+  "full_clean_clone_build_verified": false,
+  "clean_clone_prerequisites": "User-supplied original game files, authorized CodeWarrior and local auxiliary tools; full private graph proof packet is separately retained, not distributed.",
+  "transport": "Git CLI has no saved usable GitHub login; publication uses the already authorized GitHub connector without creating or changing credentials.",
+  "published_file_count": 225
+}

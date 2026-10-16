@@ -1,0 +1,144 @@
+--- a/decomp/src/GameSource/src/mdrive.c
++++ b/decomp/src/GameSource/src/mdrive.c
+@@ -353,6 +353,141 @@
+ {
+     model[droneIndex].fastin.modelrun = 1;
+ }
++
++static void _UpdateTireAppearance(signed short droneIndex);
++
++void update_game_data(void)
++{
++    signed short i;
++    signed short j;
++    signed short k;
++    signed short l;
++    signed short high_index;
++    signed short same_count[4];
++    tModelData *m;
++    tCarData *gc;
++    float angle;
++    float forwardPair, sidePair;
++    float fwdforce;
++    float sideforce;
++    const _tSusp *susp;
++    unsigned short tsf;
++
++    game_reckon_all(gModelTime);
++    for (i = 0; i < 6; i++) {
++        m = &model[i];
++        gc = &gGameCar[i];
++        if (!m->in_game || gc->dead >= 2) {
++            continue;
++        }
++        gc->modelIteration = m->fastin.modelIteration;
++        gc->modelTime = m->fastin.modelTime;
++        gc->dr_pos[0] = m->reckon.rwr[0];
++        gc->dr_pos[1] = m->reckon.rwr[1];
++        gc->dr_pos[2] = m->reckon.rwr[2];
++        gc->stuntW[0] = m->stuntW[0];
++        gc->stuntW[1] = m->stuntW[1];
++        gc->stuntW[2] = m->stuntW[2];
++        m->stuntW[0] = 0.0f;
++        m->stuntW[1] = 0.0f;
++        m->stuntW[2] = 0.0f;
++        CopyUV(m->reckon.uvs, gc->dr_uvs);
++        CopyUV(m->reckon.uvs, gc->dr_car_uvs);
++        susp = carSuspensions[gCarSuspensions[m->body_type]];
++        forwardPair = m->tireForce[0][2] + m->tireForce[1][2];
++        sidePair = m->tireForce[0][0] + m->tireForce[1][0];
++        forwardPair = m->tireForce[2][2] + forwardPair;
++        sidePair = m->tireForce[2][0] + sidePair;
++        angle = m->tireForce[3][2] + forwardPair;
++        fwdforce = angle;
++        sideforce = m->tireForce[3][0] + sidePair;
++        if ((angle = fwdforce - susp->fwdforcemin) > 0.0f) {
++            angle *= susp->fwdangle / susp->fwdforcerange;
++            if (angle > susp->fwdangle) angle = susp->fwdangle;
++        } else {
++            if ((angle = fwdforce - susp->bckforcemin) < 0.0f) {
++                angle *= -susp->bckangle / susp->bckforcerange;
++                if (angle < susp->bckangle) angle = susp->bckangle;
++            } else angle = 0.0f;
++        }
++        gc->pitch = 0.6f * gc->pitch + 0.4f * angle;
++        PitchUV(gc->pitch, gc->dr_car_uvs);
++        if ((angle = sideforce - susp->sideforcemin) > 0.0f) {
++            angle *= -susp->sideangle / susp->sideforcerange;
++            if (angle > susp->sideangle) angle = susp->sideangle;
++        } else {
++            if ((angle = sideforce + susp->sideforcemin) < 0.0f) {
++                angle *= -susp->sideangle / susp->sideforcerange;
++                if (angle < -susp->sideangle) angle = -susp->sideangle;
++            } else angle = 0.0f;
++        }
++        gc->roll = 0.7f * gc->roll + 0.3f * angle;
++        RollUV(gc->roll, gc->dr_car_uvs);
++        for (j = 0; j < 4; j++) {
++            gc->tireR[j][0] = m->car->tireR[j][0];
++            gc->tireR[j][1] = m->car->tireR[j][1];
++            gc->tireR[j][2] = m->car->tireR[j][2];
++            WorldVector(m->car->tireR[j], gc->dr_tirepos[j], gc->dr_uvs);
++            gc->dr_tirepos[j][0] += gc->dr_pos[0];
++            gc->dr_tirepos[j][1] += gc->dr_pos[1];
++            gc->dr_tirepos[j][2] += gc->dr_pos[2];
++        }
++        gc->dr_vel[0] = m->reckon.rwv[0];
++        gc->dr_vel[1] = m->reckon.rwv[1];
++        gc->dr_vel[2] = m->reckon.rwv[2];
++        gc->dr_acc[0] = m->reckon.rwa[0];
++        gc->dr_acc[1] = m->reckon.rwa[1];
++        gc->dr_acc[2] = m->reckon.rwa[2];
++        if (gLink[i].owner == 0 || gLink[i].owner == 6) {
++            high_index = 0;
++            for (k = 0; k < 4; k++) {
++                gc->sound_flags[k] = m->sound_flags[k];
++                same_count[k] = 0;
++                if (m->sviscode[k] != 8 || m->sound_flags[k]) {
++                    for (l = k + 1; l < 4; l++) {
++                        if (m->sound_flags[k] == m->sound_flags[l]) same_count[k]++;
++                    }
++                }
++                if (same_count[k] >= same_count[high_index]) {
++                    high_index = k;
++                    tsf = m->sound_flags[k];
++                }
++            }
++            gc->in_tunnel = (tsf >> 8) & 1;
++            if (m->brake) m->appearance |= 0x1000;
++            else m->appearance &= ~0x1000;
++            if (m->magvel > 20.0f && m->bodyForce[0][0]) m->appearance |= 0x80;
++            else m->appearance &= ~0x80;
++            if (m->magvel > 20.0f && m->bodyForce[2][0]) m->appearance |= 0x4000;
++            else m->appearance &= ~0x4000;
++            if (m->magvel > 20.0f && m->bodyForce[1][0]) m->appearance |= 0x100;
++            else m->appearance &= ~0x100;
++            if (m->magvel > 20.0f && m->bodyForce[3][0]) m->appearance |= 0x2000;
++            else m->appearance &= ~0x2000;
++            if (m->thumpflag > 2) m->appearance |= 0x800;
++            else if (!m->thumpflag) m->appearance &= ~0x800;
++            if (gc->solid && !m->solid) m->appearance &= ~8;
++            else if (!gc->solid && m->solid) m->appearance |= 8;
++            if (gc->solid && m->solid) m->appearance &= ~8;
++            _UpdateTireAppearance(i);
++            gc->v[0] = m->v[0];
++            gc->v[1] = m->v[1];
++            gc->v[2] = m->v[2];
++            gc->rwmph = m->reckon.rwmph;
++        }
++        gc->appearance = m->appearance;
++        m->appearance &= ~0x100000;
++        gc->collidable = m->collidable;
++        gc->solid = m->solid;
++        if (!gc->solid && gc->collide_time == 0.0f) {
++            gc->collide_time = m->fastin.modelTime;
++            gc->collide_count = gc->collide_state = -1;
++        }
++        if (gc->solid == 1) gc->collide_time = 0.0f;
++        gc->data_valid = m->data_valid;
++    }
++}
++
+ 
+ static void _UpdateTireAppearance(signed short droneIndex)
+ {

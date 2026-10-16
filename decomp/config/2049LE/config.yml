@@ -1,0 +1,25 @@
+# San Francisco Rush 2049 (GameCube port from Midway Arcade Treasures 3), debug build rush_d.dol.
+# symbols.txt / splits.txt were generated with `dtk elf config ../rush_d.elf config/2049LE`
+# from the symbol-rich rush_d.elf, which is byte-identical to rush_d.dol in every loaded segment.
+object_base: orig/2049LE
+object: files/rush_d.dol
+hash: c6a4b203cc2446cf71cf524d49f0fb7839bafef1
+symbols: config/2049LE/symbols.txt
+splits: config/2049LE/splits.txt
+# Linker .comment version; revisit once the compiler version is confirmed.
+mw_comment_version: 10
+ldscript_template: config/2049LE/ldscript.tpl
+# Text and binary data that dtk mistook for pointers into g_TexSort (button glyph bytes 0x80/0x81 at
+# the start of strings like "\x80 SELECT \x81 BACK", and two words of binary data).
+block_relocations:
+- source: 0x8011433C
+- source: 0x80114420
+- source: 0x801146D4
+- source: 0x80114714
+- source: 0x80114778
+- source: 0x801154F0
+- source: 0x80115614
+- source: 0x80115A64
+- source: 0x80132EBC
+- source: 0x8014AECC
+- source: 0x8012269C

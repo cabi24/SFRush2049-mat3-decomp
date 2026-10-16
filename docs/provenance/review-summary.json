@@ -1,0 +1,125 @@
+{
+  "review_seal_sha256": "af8e508257fe03d2498a39316c4b72b8f82cbb28264cd12cd70c2cfe9a1a332c",
+  "delivery_manifest_sha256": "8ef574e17bd4300af3a34c644293d5aeba4766d3f74825e8677a099847408849",
+  "prior_wave25_seal_sha256": "3979c4b86624b146c3154a34210d553cb1e18a317cce0bd973c0a1210fc0a9b8",
+  "historical_report_sha256": "6d0257df4a540503da7236a1381fcf1a4c14a64d5fccbacfd13f3730218ed599",
+  "reviewed_progress": {
+    "matched_functions": 1441,
+    "total_functions": 1844,
+    "matched_code": 432240,
+    "total_code": 715968,
+    "linked_units": 119
+  },
+  "previous_wave_progress": {
+    "matched_functions": 1438,
+    "total_functions": 1844,
+    "matched_code": 429912,
+    "total_code": 715968,
+    "linked_units": 119
+  },
+  "canonical_at_review": {
+    "matched_functions": 1271,
+    "total_functions": 1844,
+    "matched_code": 342476,
+    "total_code": 715968,
+    "linked_units": 113
+  },
+  "exact_source_files": [
+    {
+      "path": "decomp/src/GameSource/src/resurrect.c",
+      "baseline_sha256": "9d80249241c2b30c1cd56e1983c4774605809f882bf805a8442622dc3d380ad4",
+      "sha256": "7f530d61557b385a96958a133586493478523aca3b763bba989ec283e0858e32",
+      "object_sha256": "582d60a79245eed05305bbdfef80e406a83cbbcbee77e5cb679aea197429c854",
+      "new_functions": 1,
+      "new_bytes": 1328,
+      "promotion": false
+    },
+    {
+      "path": "decomp/src/GameSource/src/hud.c",
+      "baseline_sha256": "52372ebdd33a6b997c548686f41b49b2b8a710074f1d11eb507d855011816e54",
+      "sha256": "bd561fb93997346af8059aa5618728b53715196c27cc00768ded6d8f294d8f62",
+      "object_sha256": "e126ee18f86ffd4fbe92e23f1f92a48a33830a559340c534de9deaf35d9e9cfb",
+      "new_functions": 2,
+      "new_bytes": 1000,
+      "promotion": false
+    }
+  ],
+  "partial_units": {
+    "resurrect": {
+      "exact_functions": 16,
+      "exact_bytes": 8252,
+      "text_relocations": 240,
+      "referenced_objects": 38,
+      "raw_named_layout": "13/41",
+      "new_functions": 1,
+      "new_bytes": 1328,
+      "status": "NonMatching"
+    },
+    "hud": {
+      "exact_functions": 27,
+      "exact_bytes": 11812,
+      "text_relocations": 618,
+      "referenced_objects": 133,
+      "raw_named_layout": "26/107",
+      "new_functions": 2,
+      "new_bytes": 1000,
+      "status": "NonMatching"
+    },
+    "maxpath": {
+      "exact_functions": 23,
+      "exact_bytes": 11248,
+      "text_relocations": 360,
+      "referenced_objects": 48,
+      "raw_named_layout": "36/48",
+      "new_functions": 0,
+      "new_bytes": 0,
+      "status": "NonMatching"
+    },
+    "stree": {
+      "exact_functions": 24,
+      "exact_bytes": 15332,
+      "text_relocations": 374,
+      "referenced_objects": 47,
+      "raw_named_layout": "28/37",
+      "new_functions": 0,
+      "new_bytes": 0,
+      "status": "NonMatching"
+    },
+    "mdrive": {
+      "exact_functions": 17,
+      "exact_bytes": 5272,
+      "text_relocations": 232,
+      "referenced_objects": 38,
+      "raw_named_layout": "11/42",
+      "new_functions": 0,
+      "new_bytes": 0,
+      "status": "NonMatching"
+    }
+  },
+  "controls": {
+    "status": "passed",
+    "binary_observations": 106,
+    "distinct_corrupted_objects": 102,
+    "compiled_C_controls": 8,
+    "new_function_DWARF_CSV_predicates": 18,
+    "uncredited_callback_DWARF_CSV_predicates": 6,
+    "named_lifecycle_allocation_DWARF_CSV_predicates": 20,
+    "total_DWARF_CSV_predicates": 44,
+    "aggregate_overclaims": 16,
+    "separate_research_body_overclaims": 2,
+    "native_full_game_links": 0,
+    "new_DOL_claims": 0,
+    "worker_or_inherited_counts_not_added": true,
+    "focused_exact_objects": 66,
+    "HUD_lifecycle_anchor_objects": 31,
+    "resurrect_literal_only_objects": 1,
+    "new_research_objects": 8,
+    "inherited_research_negative_controls_recounted": false,
+    "raw_RELA_storage_scope": "original unmasked split conformity; not a claim that overwritten bits affect runtime semantics"
+  },
+  "fresh_native_full_game_links": 0,
+  "new_DOL_claims": 0,
+  "new_promotions": [],
+  "research_included_in_exact_aggregate": false,
+  "scope": "Compact derived review receipt. Private binary proof artifacts and thousands of indexed artifacts are intentionally not distributed."
+}

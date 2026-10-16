@@ -1,0 +1,41 @@
+{
+  "original_dol_sha256": "27eac444d9fee753864ef2978cc8c1999f07eb8d459d0dee60f254c18cd05e67",
+  "assets": [
+    {
+      "name": "defaultFontData",
+      "source": "decomp/src/NGC/FONT/defaultFont.cpp",
+      "address": "0x80136590",
+      "bytes": 69552,
+      "sha256": "ff5a930515d5547345f9e178dcf9d8370dd7b968fa0a1c07bdafae3e8ffbd33b",
+      "signed": false,
+      "generated_include": "decomp/include/generated/defaultFontData.inc"
+    },
+    {
+      "name": "icondata",
+      "source": "decomp/src/NGC/ngcMemcard.c",
+      "address": "0x8012f530",
+      "bytes": 14912,
+      "sha256": "d833a6e94814e5044108ab1dd1950d40375f479db175a545f4f264bf1c3b2877",
+      "signed": false,
+      "generated_include": "decomp/include/generated/icondata.inc"
+    },
+    {
+      "name": "playerPixels",
+      "source": "decomp/src/GameSource/src/save.c",
+      "address": "0x8010a9f0",
+      "bytes": 512,
+      "sha256": "fbd90cd92e394797144b25b43de23872ae7d492be3dd08110f666507a78c0b3d",
+      "signed": true,
+      "generated_include": "decomp/include/generated/playerPixels.inc"
+    },
+    {
+      "name": "ghostPixels",
+      "source": "decomp/src/GameSource/src/save.c",
+      "address": "0x8010ac34",
+      "bytes": 512,
+      "sha256": "aed01b2cac55ca9eb65fac0ddc82d5f6ef1821bc2bf20be5f6085408e71d8e67",
+      "signed": true,
+      "generated_include": "decomp/include/generated/ghostPixels.inc"
+    }
+  ]
+}

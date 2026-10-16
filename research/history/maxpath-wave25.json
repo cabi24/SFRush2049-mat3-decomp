@@ -1,0 +1,59 @@
+{
+  "status": "passed",
+  "unit": "maxpath",
+  "new_functions": 0,
+  "new_bytes": 0,
+  "included_in_exact_aggregate": false,
+  "cold_candidate_reproductions": 2,
+  "cold_baseline_reproduced": true,
+  "native_variants": 4,
+  "prior_functions_preserved": 23,
+  "prior_bytes_preserved": 11248,
+  "prior_text_relocations": 360,
+  "prior_referenced_objects": 48,
+  "prior_data_identities_payloads_preserved": true,
+  "reference_indexed_all_three_positive_proofs_identical": true,
+  "full_unmasked_prior_bodies_data_passed": true,
+  "research_function": "AvoidAreas",
+  "native_body_bytes": 1744,
+  "target_body_bytes": 1744,
+  "raw_different_word_offsets": [
+    "0x640",
+    "0x644",
+    "0x648",
+    "0x650",
+    "0x654",
+    "0x660",
+    "0x664",
+    "0x670"
+  ],
+  "same_extent_different_words": 8,
+  "strict_full_body_overclaim_rejected": true,
+  "overclaim_reason": "('full instruction mismatch', 'AvoidAreas')",
+  "object_sha256": "aae51c758c1f6a1a8457726561144fd266a4505c5871a1ba536e2a0ef7818af7",
+  "C_controls_rejected": 1,
+  "binary_controls_rejected": 2,
+  "controls": [
+    {
+      "control": "prior-C-payload",
+      "rejected": true,
+      "reason": "('full instruction mismatch', 'FindResPtRecurse')",
+      "object_sha256": "fecb6495be6dc387be52f2656947b0a78806792503c1a5df70a174a2bd0387f3"
+    },
+    {
+      "control": "prior-body-opcode",
+      "rejected": true,
+      "reason": "('full instruction mismatch', 'InitPathData')",
+      "object_sha256": "31693a2df1dc6589e4b8febc9d272040ffc4196cbc6cfa029395977975b6b1b5"
+    },
+    {
+      "control": "prior-complete-data-payload",
+      "rejected": true,
+      "reason": "('referenced payload mismatch', '@106', '@119')",
+      "object_sha256": "403f9fb472b9c430a53ca64d63faaf40dab7a0d010758ecc162a464315edf14d"
+    }
+  ],
+  "diagnostic": null,
+  "full_unit_or_DOL_claim": false,
+  "owned_commands_pending": []
+}

@@ -1,0 +1,580 @@
+/* Partial recovery of resurrect.c. This translation unit remains NonMatching. */
+#include "rush/rush_types.h"
+
+#define MSL_NO_SQRTF
+#include "msl_math_inline.h"
+extern tCarData gGameCar[6];
+extern tModelData model[6];
+extern float unitmatrix[4][3];
+extern double sin(double);
+extern double cos(double);
+extern void ExtractYaw(float (*mat)[3], float *yaw);
+extern surftyp *RoadPosition(float *ipos, float *opos, float (*uvs)[3]);
+extern void CopyUV(float (*src)[3], float (*dst)[3]);
+extern void fyaw(float sint, float cost, float (*uv)[3]);
+extern void syminit(tModelData *m);
+extern void multigo(signed short droneIndex);
+extern signed char gDeathMode;
+extern float gModelTime;
+extern enum_kNumRaceTypes gRace;
+extern void CrashedStunt(int player);
+extern void InitBattlePlayer(signed short slot);
+extern anon_numPts_pts_8 gDronePaths[4];
+extern anon_startTime_loopPt_32c gCheckpoints;
+extern anon_numPts_pts_10 gResPath;
+extern void SetNewPathIndex(tModelData *m, signed short idx);
+extern signed char gTrackNum, gBackwards;
+extern signed short gDemoPathPt;
+extern anon_track_car_a gLink[13];
+extern signed char gSuperSpeed;
+extern float magnitude(float *v);
+extern void make_super_speed(tModelData *m);
+static float resurrectTime;
+/* The recovered call sites pass an abort flag in r5, absent from the generated header. */
+extern void SetResurrectionData(signed short mode, tModelData *m, int abort);
+inline float sinf(float x) { return (float)sin(x); }
+inline float cosf(float x) { return (float)cos(x); }
+
+#pragma force_active on
+static int FindSurfaceUvsInPlace(float *inPos, float (*inUvs)[3], float (*uvs)[3])
+{
+    float sine, cosine, inYaw, outYaw;
+    float snapPos[3];
+    surftyp *surf;
+    ExtractYaw(inUvs, &inYaw);
+    inYaw=-inYaw;
+    surf=RoadPosition(inPos, snapPos, uvs);
+    if (surf) {
+        if (surf->flags & 0x2000) return 1;
+        ExtractYaw(uvs, &outYaw);
+        sine=sinf(inYaw+outYaw);
+        cosine=cosf(inYaw+outYaw);
+    } else {
+        sine=sinf(inYaw);
+        cosine=cosf(inYaw);
+        CopyUV(unitmatrix, uvs);
+    }
+    fyaw(-sine, cosine, uvs);
+    return 0;
+}
+#pragma force_active reset
+
+void MakeUvsFromQuat(float *q, float (*uvs)[3])
+{
+    float Nq;
+    float q1=q[0], q2=q[1], q3=q[2], q4=q[3];
+    float q11=q1*q1, q22=q2*q2, q33=q3*q3, q44=q4*q4;
+    float q12, q13, q14, q23, q24, q34;
+    q14=q1*q4; q13=q1*q3; q12=q1*q2;
+    q24=q2*q4; q23=q2*q3; q34=q3*q4;
+    Nq=q11+q22+q33+q44;
+    Nq=Nq>0.0f ? 1.0f/Nq : 0.0f;
+    uvs[0][0]=Nq*(q11+q22-q33-q44);
+    uvs[0][1]=Nq*(2.0f*(q23-q14));
+    uvs[0][2]=Nq*(2.0f*(q24+q13));
+    uvs[1][0]=Nq*(2.0f*(q23+q14));
+    uvs[1][1]=Nq*(q11-q22+q33-q44);
+    uvs[1][2]=Nq*(2.0f*(q34-q12));
+    uvs[2][0]=Nq*(2.0f*(q24-q13));
+    uvs[2][1]=Nq*(2.0f*(q34+q12));
+    uvs[2][2]=Nq*(q11-q22-q33+q44);
+}
+
+void MakeQuatFromUvs(float (*uvs)[3], float *q)
+{
+    if (uvs[0][0] >= 0.0f) {
+        if (uvs[1][1] + uvs[2][2] >= 0.0f) {
+            q[0]=1.0f+uvs[0][0]+uvs[1][1]+uvs[2][2];
+            q[1]=uvs[2][1]-uvs[1][2];
+            q[2]=uvs[0][2]-uvs[2][0];
+            q[3]=uvs[1][0]-uvs[0][1];
+        } else {
+            q[0]=uvs[2][1]-uvs[1][2];
+            q[1]=1.0f+uvs[0][0]-uvs[1][1]-uvs[2][2];
+            q[2]=uvs[1][0]+uvs[0][1];
+            q[3]=uvs[0][2]+uvs[2][0];
+        }
+    } else {
+        if (uvs[1][1]-uvs[2][2] >= 0.0f) {
+            q[0]=uvs[0][2]-uvs[2][0];
+            q[1]=uvs[1][0]+uvs[0][1];
+            q[2]=1.0f-uvs[0][0]+uvs[1][1]-uvs[2][2];
+            q[3]=uvs[2][1]+uvs[1][2];
+        } else {
+            q[0]=uvs[1][0]-uvs[0][1];
+            q[1]=uvs[0][2]+uvs[2][0];
+            q[2]=uvs[2][1]+uvs[1][2];
+            q[3]=1.0f-uvs[0][0]-uvs[1][1]+uvs[2][2];
+        }
+    }
+}
+
+#pragma force_active on
+static void FindBestQuat(float *q1, float *q2)
+{
+    signed short i;
+    float dq1;
+    float dq2;
+    dq1 = dq2 = 0.0f;
+    for (i = 0; i < 4; i++) {
+        dq1 += fabs(q1[i] - q2[i]);
+        dq2 += fabs(q1[i] + q2[i]);
+    }
+    if (dq2 < dq1) {
+        q2[0] = -q2[0];
+        q2[1] = -q2[1];
+        q2[2] = -q2[2];
+        q2[3] = -q2[3];
+    }
+}
+#pragma force_active reset
+
+void Interpolate(float *pointa, float *pointb, signed short p_size,
+                 float vala, float valb, float inab, float *pointab)
+{
+    float scale = valb - vala;
+    signed short i;
+    if (scale != 0.0f)
+        scale = (inab - vala) / scale;
+    for (i = 0; i < p_size; i++)
+        pointab[i] = pointa[i] + scale * (pointb[i] - pointa[i]);
+}
+
+void BlinkResurrectingCars(void)
+{
+    signed short i;
+    float delta_time;
+    for (i = 0; i < 6; i++) {
+        if (model[i].in_game && gGameCar[i].data_valid) {
+            if (!gGameCar[i].solid) {
+                delta_time = model[i].fastin.modelTime - gGameCar[i].collide_time;
+                if (--gGameCar[i].collide_count < 0) {
+                    if (++gGameCar[i].collide_state & 1) {
+                        gGameCar[i].collide_count = 0;
+                        model[i].appearance &= ~8;
+                    } else {
+                        switch ((int)delta_time) {
+                        case 0: case 1: gGameCar[i].collide_count = 2; break;
+                        case 2: case 3: gGameCar[i].collide_count = 1; break;
+                        default: gGameCar[i].collide_count = 0; break;
+                        }
+                        if (gGameCar[i].dead <= 0)
+                            model[i].appearance |= 8;
+                    }
+                }
+            } else {
+                model[i].appearance &= ~8;
+            }
+        }
+    }
+}
+
+void FinishResurrecting(tModelData *m)
+{
+    if (m->resurrect.moving_state == -2) {
+        m->fastin.modelrun=0;
+        m->resurrect.moving_state=-1;
+        m->initin.pos[0]=m->resurrect.pos[0];
+        m->initin.pos[1]=m->resurrect.pos[1];
+        m->initin.pos[2]=m->resurrect.pos[2];
+        CopyUV(m->resurrect.uvs,m->initin.uvs);
+        syminit(m);
+        if ((float)m->resurrect.velocity >= 44.0f) {
+            m->gear=m->commandgear=m->mainin.gear=2;
+        } else {
+            m->gear=m->commandgear=m->mainin.gear=1;
+        }
+        m->v[2]=m->resurrect.velocity;
+        m->tireV[0][2]=m->resurrect.velocity;
+        m->tires[0].angvel=m->tireV[0][2]/m->tires[0].tradius;
+        m->tireV[1][2]=m->resurrect.velocity;
+        m->tires[1].angvel=m->tireV[1][2]/m->tires[1].tradius;
+        m->tireV[2][2]=m->resurrect.velocity;
+        m->tires[2].angvel=m->tireV[2][2]/m->tires[2].tradius;
+        m->tireV[3][2]=m->resurrect.velocity;
+        m->tires[3].angvel=m->tireV[3][2]/m->tires[3].tradius;
+        multigo(m->slot);
+    }
+}
+
+void CheckCrash(signed short drone_index)
+{
+    tCarData *gc=&gGameCar[drone_index];
+    tModelData *m=&model[drone_index];
+    switch (gc->crash_state) {
+    case 2:
+        break;
+    case 0:
+        if (gc->dead <= 0 && m->crashflag) {
+            gc->restart=-1;
+            SetResurrectionData(2,m,0);
+            gc->crash_state=1;
+            gc->crashtime=m->fastin.modelTime;
+        }
+        break;
+    case 1:
+        if (gRace == kBattle) {
+            if (m->fastin.modelTime-gc->crashtime > 2.25f)
+                gc->crash_state=2;
+        } else {
+            if (m->fastin.modelTime-gc->crashtime > 3.5f)
+                gc->crash_state=2;
+        }
+        break;
+    }
+}
+
+void AbortCar(signed short drone_index, int death)
+{
+    if (gModelTime < 5.0f) return;
+    if (gRace == kStunt) CrashedStunt(drone_index);
+    if (gRace == kBattle) InitBattlePlayer(drone_index);
+    SetResurrectionData(2,&model[drone_index],1);
+    gGameCar[drone_index].crash_state=2;
+    if (gDeathMode && death)
+        gGameCar[drone_index].dead=0;
+    else
+        gGameCar[drone_index].dead=-1;
+}
+
+int AreWeSolid(signed short node)
+{
+    tModelData *m = &model[node];
+    tCarData *gc = &gGameCar[node];
+    return gc->crash_state == 0 && m->crashflag == 0 &&
+           m->resurrect.moving_state == -1 && m->solid && !m->hide_car;
+}
+
+#pragma force_active on
+static void FindDroneResPt(tModelData *m, int *outPath, int *outIdx)
+{
+    int pathIndex=((tCarData *)((char *)gGameCar+m->slot*sizeof(tCarData)))->mpctl.path;
+    int p, idx, end;
+    float min, x, y, z, dx, dy, dz, dist;
+    anon_numPts_pts_8 *path;
+    path=&gDronePaths[pathIndex];
+    min=1.0e20f;
+    x=m->resurrect.save_pos[0];
+    y=m->resurrect.save_pos[1];
+    z=m->resurrect.save_pos[2];
+    idx=0;
+    end=m->next_cp_index < m->last_cp_index ? path->numPts : gCheckpoints.points[m->next_cp_index].pathPts[pathIndex+1];
+    for (p=gCheckpoints.points[m->last_cp_index].pathPts[pathIndex+1];p<end;p++) {
+        dx=path->pts[p].pos[0]-x;
+        dy=path->pts[p].pos[1]-y;
+        dz=path->pts[p].pos[2]-z;
+        dist=dx*dx+dy*dy+dz*dz;
+        if (dist<min) { min=dist;idx=p; }
+    }
+    *outPath=pathIndex;
+    *outIdx=idx;
+    SetNewPathIndex(m,idx);
+}
+#pragma force_active reset
+
+void InitDemoPathPoint(void)
+{
+    static signed short track1[]={0,242,494};
+    static signed short track2[]={0,258,484,700};
+    static signed short track3[]={0,250,520,740};
+    static signed short track4[]={0,230,430,730};
+    static signed short track5[]={0,200,430,600};
+    static signed short track6[]={0,230,420,680};
+    static signed short track1Back[]={0,250,480};
+    static signed short track2Back[]={0,270,525,740};
+    static signed short track3Back[]={0,250,520,770};
+    static signed short track4Back[]={0,220,450,760};
+    static signed short track5Back[]={0,260,515,750,1030};
+    static signed short track6Back[]={0,260,505,760,1027};
+    static signed short *demo_path_points[]={track1,track2,track3,track4,track5,track6,track1Back,track2Back,track3Back,track4Back,track5Back,track6Back};
+    static signed short num_demo_ppoints[]={3,4,4,4,4,4,3,4,4,4,5,5};
+    static signed short cur_demo_ppoint[12];
+    int dindex;
+    int track=gBackwards ? gTrackNum+6 : gTrackNum;
+    dindex=cur_demo_ppoint[track]+1;
+    if(dindex<0 || dindex>=num_demo_ppoints[track]) dindex=0;
+    cur_demo_ppoint[track]=dindex;
+    gDemoPathPt=demo_path_points[track][dindex];
+}
+
+void UpdateResurrectingCar(tModelData *m)
+{
+    static float save_pos[6][3];
+    float pos[3],pos2[3];
+    float f32_state,temp,scale;
+    float uvs[3][3],quat[4];
+    signed short i,node=m->slot;
+    if(m->resurrect.moving_state==0) {
+        pos2[0]=m->initin.pos[0]-m->resurrect.pos[0];
+        pos2[1]=m->initin.pos[1]-m->resurrect.pos[1];
+        pos2[2]=m->initin.pos[2]-m->resurrect.pos[2];
+        temp=magnitude(pos2);
+        temp*=0.125f;
+        if(temp>100.0f) temp=100.0f;
+        Interpolate(m->initin.pos,m->resurrect.pos,3,0.0f,resurrectTime,resurrectTime/2.0f,save_pos[node]);
+        save_pos[node][1]+=temp;
+        m->appearance&=~8;
+    }
+    m->resurrect.moving_state++;
+    f32_state=m->fastin.modelTime-m->resurrect.resurrect_time;
+    if(f32_state>resurrectTime) {
+        if(m->appearance&16) m->appearance&=~16;
+        m->resurrect.moving_state=-2;
+        if(gLink[node].owner==6 || m->we_control) m->hide_car=0;
+    } else {
+        if(m->appearance&16) m->appearance&=~16;
+        if(f32_state<resurrectTime/2.0f) {
+            scale=2.0f*f32_state*f32_state/resurrectTime;
+            Interpolate(m->initin.pos,save_pos[node],3,0.0f,resurrectTime/2.0f,scale,pos);
+            Interpolate(m->resurrect.quat_start,m->resurrect.quat_end,4,0.0f,resurrectTime/2.0f,scale,quat);
+            MakeUvsFromQuat(quat,uvs);
+            scale=1.0f-2.0f*scale/resurrectTime;
+            if(gLink[node].owner==6) {
+                for(i=0;i<3;i++) {
+                    if(fabs(m->rwv[i]*=scale)<0.01f) m->rwv[i]=0.0f;
+                }
+            }
+            CopyUV(uvs,m->uvs);
+            if(gSuperSpeed) make_super_speed(m);
+        } else {
+            Interpolate(save_pos[node],m->resurrect.pos,3,resurrectTime/2.0f,resurrectTime,f32_state,pos);
+        }
+        m->rwr[0]=pos[0];
+        m->rwr[1]=pos[1];
+        m->rwr[2]=pos[2];
+    }
+}
+
+extern unsigned int gGameState;
+extern signed char gNoAutoAbort,gEndGame,gCoastFlag,gNumActiveCars;
+extern signed short gNumPlayers;
+extern anon_slot_controller_50 gPlayers[4];
+extern void NextResPathPt(int path,int idx,int *outPath,int *outIdx);
+extern void BodyVector(float *v,float *result,float (*uvs)[3]);
+extern float fatan2(float x,float y);
+
+void DetectDroneAbort(void)
+{
+    signed short i,node,abort_me;
+    float pos2[3],delta[3];
+    tModelData *m;
+    tCarData *gc;
+    int path,idx;
+    if(gModelTime<5.0f) {
+        for(i=0;i<6;i++) {
+            model[i].stuck_time=0.0f;
+            gGameCar[i].fwd_progress_t=0.0f;
+            gGameCar[i].strayAngle=0.0f;
+        }
+        return;
+    }
+    for(i=0;i<gNumActiveCars;i++) {
+        node=model[i].slot;
+        m=&model[node];
+        if(m->we_control || gLink[node].owner==6) {
+            gc=&gGameCar[node];
+            abort_me=m->please_abort_me;
+            if(gc->dr_pos[1]<-190.0f && !gc->dead && !gc->crash_state && m->resurrect.moving_state==-1) {
+                m->resurrect.autoAbort=1;
+                AbortCar(m->slot,0);
+                return;
+            }
+            if((unsigned int)(gRace-kStunt)>kObstacle-kStunt && gRace!=kBattle) {
+                if((gGameState&0x400008) && gRace!=kPractice && !gNoAutoAbort && !gEndGame && !gCoastFlag &&
+                   gc->place_locked!=1 && AreWeSolid(m->slot) && m->drone_scale>0.1f &&
+                   (m->magvel<25.0f || abort_me)) {
+                    if(!abort_me) {
+                        if(m->stuck_time==0.0f) m->stuck_time=m->fastin.modelTime;
+                        else m->stuck_time=m->fastin.modelTime;
+                    }
+                    if(abort_me) {
+                        SetResurrectionData(2,m,1);
+                        gc->crash_state=2;
+                        m->stuck_time=0.0f;
+                        gc->dead=-1;
+                        m->resurrect.autoAbort=1;
+                    }
+                } else m->stuck_time=0.0f;
+            }
+        }
+    }
+    for(node=0;node<gNumPlayers;node++) {
+        m=&model[gPlayers[node].slot];
+        gc=&gGameCar[gPlayers[node].slot];
+        if(gc->distance>gc->last_distance) {
+            gc->fwd_progress_t=0.0f;
+            gc->last_distance=gc->distance;
+            gc->strayAngle=0.0f;
+        } else if(!AreWeSolid(m->slot)) {
+            gc->fwd_progress_t=0.0f;
+            gc->strayAngle=0.0f;
+        } else if(gc->fwd_progress_t==0.0f) {
+            gc->fwd_progress_t=m->fastin.modelTime;
+        } else if(m->fastin.modelTime-gc->fwd_progress_t>2.0f) {
+            path=gc->lastResPath;
+            idx=gc->lastResIdx;
+            for(i=0;i<5;i++) NextResPathPt(path,idx,&path,&idx);
+            if(path>=0) {
+                delta[0]=gResPath.alt[path].pts[idx][0]-gc->dr_pos[0];
+                delta[1]=gResPath.alt[path].pts[idx][1]-gc->dr_pos[1];
+                delta[2]=gResPath.alt[path].pts[idx][2]-gc->dr_pos[2];
+            } else {
+                delta[0]=gResPath.pts[idx][0]-gc->dr_pos[0];
+                delta[1]=gResPath.pts[idx][1]-gc->dr_pos[1];
+                delta[2]=gResPath.pts[idx][2]-gc->dr_pos[2];
+            }
+            BodyVector(delta,pos2,gc->dr_uvs);
+            gc->strayAngle=fatan2(pos2[0],pos2[2]);
+        }
+    }
+}
+
+extern void TB_Vector3Normalize(float *v);
+extern float fasin(float v);
+/* sqrtf is needed here; the earlier bodies intentionally suppress its unused constants. */
+inline float surface_sqrt(float x)
+{
+    if (x > 0.0f) {
+        double guess = __frsqrte((double)x);
+        guess = 0.5 * guess * (3.0 - guess * guess * x);
+        guess = 0.5 * guess * (3.0 - guess * guess * x);
+        guess = 0.5 * guess * (3.0 - guess * guess * x);
+        return (float)(x * guess);
+    } else if (x < 0.0) return NAN;
+    else if (fpclassify(x) == FP_NAN) return NAN;
+    return x;
+}
+
+#pragma force_active on
+static void FindSurfaceUvsFromResPoint(int res, int path, int idx, float (*uvs)[3])
+{
+    float sine, cosine, yaw, angle;
+    float snapPos[3], pt[3], pos[3];
+    surftyp *surf;
+    if (path >= 0) {
+        if (res) {
+            pos[0] = gResPath.alt[path].pts[idx][0];
+            pos[1] = gResPath.alt[path].pts[idx][1];
+            pos[2] = gResPath.alt[path].pts[idx][2];
+            if (idx == gResPath.alt[path].numPts - 1) {
+                if (gResPath.alt[path].lastPath >= 0) {
+                    pt[0] = gResPath.alt[gResPath.alt[path].lastPath].pts[gResPath.alt[path].lastIdx][0] - pos[0];
+                    pt[1] = gResPath.alt[gResPath.alt[path].lastPath].pts[gResPath.alt[path].lastIdx][1] - pos[1];
+                    pt[2] = gResPath.alt[gResPath.alt[path].lastPath].pts[gResPath.alt[path].lastIdx][2] - pos[2];
+                } else {
+                    pt[0] = gResPath.pts[gResPath.alt[path].lastIdx][0] - pos[0];
+                    pt[1] = gResPath.pts[gResPath.alt[path].lastIdx][1] - pos[1];
+                    pt[2] = gResPath.pts[gResPath.alt[path].lastIdx][2] - pos[2];
+                }
+            } else {
+                pt[0] = gResPath.alt[path].pts[idx+1][0] - pos[0];
+                pt[1] = gResPath.alt[path].pts[idx+1][1] - pos[1];
+                pt[2] = gResPath.alt[path].pts[idx+1][2] - pos[2];
+            }
+        } else {
+            pos[0] = gDronePaths[path].pts[idx].pos[0];
+            pos[1] = gDronePaths[path].pts[idx].pos[1];
+            pos[2] = gDronePaths[path].pts[idx].pos[2];
+            if (idx == gDronePaths[path].numPts - 1) {
+                pt[0] = gDronePaths[path].pts[gCheckpoints.points[gCheckpoints.loopPt].pathPts[path+1]].pos[0] - gDronePaths[path].pts[idx].pos[0];
+                pt[1] = gDronePaths[path].pts[gCheckpoints.points[gCheckpoints.loopPt].pathPts[path+1]].pos[1] - gDronePaths[path].pts[idx].pos[1];
+                pt[2] = gDronePaths[path].pts[gCheckpoints.points[gCheckpoints.loopPt].pathPts[path+1]].pos[2] - gDronePaths[path].pts[idx].pos[2];
+            } else {
+                pt[0] = gDronePaths[path].pts[idx+1].pos[0] - gDronePaths[path].pts[idx].pos[0];
+                pt[1] = gDronePaths[path].pts[idx+1].pos[1] - gDronePaths[path].pts[idx].pos[1];
+                pt[2] = gDronePaths[path].pts[idx+1].pos[2] - gDronePaths[path].pts[idx].pos[2];
+            }
+        }
+    } else {
+        pos[0] = gResPath.pts[idx][0];
+        pos[1] = gResPath.pts[idx][1];
+        pos[2] = gResPath.pts[idx][2];
+        if (idx == gResPath.numPts - 1) {
+            pt[0] = gResPath.pts[gCheckpoints.points[gCheckpoints.loopPt].pathPts[0]][0] - gResPath.pts[idx][0];
+            pt[1] = gResPath.pts[gCheckpoints.points[gCheckpoints.loopPt].pathPts[0]][1] - gResPath.pts[idx][1];
+            pt[2] = gResPath.pts[gCheckpoints.points[gCheckpoints.loopPt].pathPts[0]][2] - gResPath.pts[idx][2];
+        } else {
+            pt[0] = gResPath.pts[idx+1][0] - gResPath.pts[idx][0];
+            pt[1] = gResPath.pts[idx+1][1] - gResPath.pts[idx][1];
+            pt[2] = gResPath.pts[idx+1][2] - gResPath.pts[idx][2];
+        }
+    }
+    TB_Vector3Normalize(pt);
+    surf = RoadPosition(pos,snapPos,uvs);
+    if (surf) {
+        angle = fasin(pt[0]);
+        if (pt[2] < 0.0f) angle = 3.1415927410125732f - angle;
+        ExtractYaw(uvs,&yaw);
+        sine = sinf(angle+yaw);
+        cosine = cosf(angle+yaw);
+    } else {
+        sine = pt[1];
+        cosine = surface_sqrt(pt[0]*pt[0] + pt[2]*pt[2]);
+        if (pt[2] < 0.0f) sine = -sine;
+        uvs[0][0]=1.0f;uvs[0][1]=0.0f;uvs[0][2]=0.0f;
+        uvs[1][0]=0.0f;uvs[1][1]=cosine;uvs[1][2]=-sine;
+        uvs[2][0]=0.0f;uvs[2][1]=sine;uvs[2][2]=cosine;
+        sine=pt[0];cosine=pt[2];
+    }
+    fyaw(-sine,cosine,uvs);
+}
+#pragma force_active reset
+
+extern signed short GetNextCheckpoint(signed short idx);
+extern void SetDroneResPathIndex(tModelData *m,signed short path,signed short idx);
+extern void SyncMaxpathToLastCheckpoint(signed short slot);
+extern void NormalVector(float *v);
+void SetResurrectionData(signed short mode,tModelData *m,int abort)
+{
+    int p;
+    switch(mode) {
+    case 0:
+        if(gGameState&8) {
+            FindSurfaceUvsFromResPoint(1,-1,gDemoPathPt,m->resurrect.uvs);
+            for(p=gCheckpoints.numPoints-1;p>=0;p--) {
+                if(gDemoPathPt>=gCheckpoints.points[p].pathPts[0]) {
+                    m->last_cp_index=p;
+                    m->next_cp_index=GetNextCheckpoint(m->last_cp_index);
+                    break;
+                }
+            }
+            SetDroneResPathIndex(m,-1,gDemoPathPt);
+            m->resurrect.save_pos[0]=gDronePaths[gGameCar[m->slot].mpctl.path].pts[gGameCar[m->slot].mpctl.idx].pos[0];
+            m->resurrect.save_pos[1]=gDronePaths[gGameCar[m->slot].mpctl.path].pts[gGameCar[m->slot].mpctl.idx].pos[1];
+            m->resurrect.save_pos[2]=gDronePaths[gGameCar[m->slot].mpctl.path].pts[gGameCar[m->slot].mpctl.idx].pos[2];
+        } else if(gRace==kBattle || gRace==kStunt) {
+            m->resurrect.save_pos[0]=gCheckpoints.points[(m->slot==0 ? 0 : m->slot==1 ? 2 : m->slot==2 ? 1 : 3)].pos[0];
+            m->resurrect.save_pos[1]=gCheckpoints.points[(m->slot==0 ? 0 : m->slot==1 ? 2 : m->slot==2 ? 1 : 3)].pos[1];
+            m->resurrect.save_pos[2]=gCheckpoints.points[(m->slot==0 ? 0 : m->slot==1 ? 2 : m->slot==2 ? 1 : 3)].pos[2];
+            CopyUV(unitmatrix,m->resurrect.uvs);
+            m->resurrect.uvs[2][0]=gCheckpoints.points[(m->slot==0 ? 0 : m->slot==1 ? 2 : m->slot==2 ? 1 : 3)].normal[0];
+            m->resurrect.uvs[2][1]=gCheckpoints.points[(m->slot==0 ? 0 : m->slot==1 ? 2 : m->slot==2 ? 1 : 3)].normal[1];
+            m->resurrect.uvs[2][2]=gCheckpoints.points[(m->slot==0 ? 0 : m->slot==1 ? 2 : m->slot==2 ? 1 : 3)].normal[2];
+            m->resurrect.uvs[2][1]=0.0f;
+            m->resurrect.uvs[2][0]*=-1.0f;
+            m->resurrect.uvs[2][2]*=-1.0f;
+            NormalVector(m->resurrect.uvs[2]);
+            m->resurrect.uvs[0][0]=m->resurrect.uvs[1][1]*m->resurrect.uvs[2][2]-m->resurrect.uvs[1][2]*m->resurrect.uvs[2][1];
+            m->resurrect.uvs[0][1]=m->resurrect.uvs[1][2]*m->resurrect.uvs[2][0]-m->resurrect.uvs[1][0]*m->resurrect.uvs[2][2];
+            m->resurrect.uvs[0][2]=m->resurrect.uvs[1][0]*m->resurrect.uvs[2][1]-m->resurrect.uvs[1][1]*m->resurrect.uvs[2][0];
+            NormalVector(m->resurrect.uvs[0]);
+            SyncMaxpathToLastCheckpoint(m->slot);
+        } else {
+            m->resurrect.save_pos[0]=gResPath.pts[gCheckpoints.points[m->last_cp_index].pathPts[0]][0];
+            m->resurrect.save_pos[1]=gResPath.pts[gCheckpoints.points[m->last_cp_index].pathPts[0]][1];
+            m->resurrect.save_pos[2]=gResPath.pts[gCheckpoints.points[m->last_cp_index].pathPts[0]][2];
+            FindSurfaceUvsFromResPoint(1,-1,gCheckpoints.points[m->last_cp_index].pathPts[0],m->resurrect.uvs);
+            SyncMaxpathToLastCheckpoint(m->slot);
+        }
+        m->resurrect.crash_time=0.0f;
+        break;
+    case 1:
+        break;
+    case 2:
+        m->resurrect.save_pos[0]=m->reckon.rwr[0];
+        m->resurrect.save_pos[1]=m->reckon.rwr[1];
+        m->resurrect.save_pos[2]=m->reckon.rwr[2];
+        m->resurrect.crash_time=m->fastin.modelTime;
+        break;
+    }
+}

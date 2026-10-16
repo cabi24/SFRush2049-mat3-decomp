@@ -1,0 +1,81 @@
+{
+  "_comment": "Qualifiers CodeWarrior's DWARF v1 does not record (volatile is never emitted). Each entry is inferred from codegen; see writeup.md. Applied by tools/dwarftypes.py.",
+  "volatile_variables": [
+    "GVSyncCount",
+    "Worlddlidx",
+    "gFrameSeconds",
+    "gLastFrameCount",
+    "gLastFrameCounter",
+    "gSeconds"
+  ],
+  "_comment_const": "Global variables in .rodata: DWARF v1 does not record const either.",
+  "const_variables": [
+    "gControlTable"
+  ],
+  "_comment_externs": "Correct shared declarations inferred from defining units and access patterns. checkpoint.c defines ghostRaceTimes as six floats (24 bytes); its finish_cam accesses require an unsized extern array to preserve original HA/LO addressing rather than inferred small-data addressing.",
+  "extern_declarations": {
+    "ghostRaceTimes": "float ghostRaceTimes[6]",
+    "finish_cam": "signed char finish_cam[]"
+  },
+  "volatile_members": {
+    "anon_retraceMsg_prenmiMsg_78": [
+      "frameCount"
+    ],
+    "anon_attached_incompatible_14": [
+      "attached",
+      "incompatible",
+      "availButtons",
+      "buttons",
+      "stick1x",
+      "stick1y",
+      "stick2x",
+      "stick2y",
+      "analog1",
+      "analog2"
+    ],
+    "anon_wheel_clutch_14": [
+      "wheel",
+      "clutch",
+      "brake",
+      "throttle",
+      "gear",
+      "wing",
+      "abort"
+    ]
+  },
+  "_comment_prototypes": "Declarations the original headers used where they differ from the definition recorded in DWARF (callers pass extra/differently-typed arguments). Inferred from call sites.",
+  "prototypes": {
+    "LoadGeoBinFile": "int LoadGeoBinFile(int wavenum, char *groupname, int waveNum)",
+    "ngcMcCreateFileReader": "int ngcMcCreateFileReader(int Port, char *filename, int unused)",
+    "ngcMcCreateFileWriter": "int ngcMcCreateFileWriter(int Port, char *Filename, int unused)",
+    "ngcMCSeek": "void ngcMCSeek(int File, int InPos)",
+    "ngcMCSeek2": "void ngcMCSeek2(int File, int AddPos)",
+    "PS2MCSeek": "void PS2MCSeek(int File, int InPos)",
+    "PS2MCRead": "int PS2MCRead(int File, void *V, int Length)",
+    "PS2MCWrite": "int PS2MCWrite(int File, void *V, int Length)",
+    "PS2McChangeDir": "int PS2McChangeDir(int Port, char *dir)",
+    "PS2McGetDir": "int PS2McGetDir(int Port, void *name, int flags, int max, anon__Create__Modify_40 *tables)",
+    "appFileOpen": "int appFileOpen(const char *filename, int mode)",
+    "MBOX_FindObject_WORK": "int MBOX_FindObject_WORK(const char *name, signed char firstModel, signed char lastModel, int flag)",
+    "MBOX_FindTexture_WORK": "anon_name_width_30 *MBOX_FindTexture_WORK(const char *name, unsigned short *index, signed char firstModel, signed char lastModel, int flag)",
+    "AudioInitSys": "void AudioInitSys(int maxVoices, int maxSfx)",
+    "Open_RAD_3D_image": "RAD3DIMAGE *Open_RAD_3D_image(void *rad_3d, unsigned int width, unsigned int height, unsigned int rad3d_surface_format)",
+    "sndPlayerMusicPrepare": "void sndPlayerMusicPrepare(char *name, int sampleRate, int flag2, int flag3)",
+    "NGCTEXGetGXTexObjFromPalette": "void NGCTEXGetGXTexObjFromPalette(void *unused, anon_versionNumber_numDescriptors_c *pal, _GXTexObj *to, unsigned long id)",
+    "LoadWave": "int LoadWave(int waveNum, int loadAgain, int unused, int handle, void *heap)",
+    "sndPlayerMusicStart": "void sndPlayerMusicStart()",
+    "DC_SendFillRect": "void DC_SendFillRect(int ulx, int uly, int lrx, int lry, int red, int green, int blue, int alpha, float z)",
+    "ngcLoopSfx": "void ngcLoopSfx(void *snd, void *_sp_table, unsigned long sfx, float volume)",
+    "ngcStopSfx": "void ngcStopSfx(void *snd, void *_sp_table, unsigned long sfx)",
+    "Run": "void Run(const char *executableName, ...)",
+    "TB_Sprintf": "void TB_Sprintf(void *buf, void *fmt, ...)",
+    "TB_Printf": "void TB_Printf(signed short x, signed short y, void *fmt, ...)",
+    "sceVu0RotCameraMatrix": "void sceVu0RotCameraMatrix(float (*m)[4], float *p, float *zd, float *yd, float *rot)",
+    "sceVu0TransMatrix": "void sceVu0TransMatrix(float (*m0)[4], float (*m1)[4], float *tv)",
+    "find_best_gear": "void find_best_gear(tModelData *m, float usang, float dsang)",
+    "WorldCullObjects": "void WorldCullObjects(int unused, float *pos, int show)",
+    "ZOID_BuildCullingList": "void ZOID_BuildCullingList(float *min, float *max, signed short dlindex)",
+    "setFBCollisionForce": "void setFBCollisionForce(tModelData *m, tModelData *m1, tModelData *m2, float *dir, float *pos, float top)",
+    "setMiniFBCollisionForce": "void setMiniFBCollisionForce(tModelData *m, tModelData *m1, tMiniModelData *m2, float *dir, float *pos)"
+  }
+}

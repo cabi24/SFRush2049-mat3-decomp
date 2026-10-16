@@ -1,0 +1,1851 @@
+{
+  "review_seal_sha256": "af8e508257fe03d2498a39316c4b72b8f82cbb28264cd12cd70c2cfe9a1a332c",
+  "files": [
+    {
+      "path": "decomp/src/GameSource/src/asincos.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/asincos.c",
+      "reviewed_sha256": "60eefbf29a9c3fa3b3a516aef14850696fa36188a5c290d5951fc65710aec08c",
+      "reviewed_bytes": 1615,
+      "export_sha256": "60eefbf29a9c3fa3b3a516aef14850696fa36188a5c290d5951fc65710aec08c",
+      "export_bytes": 1615,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/atan.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/atan.c",
+      "reviewed_sha256": "3f8f7c512c87660f1cf912f12e7dbd13c460b11e7088a57c5cfe56569e597c59",
+      "reviewed_bytes": 1702,
+      "export_sha256": "3f8f7c512c87660f1cf912f12e7dbd13c460b11e7088a57c5cfe56569e597c59",
+      "export_bytes": 1702,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/audio.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/audio.c",
+      "reviewed_sha256": "e94e4a4f159c7d773c61d35069f33fbcc1477e36f9697f01d84a5923315ba3d9",
+      "reviewed_bytes": 38569,
+      "export_sha256": "e94e4a4f159c7d773c61d35069f33fbcc1477e36f9697f01d84a5923315ba3d9",
+      "export_bytes": 38569,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/audiomgr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/audiomgr.c",
+      "reviewed_sha256": "a35815624388be97020f2961fa878fa0319b7ed4e4a6fa5496654e89c504b972",
+      "reviewed_bytes": 36637,
+      "export_sha256": "a35815624388be97020f2961fa878fa0319b7ed4e4a6fa5496654e89c504b972",
+      "export_bytes": 36637,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/audioscr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/audioscr.c",
+      "reviewed_sha256": "decd753ae39fa5fbdcbf9a0c41f8a07cd79bba921528c998c5d2c7762e0f0ae5",
+      "reviewed_bytes": 20726,
+      "export_sha256": "decd753ae39fa5fbdcbf9a0c41f8a07cd79bba921528c998c5d2c7762e0f0ae5",
+      "export_bytes": 20726,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/audiosfx.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/audiosfx.c",
+      "reviewed_sha256": "5826922c39ef9f8c67588941ffe6134cd51c08cd6faaf1cba333262ec95cc24d",
+      "reviewed_bytes": 11424,
+      "export_sha256": "5826922c39ef9f8c67588941ffe6134cd51c08cd6faaf1cba333262ec95cc24d",
+      "export_bytes": 11424,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/audiosfxps2.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/audiosfxps2.c",
+      "reviewed_sha256": "06dfb8dbce4f6b7590aeafe97725a3a91c85e7fdad9ac9c06fde75d513adc789",
+      "reviewed_bytes": 10206,
+      "export_sha256": "06dfb8dbce4f6b7590aeafe97725a3a91c85e7fdad9ac9c06fde75d513adc789",
+      "export_bytes": 10206,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/audiosongps2.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/audiosongps2.c",
+      "reviewed_sha256": "59c7c7c83ccf2388c7e5a4ddf570f7bd191819e0aa41efe68dae6a18a1f18157",
+      "reviewed_bytes": 4964,
+      "export_sha256": "59c7c7c83ccf2388c7e5a4ddf570f7bd191819e0aa41efe68dae6a18a1f18157",
+      "export_bytes": 4964,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/audiosysps2.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/audiosysps2.c",
+      "reviewed_sha256": "89cc8ce4af36610f5e47d365474b1850605de8d0217c0edc3fb6362fabb49a2f",
+      "reviewed_bytes": 3296,
+      "export_sha256": "89cc8ce4af36610f5e47d365474b1850605de8d0217c0edc3fb6362fabb49a2f",
+      "export_bytes": 3296,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/blit.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/blit.c",
+      "reviewed_sha256": "e9193a2b4617ce7e6252e55d04bbce9de49766429690db88ab74eba18d10be06",
+      "reviewed_bytes": 6359,
+      "export_sha256": "e9193a2b4617ce7e6252e55d04bbce9de49766429690db88ab74eba18d10be06",
+      "export_bytes": 6359,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/blit_pc.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/blit_pc.c",
+      "reviewed_sha256": "8380fb38f2d7093bb2d56632d39bc80f839bcf71294604663d2ef24ec85ef527",
+      "reviewed_bytes": 5523,
+      "export_sha256": "8380fb38f2d7093bb2d56632d39bc80f839bcf71294604663d2ef24ec85ef527",
+      "export_bytes": 5523,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/boot_pc.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/boot_pc.c",
+      "reviewed_sha256": "8584c1230f64dc284fa3fdac4c26382cd1603ca132bf52b6e21c819b9f5f2bd1",
+      "reviewed_bytes": 317,
+      "export_sha256": "8584c1230f64dc284fa3fdac4c26382cd1603ca132bf52b6e21c819b9f5f2bd1",
+      "export_bytes": 317,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/bsearch.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/bsearch.c",
+      "reviewed_sha256": "de922acb2ce928c344b5c49431c7bb2b0052a75ecea44c6e9a8ab6b37c744d6f",
+      "reviewed_bytes": 812,
+      "export_sha256": "de922acb2ce928c344b5c49431c7bb2b0052a75ecea44c6e9a8ab6b37c744d6f",
+      "export_bytes": 812,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/bstree.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/bstree.c",
+      "reviewed_sha256": "7fba69cf0c91211eee7cbf733a93c530c4bf8c17dd165d44eb3e855cf69d5061",
+      "reviewed_bytes": 1894,
+      "export_sha256": "7fba69cf0c91211eee7cbf733a93c530c4bf8c17dd165d44eb3e855cf69d5061",
+      "export_bytes": 1894,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/camera.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/camera.c",
+      "reviewed_sha256": "2e483f4b58d6a3b32489ed2e7e51bd4e5d699ef75da636e9d33f746d38a0074f",
+      "reviewed_bytes": 37699,
+      "export_sha256": "2e483f4b58d6a3b32489ed2e7e51bd4e5d699ef75da636e9d33f746d38a0074f",
+      "export_bytes": 37699,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/carload.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/carload.c",
+      "reviewed_sha256": "4c5a697b49f9988469b077d29eeea8aaa6aa1bd9c7ccb8726b4e19a31b003655",
+      "reviewed_bytes": 3046,
+      "export_sha256": "4c5a697b49f9988469b077d29eeea8aaa6aa1bd9c7ccb8726b4e19a31b003655",
+      "export_bytes": 3046,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/cars.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/cars.c",
+      "reviewed_sha256": "8d8974923f8c711b76ade836435547d6c1ea4a3f973260c7fffe9dc07e614375",
+      "reviewed_bytes": 14782,
+      "export_sha256": "8d8974923f8c711b76ade836435547d6c1ea4a3f973260c7fffe9dc07e614375",
+      "export_bytes": 14782,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/cheatscr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/cheatscr.c",
+      "reviewed_sha256": "f959f11f96315d155bfa9f60a5aa96413b5835725972e598189d8f47fa4fdd95",
+      "reviewed_bytes": 8042,
+      "export_sha256": "f959f11f96315d155bfa9f60a5aa96413b5835725972e598189d8f47fa4fdd95",
+      "export_bytes": 8042,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/checkpoint.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/checkpoint.c",
+      "reviewed_sha256": "9949d21bba5a9910073e793143fc21b226e86fc1edf29a8b2c89c58f89b6b080",
+      "reviewed_bytes": 9289,
+      "export_sha256": "9949d21bba5a9910073e793143fc21b226e86fc1edf29a8b2c89c58f89b6b080",
+      "export_bytes": 9289,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/circuit.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/circuit.c",
+      "reviewed_sha256": "dbf6539c7afecf8a3bb709e6836acf9bd18fc18d5b26492e44e9bad907f50efd",
+      "reviewed_bytes": 9248,
+      "export_sha256": "dbf6539c7afecf8a3bb709e6836acf9bd18fc18d5b26492e44e9bad907f50efd",
+      "export_bytes": 9248,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/circuitscr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/circuitscr.c",
+      "reviewed_sha256": "690c4079f9033ccd72c15fdef54cb9db1c68fba2261db20c8f368011027176b0",
+      "reviewed_bytes": 39370,
+      "export_sha256": "690c4079f9033ccd72c15fdef54cb9db1c68fba2261db20c8f368011027176b0",
+      "export_bytes": 39370,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/collision.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/collision.c",
+      "reviewed_sha256": "a07cc68a003be44acebd90ba8fc375c979ec90eb2f6288b41e736d797f79fc9c",
+      "reviewed_bytes": 13474,
+      "export_sha256": "a07cc68a003be44acebd90ba8fc375c979ec90eb2f6288b41e736d797f79fc9c",
+      "export_bytes": 13474,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/controls.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/controls.c",
+      "reviewed_sha256": "27ee86d476c81a945f3a8033d64d504c87e0bf303e9300c86e9d158f6bc40756",
+      "reviewed_bytes": 8157,
+      "export_sha256": "27ee86d476c81a945f3a8033d64d504c87e0bf303e9300c86e9d158f6bc40756",
+      "export_bytes": 8157,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/controlscr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/controlscr.c",
+      "reviewed_sha256": "81b7d866bb90871b14a5a793f9cad3194f11410e6bc596fd8e75549c3c698bd9",
+      "reviewed_bytes": 18227,
+      "export_sha256": "81b7d866bb90871b14a5a793f9cad3194f11410e6bc596fd8e75549c3c698bd9",
+      "export_bytes": 18227,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/controlsys.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/controlsys.c",
+      "reviewed_sha256": "9421428217dc361f8d65474fe81f4929dd6a3d365393ebc81e364b35c8a89996",
+      "reviewed_bytes": 9856,
+      "export_sha256": "9421428217dc361f8d65474fe81f4929dd6a3d365393ebc81e364b35c8a89996",
+      "export_bytes": 9856,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/countdown.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/countdown.c",
+      "reviewed_sha256": "548ec1416d63c45ac0a8ee68609aa2caaabd098811710e9b9a27d6886b0a6b6c",
+      "reviewed_bytes": 2790,
+      "export_sha256": "548ec1416d63c45ac0a8ee68609aa2caaabd098811710e9b9a27d6886b0a6b6c",
+      "export_bytes": 2790,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/demo.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/demo.c",
+      "reviewed_sha256": "951fa46bcec23ef007fd9735c2f5462d4c57ab5ff6f96a14fa0f3f0ff5f1d204",
+      "reviewed_bytes": 3375,
+      "export_sha256": "951fa46bcec23ef007fd9735c2f5462d4c57ab5ff6f96a14fa0f3f0ff5f1d204",
+      "export_bytes": 3375,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/drivetra.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/drivetra.c",
+      "reviewed_sha256": "6080eb270a1337b1c9574aec2c8c9dfdb5d9036d21bb630b318cb55d78b2bc42",
+      "reviewed_bytes": 6259,
+      "export_sha256": "6080eb270a1337b1c9574aec2c8c9dfdb5d9036d21bb630b318cb55d78b2bc42",
+      "export_bytes": 6259,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/drivsym.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/drivsym.c",
+      "reviewed_sha256": "c0b2b02addd1f9bd8001d41b44ea9e2fbcba9626a7c69f1165024c9af48aebae",
+      "reviewed_bytes": 23995,
+      "export_sha256": "c0b2b02addd1f9bd8001d41b44ea9e2fbcba9626a7c69f1165024c9af48aebae",
+      "export_bytes": 23995,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/drones.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/drones.c",
+      "reviewed_sha256": "32f86359264fa4a86eac6642fc842bcf344f3c7eadeaa3620c8ff9f22a2d230e",
+      "reviewed_bytes": 1250,
+      "export_sha256": "32f86359264fa4a86eac6642fc842bcf344f3c7eadeaa3620c8ff9f22a2d230e",
+      "export_bytes": 1250,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/eggs.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/eggs.c",
+      "reviewed_sha256": "68d35ba51b980ce163965dde8a7fa784080d1fab5a32a6e64e5263bcd45c1c62",
+      "reviewed_bytes": 4714,
+      "export_sha256": "68d35ba51b980ce163965dde8a7fa784080d1fab5a32a6e64e5263bcd45c1c62",
+      "export_bytes": 4714,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/fake.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/fake.c",
+      "reviewed_sha256": "0e34e60e4857fe9d3ffafb88411a7c4d2e6eaacdb039140ef83b2d5d0d5a0609",
+      "reviewed_bytes": 11672,
+      "export_sha256": "0e34e60e4857fe9d3ffafb88411a7c4d2e6eaacdb039140ef83b2d5d0d5a0609",
+      "export_bytes": 11672,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/fakegdfs.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/fakegdfs.c",
+      "reviewed_sha256": "b43423fa691610974b49c7a4854ade21506da038a359337cee04e205e12365e3",
+      "reviewed_bytes": 2121,
+      "export_sha256": "b43423fa691610974b49c7a4854ade21506da038a359337cee04e205e12365e3",
+      "export_bytes": 2121,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/fmath.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/fmath.c",
+      "reviewed_sha256": "dc2b38176f2cde208697603c632cdffcc62d60ccc1d5da0f8b990fc9af7edbc5",
+      "reviewed_bytes": 11345,
+      "export_sha256": "dc2b38176f2cde208697603c632cdffcc62d60ccc1d5da0f8b990fc9af7edbc5",
+      "export_bytes": 11345,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/front.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/front.c",
+      "reviewed_sha256": "d88dcefd03fcff890ca045d3bc826db7cf8868f4d989b87a1d9df9139fb95f31",
+      "reviewed_bytes": 8138,
+      "export_sha256": "d88dcefd03fcff890ca045d3bc826db7cf8868f4d989b87a1d9df9139fb95f31",
+      "export_bytes": 8138,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/game.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/game.c",
+      "reviewed_sha256": "b723a57eff6b3919845ba4332faa19e140fa282285719a361c4d9f684a17005a",
+      "reviewed_bytes": 9831,
+      "export_sha256": "b723a57eff6b3919845ba4332faa19e140fa282285719a361c4d9f684a17005a",
+      "export_bytes": 9831,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/gameoverscr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/gameoverscr.c",
+      "reviewed_sha256": "1bd671f24a5f89845b5244673d1e0565d8dea74c83a2fe58045fa97da6669a6a",
+      "reviewed_bytes": 27902,
+      "export_sha256": "1bd671f24a5f89845b5244673d1e0565d8dea74c83a2fe58045fa97da6669a6a",
+      "export_bytes": 27902,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/gamerecords.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/gamerecords.c",
+      "reviewed_sha256": "aace87c12e2edacd9c4934b325463984a0b2310c2ea3fdea5c7f5728342d3d73",
+      "reviewed_bytes": 38596,
+      "export_sha256": "aace87c12e2edacd9c4934b325463984a0b2310c2ea3fdea5c7f5728342d3d73",
+      "export_bytes": 38596,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/gfx.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/gfx.c",
+      "reviewed_sha256": "ff703917228ccdec6e80c4a70b4318ae5bb4d83c5f4e0ea8978a06e2d668c3dc",
+      "reviewed_bytes": 683,
+      "export_sha256": "ff703917228ccdec6e80c4a70b4318ae5bb4d83c5f4e0ea8978a06e2d668c3dc",
+      "export_bytes": 683,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/ghost.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/ghost.c",
+      "reviewed_sha256": "78458a41a1f8837aee2d6cb2d311e6dbb53db22b0af00377a29c18095abf6440",
+      "reviewed_bytes": 6833,
+      "export_sha256": "78458a41a1f8837aee2d6cb2d311e6dbb53db22b0af00377a29c18095abf6440",
+      "export_bytes": 6833,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/HAL_Support.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/HAL_Support.c",
+      "reviewed_sha256": "860f902f5a5e1a8da93d69d367c3654d2df72dabe35b5aa731333560f87a37f6",
+      "reviewed_bytes": 300,
+      "export_sha256": "860f902f5a5e1a8da93d69d367c3654d2df72dabe35b5aa731333560f87a37f6",
+      "export_bytes": 300,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/HAL_text.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/HAL_text.c",
+      "reviewed_sha256": "01edf586c784fbb0ed8da894559957b058e4da80de3af1c6f564731891a3a4fb",
+      "reviewed_bytes": 12948,
+      "export_sha256": "01edf586c784fbb0ed8da894559957b058e4da80de3af1c6f564731891a3a4fb",
+      "export_bytes": 12948,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/HAL_time.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/HAL_time.c",
+      "reviewed_sha256": "ac2d589ad0e37d33000e940c9622a186d907b72547106ff2ea91cb4b343793eb",
+      "reviewed_bytes": 872,
+      "export_sha256": "ac2d589ad0e37d33000e940c9622a186d907b72547106ff2ea91cb4b343793eb",
+      "export_bytes": 872,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/headlights.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/headlights.c",
+      "reviewed_sha256": "200b6741d53021cdcc8d803e02e6874ad0a73e1367f6e06998dd20d2a8bf5aaf",
+      "reviewed_bytes": 11512,
+      "export_sha256": "200b6741d53021cdcc8d803e02e6874ad0a73e1367f6e06998dd20d2a8bf5aaf",
+      "export_bytes": 11512,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/hud.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/hud.c",
+      "reviewed_sha256": "bd561fb93997346af8059aa5618728b53715196c27cc00768ded6d8f294d8f62",
+      "reviewed_bytes": 42674,
+      "export_sha256": "bd561fb93997346af8059aa5618728b53715196c27cc00768ded6d8f294d8f62",
+      "export_bytes": 42674,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/hudextra.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/hudextra.c",
+      "reviewed_sha256": "cb09b8167ed7ec40aabe78aa2fb86c50ce58f27d69fca8930792c8fa28022c34",
+      "reviewed_bytes": 30176,
+      "export_sha256": "cb09b8167ed7ec40aabe78aa2fb86c50ce58f27d69fca8930792c8fa28022c34",
+      "export_bytes": 30176,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/Init.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/Init.c",
+      "reviewed_sha256": "530bd800a0fa219681558d4ee0b94739eeab276ae16d2d60bdcbf1b6155433ba",
+      "reviewed_bytes": 1011,
+      "export_sha256": "530bd800a0fa219681558d4ee0b94739eeab276ae16d2d60bdcbf1b6155433ba",
+      "export_bytes": 1011,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/initiali.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/initiali.c",
+      "reviewed_sha256": "85c2541fd2a0487b13c9bd129bd38f54896204234f97204ea831252a06d0a573",
+      "reviewed_bytes": 7313,
+      "export_sha256": "85c2541fd2a0487b13c9bd129bd38f54896204234f97204ea831252a06d0a573",
+      "export_bytes": 7313,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/licensescr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/licensescr.c",
+      "reviewed_sha256": "df4dcd884838463d733ec5a5806956f77532d61e1a216bb65a3d4d67396a66d5",
+      "reviewed_bytes": 1524,
+      "export_sha256": "df4dcd884838463d733ec5a5806956f77532d61e1a216bb65a3d4d67396a66d5",
+      "export_bytes": 1524,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/ll.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/ll.c",
+      "reviewed_sha256": "0d3ccaf9041d068d55d5b7e1bb5672b802408fb3b12461bd84713397646161d0",
+      "reviewed_bytes": 4213,
+      "export_sha256": "0d3ccaf9041d068d55d5b7e1bb5672b802408fb3b12461bd84713397646161d0",
+      "export_bytes": 4213,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/maxpath.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/maxpath.c",
+      "reviewed_sha256": "6d91ff9b8622cc66122f380336ad2c8c05b17c03b54094f8cda591cfb3896aa1",
+      "reviewed_bytes": 35004,
+      "export_sha256": "6d91ff9b8622cc66122f380336ad2c8c05b17c03b54094f8cda591cfb3896aa1",
+      "export_bytes": 35004,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/mb_wad.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/mb_wad.c",
+      "reviewed_sha256": "689daca33429cd91c832d949740d5a10d719baec9f29736e393a61c90396082c",
+      "reviewed_bytes": 2184,
+      "export_sha256": "689daca33429cd91c832d949740d5a10d719baec9f29736e393a61c90396082c",
+      "export_bytes": 2184,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/mbox.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/mbox.c",
+      "reviewed_sha256": "8cbe7ecbc8b1ff1a373c73aeef46b3f6e80a8e6b01ad520858970084d238690e",
+      "reviewed_bytes": 6813,
+      "export_sha256": "8cbe7ecbc8b1ff1a373c73aeef46b3f6e80a8e6b01ad520858970084d238690e",
+      "export_bytes": 6813,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/mdrive.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/mdrive.c",
+      "reviewed_sha256": "e0fdc096ec8cc3903498838518cb2faa9f45d36178b48dd9288cefdc9c31062b",
+      "reviewed_bytes": 15010,
+      "export_sha256": "e0fdc096ec8cc3903498838518cb2faa9f45d36178b48dd9288cefdc9c31062b",
+      "export_bytes": 15010,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/memsys.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/memsys.c",
+      "reviewed_sha256": "6ce4d28f7550c9a768ace9cc978a463458f54035bb18db063ca2b88a12bfd11d",
+      "reviewed_bytes": 14645,
+      "export_sha256": "6ce4d28f7550c9a768ace9cc978a463458f54035bb18db063ca2b88a12bfd11d",
+      "export_bytes": 14645,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/model.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/model.c",
+      "reviewed_sha256": "0471b7c3bdea23da225508fda82d44419e910e13f10f66f14f322d9c42cee705",
+      "reviewed_bytes": 2491,
+      "export_sha256": "0471b7c3bdea23da225508fda82d44419e910e13f10f66f14f322d9c42cee705",
+      "export_bytes": 2491,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/modescr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/modescr.c",
+      "reviewed_sha256": "291f6bc3f2fc02c505eb2c533f1d4ed17ce1ee0dc8aaca228b5dd8f835f0bcb0",
+      "reviewed_bytes": 12898,
+      "export_sha256": "291f6bc3f2fc02c505eb2c533f1d4ed17ce1ee0dc8aaca228b5dd8f835f0bcb0",
+      "export_bytes": 12898,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/modf.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/modf.c",
+      "reviewed_sha256": "f4661bad75aff3009880294598573873c2f64b3b38460e851840f9af21b63e46",
+      "reviewed_bytes": 693,
+      "export_sha256": "f4661bad75aff3009880294598573873c2f64b3b38460e851840f9af21b63e46",
+      "export_bytes": 693,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/options.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/options.c",
+      "reviewed_sha256": "f4d4dea6d2a579ccc7f8469fa6c65596ce81d7a619591dcfdf3b6b1c02d8634e",
+      "reviewed_bytes": 10455,
+      "export_sha256": "f4d4dea6d2a579ccc7f8469fa6c65596ce81d7a619591dcfdf3b6b1c02d8634e",
+      "export_bytes": 10455,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/optionscr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/optionscr.c",
+      "reviewed_sha256": "054f390e4d4580fd5150b3530e792968e8d5dd255448887c7f468f86d469bf17",
+      "reviewed_bytes": 24725,
+      "export_sha256": "054f390e4d4580fd5150b3530e792968e8d5dd255448887c7f468f86d469bf17",
+      "export_bytes": 24725,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/os.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/os.c",
+      "reviewed_sha256": "2ab03e89086424ce7b22e227ff6fd0cd88b760c913081829109298111848fe73",
+      "reviewed_bytes": 263,
+      "export_sha256": "2ab03e89086424ce7b22e227ff6fd0cd88b760c913081829109298111848fe73",
+      "export_bytes": 263,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/pakerr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/pakerr.c",
+      "reviewed_sha256": "f6bfe8c0adcd3d13c3d176344d6da039d5548a71bb989aa2d4dbc85b37840db6",
+      "reviewed_bytes": 16516,
+      "export_sha256": "f6bfe8c0adcd3d13c3d176344d6da039d5548a71bb989aa2d4dbc85b37840db6",
+      "export_bytes": 16516,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/pakscr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/pakscr.c",
+      "reviewed_sha256": "eea46935735f10164a7afa7130915001e610d4024d729cca12e2f07a0868fdc0",
+      "reviewed_bytes": 13099,
+      "export_sha256": "eea46935735f10164a7afa7130915001e610d4024d729cca12e2f07a0868fdc0",
+      "export_bytes": 13099,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/paksysdc.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/paksysdc.c",
+      "reviewed_sha256": "9454217151d592fd263fa5f969737204b6c6aa7558d212ce5512bd7300527f87",
+      "reviewed_bytes": 20895,
+      "export_sha256": "9454217151d592fd263fa5f969737204b6c6aa7558d212ce5512bd7300527f87",
+      "export_bytes": 20895,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/pane.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/pane.c",
+      "reviewed_sha256": "c90f3e4564bc39ac50a4e4c2219c3d7eba98b85534229247a13ca4ca7ea4b2d1",
+      "reviewed_bytes": 4488,
+      "export_sha256": "c90f3e4564bc39ac50a4e4c2219c3d7eba98b85534229247a13ca4ca7ea4b2d1",
+      "export_bytes": 4488,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/password.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/password.c",
+      "reviewed_sha256": "54326391a8c5950d93924fd6fcc8c6859ef1b6a6238829a26543ca3b659276b5",
+      "reviewed_bytes": 4368,
+      "export_sha256": "54326391a8c5950d93924fd6fcc8c6859ef1b6a6238829a26543ca3b659276b5",
+      "export_bytes": 4368,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/pathcommon.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/pathcommon.c",
+      "reviewed_sha256": "fcbf8a5601adb0c98e96ac92a7c750adcad71e973e3237bd64972ce5a75b79df",
+      "reviewed_bytes": 21667,
+      "export_sha256": "fcbf8a5601adb0c98e96ac92a7c750adcad71e973e3237bd64972ce5a75b79df",
+      "export_bytes": 21667,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/pausescr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/pausescr.c",
+      "reviewed_sha256": "69cefdd0ced15c6bdd8fdcf9880a8387f50c2a08dacaff906b0f5429f8d1296f",
+      "reviewed_bytes": 38608,
+      "export_sha256": "69cefdd0ced15c6bdd8fdcf9880a8387f50c2a08dacaff906b0f5429f8d1296f",
+      "export_bytes": 38608,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/powerups.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/powerups.c",
+      "reviewed_sha256": "7366162684f84011cdcaeb1d84564f924568cc8d296a63ecc2cb94f4e2ef9cc2",
+      "reviewed_bytes": 7516,
+      "export_sha256": "7366162684f84011cdcaeb1d84564f924568cc8d296a63ecc2cb94f4e2ef9cc2",
+      "export_bytes": 7516,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/rekon.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/rekon.c",
+      "reviewed_sha256": "6498bd222248bef48b6bece2c77c6c2ea2f9fe27b9c75b6a241b37adf51d0637",
+      "reviewed_bytes": 2744,
+      "export_sha256": "6498bd222248bef48b6bece2c77c6c2ea2f9fe27b9c75b6a241b37adf51d0637",
+      "export_bytes": 2744,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/resurrect.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/resurrect.c",
+      "reviewed_sha256": "7f530d61557b385a96958a133586493478523aca3b763bba989ec283e0858e32",
+      "reviewed_bytes": 23065,
+      "export_sha256": "7f530d61557b385a96958a133586493478523aca3b763bba989ec283e0858e32",
+      "export_bytes": 23065,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/road.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/road.c",
+      "reviewed_sha256": "e8fc270b63c04699e68b02ea8e39c7879c865581af8ab5c8f0d429bba16375d5",
+      "reviewed_bytes": 3686,
+      "export_sha256": "e8fc270b63c04699e68b02ea8e39c7879c865581af8ab5c8f0d429bba16375d5",
+      "export_bytes": 3686,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/save.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/save.c",
+      "reviewed_sha256": "42cc783fe04b6c43d062f61a35799bd8626f27c54f331e438bda4d372e2a1694",
+      "reviewed_bytes": 63659,
+      "export_sha256": "b3dbeb247cd8db6746b1d5bf9ce73176c0277cc5debe6e42affb763d74f4e153",
+      "export_bytes": 58828,
+      "byte_identical_to_reviewed": false
+    },
+    {
+      "path": "decomp/src/GameSource/src/sched.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/sched.c",
+      "reviewed_sha256": "966dbcfac1f8e0756adbd36e9d8ac74b376b6059e79b32b417137864df38c55a",
+      "reviewed_bytes": 808,
+      "export_sha256": "966dbcfac1f8e0756adbd36e9d8ac74b376b6059e79b32b417137864df38c55a",
+      "export_bytes": 808,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/selectcarload.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/selectcarload.c",
+      "reviewed_sha256": "2efa09cd5cf9b7f851414f281ab789f5aa512e641e3cbe4a4aa1bdd0b0195063",
+      "reviewed_bytes": 7753,
+      "export_sha256": "2efa09cd5cf9b7f851414f281ab789f5aa512e641e3cbe4a4aa1bdd0b0195063",
+      "export_bytes": 7753,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/shots.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/shots.c",
+      "reviewed_sha256": "e089752e447aa9e5e5674020d5b767ad44840ff32bfa256a58860b9798938f60",
+      "reviewed_bytes": 44411,
+      "export_sha256": "e089752e447aa9e5e5674020d5b767ad44840ff32bfa256a58860b9798938f60",
+      "export_bytes": 44411,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/skids.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/skids.c",
+      "reviewed_sha256": "2289b026ab5778309f3fe6b6fc58842159f4039042e9f324f47f0913410704b6",
+      "reviewed_bytes": 13968,
+      "export_sha256": "2289b026ab5778309f3fe6b6fc58842159f4039042e9f324f47f0913410704b6",
+      "export_bytes": 13968,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/sky.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/sky.c",
+      "reviewed_sha256": "a652f516e0df5c47439abad06bb052c395e9157064618c71115cbdc1085a1128",
+      "reviewed_bytes": 1170,
+      "export_sha256": "a652f516e0df5c47439abad06bb052c395e9157064618c71115cbdc1085a1128",
+      "export_bytes": 1170,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/smoke.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/smoke.c",
+      "reviewed_sha256": "921e54da2f3fe1c74a23b487c76c437e736f98c682d94d1e1b493e17296fcb02",
+      "reviewed_bytes": 10228,
+      "export_sha256": "921e54da2f3fe1c74a23b487c76c437e736f98c682d94d1e1b493e17296fcb02",
+      "export_bytes": 10228,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/startscr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/startscr.c",
+      "reviewed_sha256": "16b79f3130b6dfa0b5e29b712fa3daf9d261ddf53650c079debb59559dd3544d",
+      "reviewed_bytes": 16022,
+      "export_sha256": "16b79f3130b6dfa0b5e29b712fa3daf9d261ddf53650c079debb59559dd3544d",
+      "export_bytes": 16022,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/state.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/state.c",
+      "reviewed_sha256": "db876785f11dfd695d901cad820fc160f806f3ba81039c82470404b5b892906a",
+      "reviewed_bytes": 6821,
+      "export_sha256": "db876785f11dfd695d901cad820fc160f806f3ba81039c82470404b5b892906a",
+      "export_bytes": 6821,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/statll.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/statll.c",
+      "reviewed_sha256": "8a54cd391540661c606098788c845d3e4ed2ca441a4a4a93683744fea592ddfd",
+      "reviewed_bytes": 2033,
+      "export_sha256": "8a54cd391540661c606098788c845d3e4ed2ca441a4a4a93683744fea592ddfd",
+      "export_bytes": 2033,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/stats.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/stats.c",
+      "reviewed_sha256": "472150bbe7bfb7d9e9e85856290790f8a5719742ff4b2f90395cd6a1609ca3e9",
+      "reviewed_bytes": 1955,
+      "export_sha256": "472150bbe7bfb7d9e9e85856290790f8a5719742ff4b2f90395cd6a1609ca3e9",
+      "export_bytes": 1955,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/streaks.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/streaks.c",
+      "reviewed_sha256": "176198d1c060212abb5a148f85c0b536c2ca0d9c5914f1ecd2e82ed5f5854a5a",
+      "reviewed_bytes": 6570,
+      "export_sha256": "176198d1c060212abb5a148f85c0b536c2ca0d9c5914f1ecd2e82ed5f5854a5a",
+      "export_bytes": 6570,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/stree.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/stree.c",
+      "reviewed_sha256": "2d82b2803044fcde7b8a0f36be1b44620bdd869575e851ab1f89f2bec66e8c26",
+      "reviewed_bytes": 39346,
+      "export_sha256": "2d82b2803044fcde7b8a0f36be1b44620bdd869575e851ab1f89f2bec66e8c26",
+      "export_bytes": 39346,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/stunt.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/stunt.c",
+      "reviewed_sha256": "00d231d4b9180043e4023cddd55f97af0aa19d5d527d2e243391e798c85a0644",
+      "reviewed_bytes": 18133,
+      "export_sha256": "00d231d4b9180043e4023cddd55f97af0aa19d5d527d2e243391e798c85a0644",
+      "export_bytes": 18133,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/tan.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/tan.c",
+      "reviewed_sha256": "4b4b06c8ca2a95bf354e02362e25e103b1c2731fde7863f6583e5450722866e8",
+      "reviewed_bytes": 1932,
+      "export_sha256": "4b4b06c8ca2a95bf354e02362e25e103b1c2731fde7863f6583e5450722866e8",
+      "export_bytes": 1932,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/targetpaths.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/targetpaths.c",
+      "reviewed_sha256": "dd91655bf7c65a4aa0c9725fa353aee9f2ea5316ad9740c4f79c1b4e72286613",
+      "reviewed_bytes": 20891,
+      "export_sha256": "dd91655bf7c65a4aa0c9725fa353aee9f2ea5316ad9740c4f79c1b4e72286613",
+      "export_bytes": 20891,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/TB_text.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/TB_text.c",
+      "reviewed_sha256": "cbb9c9b255213d2d6479bd495ef564165e7f3d4978b70be8ee641f6ec77a83eb",
+      "reviewed_bytes": 11009,
+      "export_sha256": "cbb9c9b255213d2d6479bd495ef564165e7f3d4978b70be8ee641f6ec77a83eb",
+      "export_bytes": 11009,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/TB_Vector.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/TB_Vector.c",
+      "reviewed_sha256": "130cb068952e6aacaccb3c3265aefc40db3e344c48723db6212c8a377b6b0645",
+      "reviewed_bytes": 760,
+      "export_sha256": "130cb068952e6aacaccb3c3265aefc40db3e344c48723db6212c8a377b6b0645",
+      "export_bytes": 760,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/text.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/text.c",
+      "reviewed_sha256": "8b62bf51abd37bdd09f590cab4b06e0eca595e21d34974a293b928b56a2e3e75",
+      "reviewed_bytes": 5511,
+      "export_sha256": "8b62bf51abd37bdd09f590cab4b06e0eca595e21d34974a293b928b56a2e3e75",
+      "export_bytes": 5511,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/texture.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/texture.c",
+      "reviewed_sha256": "8a7a79b5ab0449616e6d276f6cdbf18876e865a7f75c0836d9a4290841993628",
+      "reviewed_bytes": 410,
+      "export_sha256": "8a7a79b5ab0449616e6d276f6cdbf18876e865a7f75c0836d9a4290841993628",
+      "export_bytes": 410,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/textureanim.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/textureanim.c",
+      "reviewed_sha256": "b3fa3e99e0a270a87650d6eb2185ec0ef0bbb79cabc4f28f4caa3e9a419d46e4",
+      "reviewed_bytes": 24608,
+      "export_sha256": "b3fa3e99e0a270a87650d6eb2185ec0ef0bbb79cabc4f28f4caa3e9a419d46e4",
+      "export_bytes": 24608,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/timer.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/timer.c",
+      "reviewed_sha256": "f143695f0ae3fbd08b50e57c26aaca546ea578a74639c392ed937c3c287374b3",
+      "reviewed_bytes": 2184,
+      "export_sha256": "f143695f0ae3fbd08b50e57c26aaca546ea578a74639c392ed937c3c287374b3",
+      "export_bytes": 2184,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/timingbar.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/timingbar.c",
+      "reviewed_sha256": "d695b071d479482cd5832a2edbf6627b585e473a5d1c9d6a9614309e4bf0e90e",
+      "reviewed_bytes": 288,
+      "export_sha256": "d695b071d479482cd5832a2edbf6627b585e473a5d1c9d6a9614309e4bf0e90e",
+      "export_bytes": 288,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/tires.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/tires.c",
+      "reviewed_sha256": "c9b662e5a29f53d9be91e621e8c2eb4404cffd8a68ec775c2b29d3f20d365b7d",
+      "reviewed_bytes": 9690,
+      "export_sha256": "c9b662e5a29f53d9be91e621e8c2eb4404cffd8a68ec775c2b29d3f20d365b7d",
+      "export_bytes": 9690,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/titlescr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/titlescr.c",
+      "reviewed_sha256": "d680bb7eee759ed55434f20be56728f8b9714720c894ac0117666fd50e578d04",
+      "reviewed_bytes": 2194,
+      "export_sha256": "d680bb7eee759ed55434f20be56728f8b9714720c894ac0117666fd50e578d04",
+      "export_bytes": 2194,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/tracks.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/tracks.c",
+      "reviewed_sha256": "6866890e5ba88510d0e104d21cafa8f03132b55e3cce94c849a4480216540ac0",
+      "reviewed_bytes": 6537,
+      "export_sha256": "6866890e5ba88510d0e104d21cafa8f03132b55e3cce94c849a4480216540ac0",
+      "export_bytes": 6537,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/unzip.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/unzip.c",
+      "reviewed_sha256": "cfde6253e9e3574211acaf0a1c8dcf9bc7d29318fa1dc2d8a2d3ed56529b7e09",
+      "reviewed_bytes": 11679,
+      "export_sha256": "cfde6253e9e3574211acaf0a1c8dcf9bc7d29318fa1dc2d8a2d3ed56529b7e09",
+      "export_bytes": 11679,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/videoscr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/videoscr.c",
+      "reviewed_sha256": "d0dd51c36ef1c26d8886500427147373012a8cd56b3760e90020354c8e230bfa",
+      "reviewed_bytes": 16719,
+      "export_sha256": "d0dd51c36ef1c26d8886500427147373012a8cd56b3760e90020354c8e230bfa",
+      "export_bytes": 16719,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/warningscr.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/warningscr.c",
+      "reviewed_sha256": "c446575c1bd90068205acdd6df4bf289d99bde4f30a09e815a42bb9dde62ba9e",
+      "reviewed_bytes": 445,
+      "export_sha256": "c446575c1bd90068205acdd6df4bf289d99bde4f30a09e815a42bb9dde62ba9e",
+      "export_bytes": 445,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/waveinfo.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/waveinfo.c",
+      "reviewed_sha256": "31df59af82d5ae88eca7f6f9d474562250693528f5a6850dc532f06c3fe4d731",
+      "reviewed_bytes": 3270,
+      "export_sha256": "31df59af82d5ae88eca7f6f9d474562250693528f5a6850dc532f06c3fe4d731",
+      "export_bytes": 3270,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/waves.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/waves.c",
+      "reviewed_sha256": "b24af063890c9e75948d3f31d5f3910912dcaf8a154c6f129ef40accae9b636d",
+      "reviewed_bytes": 21656,
+      "export_sha256": "b24af063890c9e75948d3f31d5f3910912dcaf8a154c6f129ef40accae9b636d",
+      "export_bytes": 21656,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/weapons.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/weapons.c",
+      "reviewed_sha256": "f252b6dcf5fd7e1186a880e1fe3d231790a215797abf8a06a72087a00f208634",
+      "reviewed_bytes": 21297,
+      "export_sha256": "f252b6dcf5fd7e1186a880e1fe3d231790a215797abf8a06a72087a00f208634",
+      "export_bytes": 21297,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/world.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/world.c",
+      "reviewed_sha256": "cb12eabad2bdfea2569d199f0bcabb95ac3d6545a6010df1946a5d45e32aef93",
+      "reviewed_bytes": 32624,
+      "export_sha256": "cb12eabad2bdfea2569d199f0bcabb95ac3d6545a6010df1946a5d45e32aef93",
+      "export_bytes": 32624,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/worlddam.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/worlddam.c",
+      "reviewed_sha256": "a1605ed93b3576a4efa852c76a0213372daad157096a84f3c0e810012188ec2a",
+      "reviewed_bytes": 4000,
+      "export_sha256": "a1605ed93b3576a4efa852c76a0213372daad157096a84f3c0e810012188ec2a",
+      "export_bytes": 4000,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoid.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/zoid.c",
+      "reviewed_sha256": "9d95dd5f92f5aaae64e5f29d9c9779a317db2b44fe8b4477eaac8ae79167699b",
+      "reviewed_bytes": 8844,
+      "export_sha256": "9d95dd5f92f5aaae64e5f29d9c9779a317db2b44fe8b4477eaac8ae79167699b",
+      "export_bytes": 8844,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoidblit.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/zoidblit.c",
+      "reviewed_sha256": "aff33afa48a10feef7bc8c63779302351141b787a6d06f74f894e469175bf44e",
+      "reviewed_bytes": 3493,
+      "export_sha256": "aff33afa48a10feef7bc8c63779302351141b787a6d06f74f894e469175bf44e",
+      "export_bytes": 3493,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoidlight.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/zoidlight.c",
+      "reviewed_sha256": "40b060a4175fa6ff3670688a65495a4a819811ea010ccf6e270ea1cf64587059",
+      "reviewed_bytes": 340,
+      "export_sha256": "40b060a4175fa6ff3670688a65495a4a819811ea010ccf6e270ea1cf64587059",
+      "export_bytes": 340,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoidpoly.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/zoidpoly.c",
+      "reviewed_sha256": "d82da52a4a73f8f82caf9d4ab3403740f75d2d5397efe3bbf6134cc5c84cec5a",
+      "reviewed_bytes": 5053,
+      "export_sha256": "d82da52a4a73f8f82caf9d4ab3403740f75d2d5397efe3bbf6134cc5c84cec5a",
+      "export_bytes": 5053,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoidtexture.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/zoidtexture.c",
+      "reviewed_sha256": "3c6c46b38ab700bf405e32bbbce3c5fabcb5ea7ed3e47799b2c293b883cebe43",
+      "reviewed_bytes": 1672,
+      "export_sha256": "3c6c46b38ab700bf405e32bbbce3c5fabcb5ea7ed3e47799b2c293b883cebe43",
+      "export_bytes": 1672,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoidwindow.c",
+      "reviewed_package_path": "decomp/src/GameSource/src/zoidwindow.c",
+      "reviewed_sha256": "ce9be99cc01cacae7aa684ee42b476348ea48c585c32ad6fb7d48adc59bf9d25",
+      "reviewed_bytes": 11035,
+      "export_sha256": "ce9be99cc01cacae7aa684ee42b476348ea48c585c32ad6fb7d48adc59bf9d25",
+      "export_bytes": 11035,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/BINK/ngcrad3d.c",
+      "reviewed_package_path": "decomp/src/NGC/BINK/ngcrad3d.c",
+      "reviewed_sha256": "93604969ba050e6cdce72a1fb82694c79acb9e92fe86713338670349f2587247",
+      "reviewed_bytes": 2854,
+      "export_sha256": "93604969ba050e6cdce72a1fb82694c79acb9e92fe86713338670349f2587247",
+      "export_bytes": 2854,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/bonus.c",
+      "reviewed_package_path": "decomp/src/NGC/bonus.c",
+      "reviewed_sha256": "76245da3b58ca84cf21e9eebf31794ceed46b546483784569dd7ee354c184661",
+      "reviewed_bytes": 20078,
+      "export_sha256": "76245da3b58ca84cf21e9eebf31794ceed46b546483784569dd7ee354c184661",
+      "export_bytes": 20078,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/FONT/defaultFont.cpp",
+      "reviewed_package_path": "decomp/src/NGC/FONT/defaultFont.cpp",
+      "reviewed_sha256": "b3760c42fb56b89bc60b3f2faa334e68858d0910937840390a4b8ed4c4b4282d",
+      "reviewed_bytes": 229022,
+      "export_sha256": "457dda396d74b2a187ff5f2afd53d661ad80ce5c5a74ef10ef316aab4aa5cfbe",
+      "export_bytes": 176,
+      "byte_identical_to_reviewed": false
+    },
+    {
+      "path": "decomp/src/NGC/FONT/menuFont.cpp",
+      "reviewed_package_path": "decomp/src/NGC/FONT/menuFont.cpp",
+      "reviewed_sha256": "3b165f85e63eb99a5696ffe323808b164935eae004082bf7985e3c51c5d6d080",
+      "reviewed_bytes": 9652,
+      "export_sha256": "3b165f85e63eb99a5696ffe323808b164935eae004082bf7985e3c51c5d6d080",
+      "export_bytes": 9652,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/FONT/menuFunc.c",
+      "reviewed_package_path": "decomp/src/NGC/FONT/menuFunc.c",
+      "reviewed_sha256": "f82eced4aba9ec98d7cbf0655b51f0d4ec68cad9132f18ee94b6c69fb2e7cf19",
+      "reviewed_bytes": 3006,
+      "export_sha256": "f82eced4aba9ec98d7cbf0655b51f0d4ec68cad9132f18ee94b6c69fb2e7cf19",
+      "export_bytes": 3006,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/libgraph.c",
+      "reviewed_package_path": "decomp/src/NGC/libgraph.c",
+      "reviewed_sha256": "ac2ff16a3b6d59acebc890fb93edb164719536580b3cf7e4c11ab1f8980c5718",
+      "reviewed_bytes": 195,
+      "export_sha256": "ac2ff16a3b6d59acebc890fb93edb164719536580b3cf7e4c11ab1f8980c5718",
+      "export_bytes": 195,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/MATMEM/matmemorycard.c",
+      "reviewed_package_path": "decomp/src/NGC/MATMEM/matmemorycard.c",
+      "reviewed_sha256": "0733e74828669f16d8d9042839a69f2df55c492a98e80e10fae3f4b952c4d022",
+      "reviewed_bytes": 616,
+      "export_sha256": "0733e74828669f16d8d9042839a69f2df55c492a98e80e10fae3f4b952c4d022",
+      "export_bytes": 616,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcAudio.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcAudio.c",
+      "reviewed_sha256": "034e80655c0d2acff750f09bb3449e9b84ba99520447fe1dff3bbaa1ad49a911",
+      "reviewed_bytes": 19946,
+      "export_sha256": "034e80655c0d2acff750f09bb3449e9b84ba99520447fe1dff3bbaa1ad49a911",
+      "export_bytes": 19946,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcCamera.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcCamera.c",
+      "reviewed_sha256": "5e9cd6045ce5aa9ac86b5dba943a74698741f3dad266c129738dbee7a4ca8291",
+      "reviewed_bytes": 7673,
+      "export_sha256": "5e9cd6045ce5aa9ac86b5dba943a74698741f3dad266c129738dbee7a4ca8291",
+      "export_bytes": 7673,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcDmalist.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcDmalist.c",
+      "reviewed_sha256": "3dd8005926438f0a7238437c4f9aa2c665b6ab0a91002d62ff6494f0a3768ce9",
+      "reviewed_bytes": 261,
+      "export_sha256": "3dd8005926438f0a7238437c4f9aa2c665b6ab0a91002d62ff6494f0a3768ce9",
+      "export_bytes": 261,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcDvdCheck.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcDvdCheck.c",
+      "reviewed_sha256": "ad0ef215766816c723c04fa99d4ac1af1313c6e487ef03d18ce8fda1a1d42583",
+      "reviewed_bytes": 5476,
+      "export_sha256": "ad0ef215766816c723c04fa99d4ac1af1313c6e487ef03d18ce8fda1a1d42583",
+      "export_bytes": 5476,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcFile.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcFile.c",
+      "reviewed_sha256": "4f615e8a50a96d70d13035063fd1c6ca4dd94025f260a8bf80732b72dbb11abf",
+      "reviewed_bytes": 6969,
+      "export_sha256": "4f615e8a50a96d70d13035063fd1c6ca4dd94025f260a8bf80732b72dbb11abf",
+      "export_bytes": 6969,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcGraph.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcGraph.c",
+      "reviewed_sha256": "7fab102fcd0d46ac01cf8a4f2c86b4e92d8749fdd46faafcbb4091bbe9f13f53",
+      "reviewed_bytes": 2105,
+      "export_sha256": "7fab102fcd0d46ac01cf8a4f2c86b4e92d8749fdd46faafcbb4091bbe9f13f53",
+      "export_bytes": 2105,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcHelper.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcHelper.c",
+      "reviewed_sha256": "a1bfb2320682c129ac9edb50813d6bb03cfdf98975631e60e1e2bc41e9e3d048",
+      "reviewed_bytes": 5387,
+      "export_sha256": "a1bfb2320682c129ac9edb50813d6bb03cfdf98975631e60e1e2bc41e9e3d048",
+      "export_bytes": 5387,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcInit.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcInit.c",
+      "reviewed_sha256": "fa01cc523c32c0e26a851d617b989cd265b291243e25cec79da3472941ac81ef",
+      "reviewed_bytes": 6959,
+      "export_sha256": "fa01cc523c32c0e26a851d617b989cd265b291243e25cec79da3472941ac81ef",
+      "export_bytes": 6959,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcLoadEffect.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcLoadEffect.c",
+      "reviewed_sha256": "e34f7e4dc8db1944e67b3a4a82a5e6066c0f62689baac9057b8246c23f1a96f4",
+      "reviewed_bytes": 10865,
+      "export_sha256": "e34f7e4dc8db1944e67b3a4a82a5e6066c0f62689baac9057b8246c23f1a96f4",
+      "export_bytes": 10865,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcMemcard.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcMemcard.c",
+      "reviewed_sha256": "0909e10d61139eed8251a9220e0dc524dc1de3c64692d6a521e3a39af866f2d1",
+      "reviewed_bytes": 75903,
+      "export_sha256": "27566754b1cde15723c1390729314813c6be81fac84fd04d8110f106d461a52c",
+      "export_bytes": 12885,
+      "byte_identical_to_reviewed": false
+    },
+    {
+      "path": "decomp/src/NGC/ngcMovie.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcMovie.c",
+      "reviewed_sha256": "54c7d5c1c65a71d20cddc4b6eb112616d17bf467a54f9c8aa361513fe9b22c7e",
+      "reviewed_bytes": 3841,
+      "export_sha256": "54c7d5c1c65a71d20cddc4b6eb112616d17bf467a54f9c8aa361513fe9b22c7e",
+      "export_bytes": 3841,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcMtx.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcMtx.c",
+      "reviewed_sha256": "3e9b2c500aacf7741b09a00aab3e52fd36d91efb2d333cf9060f5a1aab7801a2",
+      "reviewed_bytes": 6211,
+      "export_sha256": "3e9b2c500aacf7741b09a00aab3e52fd36d91efb2d333cf9060f5a1aab7801a2",
+      "export_bytes": 6211,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcPad.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcPad.c",
+      "reviewed_sha256": "2cb9feb9c449152bafd988b6386fab555d8ccd81495a25efbc7b839de025ec32",
+      "reviewed_bytes": 9832,
+      "export_sha256": "2cb9feb9c449152bafd988b6386fab555d8ccd81495a25efbc7b839de025ec32",
+      "export_bytes": 9832,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcSaveRegion.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcSaveRegion.c",
+      "reviewed_sha256": "2d35620ce4c7cbe4d5ab54b111fa51d76a353dc903b66bdffcdabd0b7d798304",
+      "reviewed_bytes": 2401,
+      "export_sha256": "2d35620ce4c7cbe4d5ab54b111fa51d76a353dc903b66bdffcdabd0b7d798304",
+      "export_bytes": 2401,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcTexHelp.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcTexHelp.c",
+      "reviewed_sha256": "11a0e8982a91425db58a1dbe60354b43d4e7147456d8e05e2ac7f739466e604d",
+      "reviewed_bytes": 4827,
+      "export_sha256": "11a0e8982a91425db58a1dbe60354b43d4e7147456d8e05e2ac7f739466e604d",
+      "export_bytes": 4827,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/ngcTexture.c",
+      "reviewed_package_path": "decomp/src/NGC/ngcTexture.c",
+      "reviewed_sha256": "b3239b563efed747fdc2ee266dc8142c95edb90b11fe12bbced104dc6e2f0798",
+      "reviewed_bytes": 27281,
+      "export_sha256": "b3239b563efed747fdc2ee266dc8142c95edb90b11fe12bbced104dc6e2f0798",
+      "export_bytes": 27281,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/src/NGC/stdlib.c",
+      "reviewed_package_path": "decomp/src/NGC/stdlib.c",
+      "reviewed_sha256": "3b7e34afae55859551fbaeebcba3a964908ddba9637be81cae93c39dc90f3b24",
+      "reviewed_bytes": 185,
+      "export_sha256": "3b7e34afae55859551fbaeebcba3a964908ddba9637be81cae93c39dc90f3b24",
+      "export_bytes": 185,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/include/dolphin_gx_types.h",
+      "reviewed_package_path": "decomp/include/dolphin_gx_types.h",
+      "reviewed_sha256": "ea46b2ce716d64d8354c6c1aa85e646b237c84ecfda4188ae442b0ae2f323f7a",
+      "reviewed_bytes": 736,
+      "export_sha256": "ea46b2ce716d64d8354c6c1aa85e646b237c84ecfda4188ae442b0ae2f323f7a",
+      "export_bytes": 736,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/include/msl_math_inline.h",
+      "reviewed_package_path": "decomp/include/msl_math_inline.h",
+      "reviewed_sha256": "22f896ccacda7c0feb18fdb532fc5a090bdccef1576191ae7bb62c2a3322e182",
+      "reviewed_bytes": 1732,
+      "export_sha256": "22f896ccacda7c0feb18fdb532fc5a090bdccef1576191ae7bb62c2a3322e182",
+      "export_bytes": 1732,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/include/rush/dolphin.h",
+      "reviewed_package_path": "decomp/include/rush/dolphin.h",
+      "reviewed_sha256": "7c2f23d98f4aa2b09c8eca773dfd699b0fe790d7ed829b86bebd9758ee9697dc",
+      "reviewed_bytes": 4888,
+      "export_sha256": "7c2f23d98f4aa2b09c8eca773dfd699b0fe790d7ed829b86bebd9758ee9697dc",
+      "export_bytes": 4888,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/include/rush/libc.h",
+      "reviewed_package_path": "decomp/include/rush/libc.h",
+      "reviewed_sha256": "19944a1dce225869d995f4ffb94ba45a544448271d3b2671e3ede8bba34dd05f",
+      "reviewed_bytes": 1450,
+      "export_sha256": "19944a1dce225869d995f4ffb94ba45a544448271d3b2671e3ede8bba34dd05f",
+      "export_bytes": 1450,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/include/rush/overrides.json",
+      "reviewed_package_path": "decomp/include/rush/overrides.json",
+      "reviewed_sha256": "bc3a1854da66c2553291e893469f83abcfec6cd184d2981290f5e88b23babf8d",
+      "reviewed_bytes": 4719,
+      "export_sha256": "bc3a1854da66c2553291e893469f83abcfec6cd184d2981290f5e88b23babf8d",
+      "export_bytes": 4719,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/include/rush/rush_decls.json",
+      "reviewed_package_path": "decomp/include/rush/rush_decls.json",
+      "reviewed_sha256": "1bb7a7eb7b2b9953c292f153213f19823bc2307ea7fd17943215a11545715b4a",
+      "reviewed_bytes": 1525450,
+      "export_sha256": "1bb7a7eb7b2b9953c292f153213f19823bc2307ea7fd17943215a11545715b4a",
+      "export_bytes": 1525450,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/include/rush/rush_protos.h",
+      "reviewed_package_path": "decomp/include/rush/rush_protos.h",
+      "reviewed_sha256": "bb61bc5b55b4d7f53cff25b5e13c43ff31b195da5a2e151ea9402e3580ae5ed9",
+      "reviewed_bytes": 78053,
+      "export_sha256": "bb61bc5b55b4d7f53cff25b5e13c43ff31b195da5a2e151ea9402e3580ae5ed9",
+      "export_bytes": 78053,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/include/rush/rush_types.h",
+      "reviewed_package_path": "decomp/include/rush/rush_types.h",
+      "reviewed_sha256": "98cbcb3093b7d3b77d4fa0476a33bda878f664eea86a32d2ae16dcf769adb813",
+      "reviewed_bytes": 150417,
+      "export_sha256": "98cbcb3093b7d3b77d4fa0476a33bda878f664eea86a32d2ae16dcf769adb813",
+      "export_bytes": 150417,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/config/2049LE/build.sha1",
+      "reviewed_package_path": "decomp/config/2049LE/build.sha1",
+      "reviewed_sha256": "32eaf85c263fd3631ed13751e7e83b6d42f15191796350b1ab4f41869300bbd1",
+      "reviewed_bytes": 66,
+      "export_sha256": "32eaf85c263fd3631ed13751e7e83b6d42f15191796350b1ab4f41869300bbd1",
+      "export_bytes": 66,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/config/2049LE/config.yml",
+      "reviewed_package_path": "decomp/config/2049LE/config.yml",
+      "reviewed_sha256": "56969b5d9c161a6e4cbb5fb412257a265ef474fd4055252cb0a8562d664a7116",
+      "reviewed_bytes": 1032,
+      "export_sha256": "56969b5d9c161a6e4cbb5fb412257a265ef474fd4055252cb0a8562d664a7116",
+      "export_bytes": 1032,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/config/2049LE/ldscript.tpl",
+      "reviewed_package_path": "decomp/config/2049LE/ldscript.tpl",
+      "reviewed_sha256": "fc76ede952f26ffff8328879f82b7cfee4710a61c31087fcdd8b656783cf100c",
+      "reviewed_bytes": 898,
+      "export_sha256": "fc76ede952f26ffff8328879f82b7cfee4710a61c31087fcdd8b656783cf100c",
+      "export_bytes": 898,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/config/2049LE/splits.txt",
+      "reviewed_package_path": "decomp/config/2049LE/splits.txt",
+      "reviewed_sha256": "e9dbae4dabc76c6a965b1e8cca5125b85298088d5829dc62d1914838aa70d4e5",
+      "reviewed_bytes": 55689,
+      "export_sha256": "e9dbae4dabc76c6a965b1e8cca5125b85298088d5829dc62d1914838aa70d4e5",
+      "export_bytes": 55689,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/config/2049LE/symbols.txt",
+      "reviewed_package_path": "decomp/config/2049LE/symbols.txt",
+      "reviewed_sha256": "87bd0bc01bdf86e236240e0851a8991342cc89128526f7a924863618f9314def",
+      "reviewed_bytes": 827473,
+      "export_sha256": "87bd0bc01bdf86e236240e0851a8991342cc89128526f7a924863618f9314def",
+      "export_bytes": 827473,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/__init__.py",
+      "reviewed_package_path": "decomp/tools/__init__.py",
+      "reviewed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reviewed_bytes": 0,
+      "export_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "export_bytes": 0,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/add_ranges.py",
+      "reviewed_package_path": "decomp/tools/add_ranges.py",
+      "reviewed_sha256": "6d903188c0a155f6ac51a9a13fb693bd8a0d4538379d40221c8532afefbe3ba4",
+      "reviewed_bytes": 965,
+      "export_sha256": "6d903188c0a155f6ac51a9a13fb693bd8a0d4538379d40221c8532afefbe3ba4",
+      "export_bytes": 965,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/bisect_link.py",
+      "reviewed_package_path": "decomp/tools/bisect_link.py",
+      "reviewed_sha256": "cbc7bb64470932b4c8afb297f4201f0d602c0d71433372b5aa078365c6698a4c",
+      "reviewed_bytes": 1767,
+      "export_sha256": "cbc7bb64470932b4c8afb297f4201f0d602c0d71433372b5aa078365c6698a4c",
+      "export_bytes": 1767,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/candidate.py",
+      "reviewed_package_path": "decomp/tools/candidate.py",
+      "reviewed_sha256": "2f68abdf77de35009226add502a225eb704a2d9e339f99c6ec282568950e76ed",
+      "reviewed_bytes": 17479,
+      "export_sha256": "2f68abdf77de35009226add502a225eb704a2d9e339f99c6ec282568950e76ed",
+      "export_bytes": 17479,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/candidate_README.md",
+      "reviewed_package_path": "decomp/tools/candidate_README.md",
+      "reviewed_sha256": "d3e8455e75a2810acb0ccb8a63d4bbd436e97213df42802cad662931030b70ff",
+      "reviewed_bytes": 4667,
+      "export_sha256": "d2d9eb72737ab58669095052d723a72683218ab618a7aaf0dc2d319ca4dd3aea",
+      "export_bytes": 4607,
+      "byte_identical_to_reviewed": false
+    },
+    {
+      "path": "decomp/tools/changes_fmt.py",
+      "reviewed_package_path": "decomp/tools/changes_fmt.py",
+      "reviewed_sha256": "e83c8e88bb511f78f6338c9503bbbbcc9cee973f04ad1b0ade1026c8b5d0241e",
+      "reviewed_bytes": 5086,
+      "export_sha256": "e83c8e88bb511f78f6338c9503bbbbcc9cee973f04ad1b0ade1026c8b5d0241e",
+      "export_bytes": 5086,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/check.py",
+      "reviewed_package_path": "decomp/tools/check.py",
+      "reviewed_sha256": "74a0fd4e632e310b78b212a43f44b873ff752f830ccb4688863a39ee3cdc9f49",
+      "reviewed_bytes": 6349,
+      "export_sha256": "74a0fd4e632e310b78b212a43f44b873ff752f830ccb4688863a39ee3cdc9f49",
+      "export_bytes": 6349,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/ctx.py",
+      "reviewed_package_path": "decomp/tools/ctx.py",
+      "reviewed_sha256": "3ebc522cc210a6ff44a25df4963b541a689da5d0f55a0926288fe1b8ff522454",
+      "reviewed_bytes": 2031,
+      "export_sha256": "3ebc522cc210a6ff44a25df4963b541a689da5d0f55a0926288fe1b8ff522454",
+      "export_bytes": 2031,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/cwmatch.py",
+      "reviewed_package_path": "decomp/tools/cwmatch.py",
+      "reviewed_sha256": "4f98eecd270953b8b2cae5b9951bd479cc371fab5be875104f8d9f66a9e909ca",
+      "reviewed_bytes": 9700,
+      "export_sha256": "4f98eecd270953b8b2cae5b9951bd479cc371fab5be875104f8d9f66a9e909ca",
+      "export_bytes": 9700,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/cwobjdiff.py",
+      "reviewed_package_path": "decomp/tools/cwobjdiff.py",
+      "reviewed_sha256": "1ca50fefb3766c7cee3c1f86e37d32b33d8fa58ef251ab165bc396566f69d748",
+      "reviewed_bytes": 1900,
+      "export_sha256": "1ca50fefb3766c7cee3c1f86e37d32b33d8fa58ef251ab165bc396566f69d748",
+      "export_bytes": 1900,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/cwprobe.py",
+      "reviewed_package_path": "decomp/tools/cwprobe.py",
+      "reviewed_sha256": "88c053bf4f875678263594142ec9f141a59b20af40d75e5606c17309c0f23270",
+      "reviewed_bytes": 2080,
+      "export_sha256": "88c053bf4f875678263594142ec9f141a59b20af40d75e5606c17309c0f23270",
+      "export_bytes": 2080,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/data2c.py",
+      "reviewed_package_path": "decomp/tools/data2c.py",
+      "reviewed_sha256": "dfd5e0cc10208a632e154d221d4137ad2d0286ad2da05f672dc98bacd296a8ce",
+      "reviewed_bytes": 6231,
+      "export_sha256": "dfd5e0cc10208a632e154d221d4137ad2d0286ad2da05f672dc98bacd296a8ce",
+      "export_bytes": 6231,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/decompctx.py",
+      "reviewed_package_path": "decomp/tools/decompctx.py",
+      "reviewed_sha256": "2dc152e9f1c288082206ae3cb5862b2f10577a5eedbc550ac2d67665b5b8750b",
+      "reviewed_bytes": 5269,
+      "export_sha256": "2dc152e9f1c288082206ae3cb5862b2f10577a5eedbc550ac2d67665b5b8750b",
+      "export_bytes": 5269,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/dolbytes.py",
+      "reviewed_package_path": "decomp/tools/dolbytes.py",
+      "reviewed_sha256": "680c04b7d483cc4f597f1cf5c1155d3889a3ba22cabc859014e23d7520e239ad",
+      "reviewed_bytes": 1188,
+      "export_sha256": "680c04b7d483cc4f597f1cf5c1155d3889a3ba22cabc859014e23d7520e239ad",
+      "export_bytes": 1188,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/doldiff.py",
+      "reviewed_package_path": "decomp/tools/doldiff.py",
+      "reviewed_sha256": "b751fe77069e09cd25b5a8db27f96dc4ccba1413912f7e69b7378e75ecb493d2",
+      "reviewed_bytes": 2396,
+      "export_sha256": "b751fe77069e09cd25b5a8db27f96dc4ccba1413912f7e69b7378e75ecb493d2",
+      "export_bytes": 2396,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/download_tool.py",
+      "reviewed_package_path": "decomp/tools/download_tool.py",
+      "reviewed_sha256": "21bc751397f81034946f20b961456083e8c0b032e1dd55ca2932629627057e35",
+      "reviewed_bytes": 4330,
+      "export_sha256": "01957b733d89866ca4e39c71e74acb078a1b0422c0e5ed332fc3105481bfdb71",
+      "export_bytes": 4395,
+      "byte_identical_to_reviewed": false
+    },
+    {
+      "path": "decomp/tools/fdiff.py",
+      "reviewed_package_path": "decomp/tools/fdiff.py",
+      "reviewed_sha256": "2d0412cfc58c1829ac21eda6cd0318ed44a2c2880c80ab6972971736df795591",
+      "reviewed_bytes": 2605,
+      "export_sha256": "2d0412cfc58c1829ac21eda6cd0318ed44a2c2880c80ab6972971736df795591",
+      "export_bytes": 2605,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/fields.py",
+      "reviewed_package_path": "decomp/tools/fields.py",
+      "reviewed_sha256": "ff04de15611f10db0cbeb701976f5872d21d39178ad24816634854c2156f4d26",
+      "reviewed_bytes": 3091,
+      "export_sha256": "ff04de15611f10db0cbeb701976f5872d21d39178ad24816634854c2156f4d26",
+      "export_bytes": 3091,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/fill.py",
+      "reviewed_package_path": "decomp/tools/fill.py",
+      "reviewed_sha256": "9b5fc6a6d76ba6982951ac0aeb3930e28cf111f687363839e40b372a1e176bde",
+      "reviewed_bytes": 1912,
+      "export_sha256": "9b5fc6a6d76ba6982951ac0aeb3930e28cf111f687363839e40b372a1e176bde",
+      "export_bytes": 1912,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/fix_splits.py",
+      "reviewed_package_path": "decomp/tools/fix_splits.py",
+      "reviewed_sha256": "37c44ead7254dfab3bee25c55f543d97c234bcb47c1d178da13ffc0a0e3560f5",
+      "reviewed_bytes": 1192,
+      "export_sha256": "37c44ead7254dfab3bee25c55f543d97c234bcb47c1d178da13ffc0a0e3560f5",
+      "export_bytes": 1192,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/fvar.py",
+      "reviewed_package_path": "decomp/tools/fvar.py",
+      "reviewed_sha256": "e5ee2511e0e85e806ec3a4d164531b923e65a70af433c602774d8f6c05e0fa96",
+      "reviewed_bytes": 3185,
+      "export_sha256": "e5ee2511e0e85e806ec3a4d164531b923e65a70af433c602774d8f6c05e0fa96",
+      "export_bytes": 3185,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/mark.py",
+      "reviewed_package_path": "decomp/tools/mark.py",
+      "reviewed_sha256": "53f6ee664a289740405036b9b439a8d7e5592a7e7043cf02b6ab75d95b5f6ddc",
+      "reviewed_bytes": 584,
+      "export_sha256": "53f6ee664a289740405036b9b439a8d7e5592a7e7043cf02b6ab75d95b5f6ddc",
+      "export_bytes": 584,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/ninja_syntax.py",
+      "reviewed_package_path": "decomp/tools/ninja_syntax.py",
+      "reviewed_sha256": "ea1710f1787bf14e7706effbd56c76c7950abd0bdcde004555014b0baa8ea82f",
+      "reviewed_bytes": 8813,
+      "export_sha256": "ea1710f1787bf14e7706effbd56c76c7950abd0bdcde004555014b0baa8ea82f",
+      "export_bytes": 8813,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/permute.py",
+      "reviewed_package_path": "decomp/tools/permute.py",
+      "reviewed_sha256": "1a8cd66d410e92911910e11f37523e3f2f5ff7e719cb32b954eb1e8a0f21830e",
+      "reviewed_bytes": 2188,
+      "export_sha256": "1a8cd66d410e92911910e11f37523e3f2f5ff7e719cb32b954eb1e8a0f21830e",
+      "export_bytes": 2188,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/place_units.py",
+      "reviewed_package_path": "decomp/tools/place_units.py",
+      "reviewed_sha256": "20fe64be00426050ec6fd1bc6a5e2cb6a06433de8c98a3145cc0ca3a0418cefb",
+      "reviewed_bytes": 1705,
+      "export_sha256": "20fe64be00426050ec6fd1bc6a5e2cb6a06433de8c98a3145cc0ca3a0418cefb",
+      "export_bytes": 1705,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/project.py",
+      "reviewed_package_path": "decomp/tools/project.py",
+      "reviewed_sha256": "75ade37a97a557cce630ea184039a1acfbf1ecafb25be7a0a7501591eaedd90f",
+      "reviewed_bytes": 73613,
+      "export_sha256": "75ade37a97a557cce630ea184039a1acfbf1ecafb25be7a0a7501591eaedd90f",
+      "export_bytes": 73613,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/skel.py",
+      "reviewed_package_path": "decomp/tools/skel.py",
+      "reviewed_sha256": "b3e99caf68b81ce722b9b78d89f58c375603dfb5714deb491dec5a460b2ee224",
+      "reviewed_bytes": 6012,
+      "export_sha256": "b3e99caf68b81ce722b9b78d89f58c375603dfb5714deb491dec5a460b2ee224",
+      "export_bytes": 6012,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/status.py",
+      "reviewed_package_path": "decomp/tools/status.py",
+      "reviewed_sha256": "69bbcde3bc071c21e1d4ebe602670859992f0e5c7510c5df0510532736e0b838",
+      "reviewed_bytes": 2598,
+      "export_sha256": "69bbcde3bc071c21e1d4ebe602670859992f0e5c7510c5df0510532736e0b838",
+      "export_bytes": 2598,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/test_candidate.py",
+      "reviewed_package_path": "decomp/tools/test_candidate.py",
+      "reviewed_sha256": "b5c4c87eb1de30a345ca516918cbcf4a9f249af0d2ea08702fff8714c10f3edb",
+      "reviewed_bytes": 10675,
+      "export_sha256": "b5c4c87eb1de30a345ca516918cbcf4a9f249af0d2ea08702fff8714c10f3edb",
+      "export_bytes": 10675,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/tests/test_verification.py",
+      "reviewed_package_path": "decomp/tools/tests/test_verification.py",
+      "reviewed_sha256": "1289f7450ba5c31d4d4f36bbc65bf827213e78cae9aecc127ff7107a80f3bd60",
+      "reviewed_bytes": 22907,
+      "export_sha256": "1289f7450ba5c31d4d4f36bbc65bf827213e78cae9aecc127ff7107a80f3bd60",
+      "export_bytes": 22907,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/transform_dep.py",
+      "reviewed_package_path": "decomp/tools/transform_dep.py",
+      "reviewed_sha256": "54cedfa8b4d913948def308f8cc0c690db595baf6d59b509aa25cb3578568438",
+      "reviewed_bytes": 2514,
+      "export_sha256": "54cedfa8b4d913948def308f8cc0c690db595baf6d59b509aa25cb3578568438",
+      "export_bytes": 2514,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/unit2c.py",
+      "reviewed_package_path": "decomp/tools/unit2c.py",
+      "reviewed_sha256": "f45ff09702cc119e14c004440111c24d45351d18cef56a532e7f8e952ba7b302",
+      "reviewed_bytes": 11096,
+      "export_sha256": "f45ff09702cc119e14c004440111c24d45351d18cef56a532e7f8e952ba7b302",
+      "export_bytes": 11096,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/variants.py",
+      "reviewed_package_path": "decomp/tools/variants.py",
+      "reviewed_sha256": "af6b24be23db22b72c3e90910fa5791646463b5ae731a0435f985baf0853c583",
+      "reviewed_bytes": 1176,
+      "export_sha256": "af6b24be23db22b72c3e90910fa5791646463b5ae731a0435f985baf0853c583",
+      "export_bytes": 1176,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/verify_layout.py",
+      "reviewed_package_path": "decomp/tools/verify_layout.py",
+      "reviewed_sha256": "70488b6a2c9810e8c87cdd4402eb073602b2a1c5adbb6819c30d2e06ea13f675",
+      "reviewed_bytes": 2988,
+      "export_sha256": "70488b6a2c9810e8c87cdd4402eb073602b2a1c5adbb6819c30d2e06ea13f675",
+      "export_bytes": 2988,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/verify_link.py",
+      "reviewed_package_path": "decomp/tools/verify_link.py",
+      "reviewed_sha256": "1c665f087e3a540900b735c5fa5f9535c8a023b277b780c1a12303f2eda3f8b7",
+      "reviewed_bytes": 5678,
+      "export_sha256": "1c665f087e3a540900b735c5fa5f9535c8a023b277b780c1a12303f2eda3f8b7",
+      "export_bytes": 5678,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/tools/verify_linked_layout.py",
+      "reviewed_package_path": "decomp/tools/verify_linked_layout.py",
+      "reviewed_sha256": "6f58c1e99c89d12255f99073984d2c745e4bd4f1cb06974906bb587da8da6feb",
+      "reviewed_bytes": 12723,
+      "export_sha256": "6f58c1e99c89d12255f99073984d2c745e4bd4f1cb06974906bb587da8da6feb",
+      "export_bytes": 12723,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/configure.py",
+      "reviewed_package_path": "decomp/configure.py",
+      "reviewed_sha256": "0e88725d7a40b1e168f0694545560f62d6313fe848da1541b52cd839d3885e86",
+      "reviewed_bytes": 18277,
+      "export_sha256": "0e88725d7a40b1e168f0694545560f62d6313fe848da1541b52cd839d3885e86",
+      "export_bytes": 18277,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "tools/dolcheck.py",
+      "reviewed_package_path": "tools/dolcheck.py",
+      "reviewed_sha256": "325ffd59b60d09efcd7103c24c19cd1402b4456d69ffab660d8ef24086fa6219",
+      "reviewed_bytes": 2042,
+      "export_sha256": "325ffd59b60d09efcd7103c24c19cd1402b4456d69ffab660d8ef24086fa6219",
+      "export_bytes": 2042,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "tools/dwarf1.py",
+      "reviewed_package_path": "tools/dwarf1.py",
+      "reviewed_sha256": "ea776195bacd3b44dd74019ae9bfb297d7917d34ab01f4616c5d78dd44de4458",
+      "reviewed_bytes": 14741,
+      "export_sha256": "ea776195bacd3b44dd74019ae9bfb297d7917d34ab01f4616c5d78dd44de4458",
+      "export_bytes": 14741,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "tools/dwarftypes.py",
+      "reviewed_package_path": "tools/dwarftypes.py",
+      "reviewed_sha256": "64811dd048343d910622de68c52bcb5c1f136f459719552049a78455bc87fab0",
+      "reviewed_bytes": 22968,
+      "export_sha256": "64811dd048343d910622de68c52bcb5c1f136f459719552049a78455bc87fab0",
+      "export_bytes": 22968,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "tools/elfio.py",
+      "reviewed_package_path": "tools/elfio.py",
+      "reviewed_sha256": "3bfa8a78fcf61ebed6517948fe1d0eb78e25579ec70508dcd6926d6537adfa37",
+      "reviewed_bytes": 2449,
+      "export_sha256": "3bfa8a78fcf61ebed6517948fe1d0eb78e25579ec70508dcd6926d6537adfa37",
+      "export_bytes": 2449,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "tools/extract_syms.py",
+      "reviewed_package_path": "tools/extract_syms.py",
+      "reviewed_sha256": "c368613abe237486031e27677d5a652967c737aeba9aba4a94c134ac5a2ecaff",
+      "reviewed_bytes": 2927,
+      "export_sha256": "c368613abe237486031e27677d5a652967c737aeba9aba4a94c134ac5a2ecaff",
+      "export_bytes": 2927,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "tools/gcm.py",
+      "reviewed_package_path": "tools/gcm.py",
+      "reviewed_sha256": "215668dc982747977bfcc7e8e981d423bfe97582cf44011145ef95d831d91427",
+      "reviewed_bytes": 2292,
+      "export_sha256": "215668dc982747977bfcc7e8e981d423bfe97582cf44011145ef95d831d91427",
+      "export_bytes": 2292,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "tools/gdf.py",
+      "reviewed_package_path": "tools/gdf.py",
+      "reviewed_sha256": "d4dead3520b196253ec2deee81085da01fca5fa1f309b959817f7cea10495ac0",
+      "reviewed_bytes": 3431,
+      "export_sha256": "d4dead3520b196253ec2deee81085da01fca5fa1f309b959817f7cea10495ac0",
+      "export_bytes": 3431,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/docs/common_bss.md",
+      "reviewed_package_path": "decomp/docs/common_bss.md",
+      "reviewed_sha256": "9186a30cca2a4af081f184380a3ceeab3a9a4fb2bf72ac50f1abbcda79196931",
+      "reviewed_bytes": 4372,
+      "export_sha256": "9186a30cca2a4af081f184380a3ceeab3a9a4fb2bf72ac50f1abbcda79196931",
+      "export_bytes": 4372,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/docs/comment_section.md",
+      "reviewed_package_path": "decomp/docs/comment_section.md",
+      "reviewed_sha256": "a867cf702f6547106fa7dc64952b641f25219021db865bf0c6955365f9762a9a",
+      "reviewed_bytes": 4669,
+      "export_sha256": "a867cf702f6547106fa7dc64952b641f25219021db865bf0c6955365f9762a9a",
+      "export_bytes": 4669,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/docs/symbols.md",
+      "reviewed_package_path": "decomp/docs/symbols.md",
+      "reviewed_sha256": "c87b2ef214a38ba0682784ca5bc550f0eb1c69a6048c8b0a08576e29bd985af4",
+      "reviewed_bytes": 2075,
+      "export_sha256": "c87b2ef214a38ba0682784ca5bc550f0eb1c69a6048c8b0a08576e29bd985af4",
+      "export_bytes": 2075,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/docs/splits.md",
+      "reviewed_package_path": "decomp/docs/splits.md",
+      "reviewed_sha256": "69b189c850cc64013b29349752b10ce360b0023fcca41ba627b35cbc0233c7cb",
+      "reviewed_bytes": 2802,
+      "export_sha256": "69b189c850cc64013b29349752b10ce360b0023fcca41ba627b35cbc0233c7cb",
+      "export_bytes": 2802,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "decomp/docs/verification-baseline.md",
+      "reviewed_package_path": "decomp/docs/verification-baseline.md",
+      "reviewed_sha256": "18e021b9e4a30f47de649b679f251f16c5c0bfb346b3fe6a25d3dd28743d599e",
+      "reviewed_bytes": 6124,
+      "export_sha256": "18e021b9e4a30f47de649b679f251f16c5c0bfb346b3fe6a25d3dd28743d599e",
+      "export_bytes": 6124,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "docs/provenance/wave26-source-only.patch",
+      "reviewed_package_path": "wave26-source-only.patch",
+      "reviewed_sha256": "691ac78ece0192e55b93191d5b703bc5cd4dbc53157ffde09077c1d144328b32",
+      "reviewed_bytes": 22849,
+      "export_sha256": "691ac78ece0192e55b93191d5b703bc5cd4dbc53157ffde09077c1d144328b32",
+      "export_bytes": 22849,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "docs/provenance/wave25-baseline/hud.c",
+      "reviewed_package_path": "evidence/baseline-sources/hud.c",
+      "reviewed_sha256": "52372ebdd33a6b997c548686f41b49b2b8a710074f1d11eb507d855011816e54",
+      "reviewed_bytes": 27182,
+      "export_sha256": "52372ebdd33a6b997c548686f41b49b2b8a710074f1d11eb507d855011816e54",
+      "export_bytes": 27182,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "docs/provenance/wave25-baseline/resurrect.c",
+      "reviewed_package_path": "evidence/baseline-sources/resurrect.c",
+      "reviewed_sha256": "9d80249241c2b30c1cd56e1983c4774605809f882bf805a8442622dc3d380ad4",
+      "reviewed_bytes": 19596,
+      "export_sha256": "9d80249241c2b30c1cd56e1983c4774605809f882bf805a8442622dc3d380ad4",
+      "export_bytes": 19596,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "research/wave26-resurrect-research-only.patch",
+      "reviewed_package_path": "wave26-resurrect-research-only.patch",
+      "reviewed_sha256": "ce07ae4ebcf8434f49f13d38693319f18395a539f3a548687d452fbec2cf54a0",
+      "reviewed_bytes": 1173,
+      "export_sha256": "ce07ae4ebcf8434f49f13d38693319f18395a539f3a548687d452fbec2cf54a0",
+      "export_bytes": 1173,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "research/wave26-mdrive-research-only.patch",
+      "reviewed_package_path": "wave26-mdrive-research-only.patch",
+      "reviewed_sha256": "7d837aba6d0c286a1142c290543a642e6d264f13b6eb884ca6791c459564055b",
+      "reviewed_bytes": 5823,
+      "export_sha256": "7d837aba6d0c286a1142c290543a642e6d264f13b6eb884ca6791c459564055b",
+      "export_bytes": 5823,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "research/wave26-maxpath-research-only.patch",
+      "reviewed_package_path": "wave26-maxpath-research-only.patch",
+      "reviewed_sha256": "5f75e1981c92d484a868a372cd06773e685af3110f1e46a338c7cc23b4fafdcd",
+      "reviewed_bytes": 1488,
+      "export_sha256": "5f75e1981c92d484a868a372cd06773e685af3110f1e46a338c7cc23b4fafdcd",
+      "export_bytes": 1488,
+      "byte_identical_to_reviewed": true
+    },
+    {
+      "path": "research/wave26-stree-research-only.patch",
+      "reviewed_package_path": "wave26-stree-research-only.patch",
+      "reviewed_sha256": "b05d1ec9ccf75af57cecbd0d667415a96ea7d54004fc940b0beb883fc89e8a82",
+      "reviewed_bytes": 6153,
+      "export_sha256": "b05d1ec9ccf75af57cecbd0d667415a96ea7d54004fc940b0beb883fc89e8a82",
+      "export_bytes": 6153,
+      "byte_identical_to_reviewed": true
+    }
+  ],
+  "deviations": "Four art payloads replaced by generated includes in three source files; compiler downloader disabled; portable candidate documentation examples. All other selected sealed files preserve original bytes including mixed line endings."
+}

@@ -1,0 +1,1132 @@
+{
+  "schema": "mat3-explicit-text-file-allowlist-v1",
+  "file_count": 225,
+  "hash_exceptions": [
+    "docs/file-allowlist.json",
+    "docs/publication-scan.json"
+  ],
+  "hash_exceptions_reason": "Avoid cyclic self-hashes; both are scanned and covered by the exact Git tree/object hashes.",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 89,
+      "sha256": "eb23c9f7fbe6b844a2a26c2e46c84fec8fdfb722bdb933388dcca5a31d865f5a"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 535,
+      "sha256": "6d01e9adf796309314ded16515b506a6e1c092be5c456ddc52483eb3209baf9c"
+    },
+    {
+      "path": "decomp/config/2049LE/build.sha1",
+      "bytes": 66,
+      "sha256": "32eaf85c263fd3631ed13751e7e83b6d42f15191796350b1ab4f41869300bbd1"
+    },
+    {
+      "path": "decomp/config/2049LE/config.yml",
+      "bytes": 1032,
+      "sha256": "56969b5d9c161a6e4cbb5fb412257a265ef474fd4055252cb0a8562d664a7116"
+    },
+    {
+      "path": "decomp/config/2049LE/ldscript.tpl",
+      "bytes": 898,
+      "sha256": "fc76ede952f26ffff8328879f82b7cfee4710a61c31087fcdd8b656783cf100c"
+    },
+    {
+      "path": "decomp/config/2049LE/splits.txt",
+      "bytes": 55689,
+      "sha256": "e9dbae4dabc76c6a965b1e8cca5125b85298088d5829dc62d1914838aa70d4e5"
+    },
+    {
+      "path": "decomp/config/2049LE/symbols.txt",
+      "bytes": 827473,
+      "sha256": "87bd0bc01bdf86e236240e0851a8991342cc89128526f7a924863618f9314def"
+    },
+    {
+      "path": "decomp/configure.py",
+      "bytes": 18277,
+      "sha256": "0e88725d7a40b1e168f0694545560f62d6313fe848da1541b52cd839d3885e86"
+    },
+    {
+      "path": "decomp/docs/comment_section.md",
+      "bytes": 4669,
+      "sha256": "a867cf702f6547106fa7dc64952b641f25219021db865bf0c6955365f9762a9a"
+    },
+    {
+      "path": "decomp/docs/common_bss.md",
+      "bytes": 4372,
+      "sha256": "9186a30cca2a4af081f184380a3ceeab3a9a4fb2bf72ac50f1abbcda79196931"
+    },
+    {
+      "path": "decomp/docs/splits.md",
+      "bytes": 2802,
+      "sha256": "69b189c850cc64013b29349752b10ce360b0023fcca41ba627b35cbc0233c7cb"
+    },
+    {
+      "path": "decomp/docs/symbols.md",
+      "bytes": 2075,
+      "sha256": "c87b2ef214a38ba0682784ca5bc550f0eb1c69a6048c8b0a08576e29bd985af4"
+    },
+    {
+      "path": "decomp/docs/verification-baseline.md",
+      "bytes": 6124,
+      "sha256": "18e021b9e4a30f47de649b679f251f16c5c0bfb346b3fe6a25d3dd28743d599e"
+    },
+    {
+      "path": "decomp/include/dolphin_gx_types.h",
+      "bytes": 736,
+      "sha256": "ea46b2ce716d64d8354c6c1aa85e646b237c84ecfda4188ae442b0ae2f323f7a"
+    },
+    {
+      "path": "decomp/include/msl_math_inline.h",
+      "bytes": 1732,
+      "sha256": "22f896ccacda7c0feb18fdb532fc5a090bdccef1576191ae7bb62c2a3322e182"
+    },
+    {
+      "path": "decomp/include/rush/dolphin.h",
+      "bytes": 4888,
+      "sha256": "7c2f23d98f4aa2b09c8eca773dfd699b0fe790d7ed829b86bebd9758ee9697dc"
+    },
+    {
+      "path": "decomp/include/rush/libc.h",
+      "bytes": 1450,
+      "sha256": "19944a1dce225869d995f4ffb94ba45a544448271d3b2671e3ede8bba34dd05f"
+    },
+    {
+      "path": "decomp/include/rush/overrides.json",
+      "bytes": 4719,
+      "sha256": "bc3a1854da66c2553291e893469f83abcfec6cd184d2981290f5e88b23babf8d"
+    },
+    {
+      "path": "decomp/include/rush/rush_decls.json",
+      "bytes": 1525450,
+      "sha256": "1bb7a7eb7b2b9953c292f153213f19823bc2307ea7fd17943215a11545715b4a"
+    },
+    {
+      "path": "decomp/include/rush/rush_protos.h",
+      "bytes": 78053,
+      "sha256": "bb61bc5b55b4d7f53cff25b5e13c43ff31b195da5a2e151ea9402e3580ae5ed9"
+    },
+    {
+      "path": "decomp/include/rush/rush_types.h",
+      "bytes": 150417,
+      "sha256": "98cbcb3093b7d3b77d4fa0476a33bda878f664eea86a32d2ae16dcf769adb813"
+    },
+    {
+      "path": "decomp/src/GameSource/src/asincos.c",
+      "bytes": 1615,
+      "sha256": "60eefbf29a9c3fa3b3a516aef14850696fa36188a5c290d5951fc65710aec08c"
+    },
+    {
+      "path": "decomp/src/GameSource/src/atan.c",
+      "bytes": 1702,
+      "sha256": "3f8f7c512c87660f1cf912f12e7dbd13c460b11e7088a57c5cfe56569e597c59"
+    },
+    {
+      "path": "decomp/src/GameSource/src/audio.c",
+      "bytes": 38569,
+      "sha256": "e94e4a4f159c7d773c61d35069f33fbcc1477e36f9697f01d84a5923315ba3d9"
+    },
+    {
+      "path": "decomp/src/GameSource/src/audiomgr.c",
+      "bytes": 36637,
+      "sha256": "a35815624388be97020f2961fa878fa0319b7ed4e4a6fa5496654e89c504b972"
+    },
+    {
+      "path": "decomp/src/GameSource/src/audioscr.c",
+      "bytes": 20726,
+      "sha256": "decd753ae39fa5fbdcbf9a0c41f8a07cd79bba921528c998c5d2c7762e0f0ae5"
+    },
+    {
+      "path": "decomp/src/GameSource/src/audiosfx.c",
+      "bytes": 11424,
+      "sha256": "5826922c39ef9f8c67588941ffe6134cd51c08cd6faaf1cba333262ec95cc24d"
+    },
+    {
+      "path": "decomp/src/GameSource/src/audiosfxps2.c",
+      "bytes": 10206,
+      "sha256": "06dfb8dbce4f6b7590aeafe97725a3a91c85e7fdad9ac9c06fde75d513adc789"
+    },
+    {
+      "path": "decomp/src/GameSource/src/audiosongps2.c",
+      "bytes": 4964,
+      "sha256": "59c7c7c83ccf2388c7e5a4ddf570f7bd191819e0aa41efe68dae6a18a1f18157"
+    },
+    {
+      "path": "decomp/src/GameSource/src/audiosysps2.c",
+      "bytes": 3296,
+      "sha256": "89cc8ce4af36610f5e47d365474b1850605de8d0217c0edc3fb6362fabb49a2f"
+    },
+    {
+      "path": "decomp/src/GameSource/src/blit.c",
+      "bytes": 6359,
+      "sha256": "e9193a2b4617ce7e6252e55d04bbce9de49766429690db88ab74eba18d10be06"
+    },
+    {
+      "path": "decomp/src/GameSource/src/blit_pc.c",
+      "bytes": 5523,
+      "sha256": "8380fb38f2d7093bb2d56632d39bc80f839bcf71294604663d2ef24ec85ef527"
+    },
+    {
+      "path": "decomp/src/GameSource/src/boot_pc.c",
+      "bytes": 317,
+      "sha256": "8584c1230f64dc284fa3fdac4c26382cd1603ca132bf52b6e21c819b9f5f2bd1"
+    },
+    {
+      "path": "decomp/src/GameSource/src/bsearch.c",
+      "bytes": 812,
+      "sha256": "de922acb2ce928c344b5c49431c7bb2b0052a75ecea44c6e9a8ab6b37c744d6f"
+    },
+    {
+      "path": "decomp/src/GameSource/src/bstree.c",
+      "bytes": 1894,
+      "sha256": "7fba69cf0c91211eee7cbf733a93c530c4bf8c17dd165d44eb3e855cf69d5061"
+    },
+    {
+      "path": "decomp/src/GameSource/src/camera.c",
+      "bytes": 37699,
+      "sha256": "2e483f4b58d6a3b32489ed2e7e51bd4e5d699ef75da636e9d33f746d38a0074f"
+    },
+    {
+      "path": "decomp/src/GameSource/src/carload.c",
+      "bytes": 3046,
+      "sha256": "4c5a697b49f9988469b077d29eeea8aaa6aa1bd9c7ccb8726b4e19a31b003655"
+    },
+    {
+      "path": "decomp/src/GameSource/src/cars.c",
+      "bytes": 14782,
+      "sha256": "8d8974923f8c711b76ade836435547d6c1ea4a3f973260c7fffe9dc07e614375"
+    },
+    {
+      "path": "decomp/src/GameSource/src/cheatscr.c",
+      "bytes": 8042,
+      "sha256": "f959f11f96315d155bfa9f60a5aa96413b5835725972e598189d8f47fa4fdd95"
+    },
+    {
+      "path": "decomp/src/GameSource/src/checkpoint.c",
+      "bytes": 9289,
+      "sha256": "9949d21bba5a9910073e793143fc21b226e86fc1edf29a8b2c89c58f89b6b080"
+    },
+    {
+      "path": "decomp/src/GameSource/src/circuit.c",
+      "bytes": 9248,
+      "sha256": "dbf6539c7afecf8a3bb709e6836acf9bd18fc18d5b26492e44e9bad907f50efd"
+    },
+    {
+      "path": "decomp/src/GameSource/src/circuitscr.c",
+      "bytes": 39370,
+      "sha256": "690c4079f9033ccd72c15fdef54cb9db1c68fba2261db20c8f368011027176b0"
+    },
+    {
+      "path": "decomp/src/GameSource/src/collision.c",
+      "bytes": 13474,
+      "sha256": "a07cc68a003be44acebd90ba8fc375c979ec90eb2f6288b41e736d797f79fc9c"
+    },
+    {
+      "path": "decomp/src/GameSource/src/controls.c",
+      "bytes": 8157,
+      "sha256": "27ee86d476c81a945f3a8033d64d504c87e0bf303e9300c86e9d158f6bc40756"
+    },
+    {
+      "path": "decomp/src/GameSource/src/controlscr.c",
+      "bytes": 18227,
+      "sha256": "81b7d866bb90871b14a5a793f9cad3194f11410e6bc596fd8e75549c3c698bd9"
+    },
+    {
+      "path": "decomp/src/GameSource/src/controlsys.c",
+      "bytes": 9856,
+      "sha256": "9421428217dc361f8d65474fe81f4929dd6a3d365393ebc81e364b35c8a89996"
+    },
+    {
+      "path": "decomp/src/GameSource/src/countdown.c",
+      "bytes": 2790,
+      "sha256": "548ec1416d63c45ac0a8ee68609aa2caaabd098811710e9b9a27d6886b0a6b6c"
+    },
+    {
+      "path": "decomp/src/GameSource/src/demo.c",
+      "bytes": 3375,
+      "sha256": "951fa46bcec23ef007fd9735c2f5462d4c57ab5ff6f96a14fa0f3f0ff5f1d204"
+    },
+    {
+      "path": "decomp/src/GameSource/src/drivetra.c",
+      "bytes": 6259,
+      "sha256": "6080eb270a1337b1c9574aec2c8c9dfdb5d9036d21bb630b318cb55d78b2bc42"
+    },
+    {
+      "path": "decomp/src/GameSource/src/drivsym.c",
+      "bytes": 23995,
+      "sha256": "c0b2b02addd1f9bd8001d41b44ea9e2fbcba9626a7c69f1165024c9af48aebae"
+    },
+    {
+      "path": "decomp/src/GameSource/src/drones.c",
+      "bytes": 1250,
+      "sha256": "32f86359264fa4a86eac6642fc842bcf344f3c7eadeaa3620c8ff9f22a2d230e"
+    },
+    {
+      "path": "decomp/src/GameSource/src/eggs.c",
+      "bytes": 4714,
+      "sha256": "68d35ba51b980ce163965dde8a7fa784080d1fab5a32a6e64e5263bcd45c1c62"
+    },
+    {
+      "path": "decomp/src/GameSource/src/fake.c",
+      "bytes": 11672,
+      "sha256": "0e34e60e4857fe9d3ffafb88411a7c4d2e6eaacdb039140ef83b2d5d0d5a0609"
+    },
+    {
+      "path": "decomp/src/GameSource/src/fakegdfs.c",
+      "bytes": 2121,
+      "sha256": "b43423fa691610974b49c7a4854ade21506da038a359337cee04e205e12365e3"
+    },
+    {
+      "path": "decomp/src/GameSource/src/fmath.c",
+      "bytes": 11345,
+      "sha256": "dc2b38176f2cde208697603c632cdffcc62d60ccc1d5da0f8b990fc9af7edbc5"
+    },
+    {
+      "path": "decomp/src/GameSource/src/front.c",
+      "bytes": 8138,
+      "sha256": "d88dcefd03fcff890ca045d3bc826db7cf8868f4d989b87a1d9df9139fb95f31"
+    },
+    {
+      "path": "decomp/src/GameSource/src/game.c",
+      "bytes": 9831,
+      "sha256": "b723a57eff6b3919845ba4332faa19e140fa282285719a361c4d9f684a17005a"
+    },
+    {
+      "path": "decomp/src/GameSource/src/gameoverscr.c",
+      "bytes": 27902,
+      "sha256": "1bd671f24a5f89845b5244673d1e0565d8dea74c83a2fe58045fa97da6669a6a"
+    },
+    {
+      "path": "decomp/src/GameSource/src/gamerecords.c",
+      "bytes": 38596,
+      "sha256": "aace87c12e2edacd9c4934b325463984a0b2310c2ea3fdea5c7f5728342d3d73"
+    },
+    {
+      "path": "decomp/src/GameSource/src/gfx.c",
+      "bytes": 683,
+      "sha256": "ff703917228ccdec6e80c4a70b4318ae5bb4d83c5f4e0ea8978a06e2d668c3dc"
+    },
+    {
+      "path": "decomp/src/GameSource/src/ghost.c",
+      "bytes": 6833,
+      "sha256": "78458a41a1f8837aee2d6cb2d311e6dbb53db22b0af00377a29c18095abf6440"
+    },
+    {
+      "path": "decomp/src/GameSource/src/HAL_Support.c",
+      "bytes": 300,
+      "sha256": "860f902f5a5e1a8da93d69d367c3654d2df72dabe35b5aa731333560f87a37f6"
+    },
+    {
+      "path": "decomp/src/GameSource/src/HAL_text.c",
+      "bytes": 12948,
+      "sha256": "01edf586c784fbb0ed8da894559957b058e4da80de3af1c6f564731891a3a4fb"
+    },
+    {
+      "path": "decomp/src/GameSource/src/HAL_time.c",
+      "bytes": 872,
+      "sha256": "ac2d589ad0e37d33000e940c9622a186d907b72547106ff2ea91cb4b343793eb"
+    },
+    {
+      "path": "decomp/src/GameSource/src/headlights.c",
+      "bytes": 11512,
+      "sha256": "200b6741d53021cdcc8d803e02e6874ad0a73e1367f6e06998dd20d2a8bf5aaf"
+    },
+    {
+      "path": "decomp/src/GameSource/src/hud.c",
+      "bytes": 42674,
+      "sha256": "bd561fb93997346af8059aa5618728b53715196c27cc00768ded6d8f294d8f62"
+    },
+    {
+      "path": "decomp/src/GameSource/src/hudextra.c",
+      "bytes": 30176,
+      "sha256": "cb09b8167ed7ec40aabe78aa2fb86c50ce58f27d69fca8930792c8fa28022c34"
+    },
+    {
+      "path": "decomp/src/GameSource/src/Init.c",
+      "bytes": 1011,
+      "sha256": "530bd800a0fa219681558d4ee0b94739eeab276ae16d2d60bdcbf1b6155433ba"
+    },
+    {
+      "path": "decomp/src/GameSource/src/initiali.c",
+      "bytes": 7313,
+      "sha256": "85c2541fd2a0487b13c9bd129bd38f54896204234f97204ea831252a06d0a573"
+    },
+    {
+      "path": "decomp/src/GameSource/src/licensescr.c",
+      "bytes": 1524,
+      "sha256": "df4dcd884838463d733ec5a5806956f77532d61e1a216bb65a3d4d67396a66d5"
+    },
+    {
+      "path": "decomp/src/GameSource/src/ll.c",
+      "bytes": 4213,
+      "sha256": "0d3ccaf9041d068d55d5b7e1bb5672b802408fb3b12461bd84713397646161d0"
+    },
+    {
+      "path": "decomp/src/GameSource/src/maxpath.c",
+      "bytes": 35004,
+      "sha256": "6d91ff9b8622cc66122f380336ad2c8c05b17c03b54094f8cda591cfb3896aa1"
+    },
+    {
+      "path": "decomp/src/GameSource/src/mb_wad.c",
+      "bytes": 2184,
+      "sha256": "689daca33429cd91c832d949740d5a10d719baec9f29736e393a61c90396082c"
+    },
+    {
+      "path": "decomp/src/GameSource/src/mbox.c",
+      "bytes": 6813,
+      "sha256": "8cbe7ecbc8b1ff1a373c73aeef46b3f6e80a8e6b01ad520858970084d238690e"
+    },
+    {
+      "path": "decomp/src/GameSource/src/mdrive.c",
+      "bytes": 15010,
+      "sha256": "e0fdc096ec8cc3903498838518cb2faa9f45d36178b48dd9288cefdc9c31062b"
+    },
+    {
+      "path": "decomp/src/GameSource/src/memsys.c",
+      "bytes": 14645,
+      "sha256": "6ce4d28f7550c9a768ace9cc978a463458f54035bb18db063ca2b88a12bfd11d"
+    },
+    {
+      "path": "decomp/src/GameSource/src/model.c",
+      "bytes": 2491,
+      "sha256": "0471b7c3bdea23da225508fda82d44419e910e13f10f66f14f322d9c42cee705"
+    },
+    {
+      "path": "decomp/src/GameSource/src/modescr.c",
+      "bytes": 12898,
+      "sha256": "291f6bc3f2fc02c505eb2c533f1d4ed17ce1ee0dc8aaca228b5dd8f835f0bcb0"
+    },
+    {
+      "path": "decomp/src/GameSource/src/modf.c",
+      "bytes": 693,
+      "sha256": "f4661bad75aff3009880294598573873c2f64b3b38460e851840f9af21b63e46"
+    },
+    {
+      "path": "decomp/src/GameSource/src/options.c",
+      "bytes": 10455,
+      "sha256": "f4d4dea6d2a579ccc7f8469fa6c65596ce81d7a619591dcfdf3b6b1c02d8634e"
+    },
+    {
+      "path": "decomp/src/GameSource/src/optionscr.c",
+      "bytes": 24725,
+      "sha256": "054f390e4d4580fd5150b3530e792968e8d5dd255448887c7f468f86d469bf17"
+    },
+    {
+      "path": "decomp/src/GameSource/src/os.c",
+      "bytes": 263,
+      "sha256": "2ab03e89086424ce7b22e227ff6fd0cd88b760c913081829109298111848fe73"
+    },
+    {
+      "path": "decomp/src/GameSource/src/pakerr.c",
+      "bytes": 16516,
+      "sha256": "f6bfe8c0adcd3d13c3d176344d6da039d5548a71bb989aa2d4dbc85b37840db6"
+    },
+    {
+      "path": "decomp/src/GameSource/src/pakscr.c",
+      "bytes": 13099,
+      "sha256": "eea46935735f10164a7afa7130915001e610d4024d729cca12e2f07a0868fdc0"
+    },
+    {
+      "path": "decomp/src/GameSource/src/paksysdc.c",
+      "bytes": 20895,
+      "sha256": "9454217151d592fd263fa5f969737204b6c6aa7558d212ce5512bd7300527f87"
+    },
+    {
+      "path": "decomp/src/GameSource/src/pane.c",
+      "bytes": 4488,
+      "sha256": "c90f3e4564bc39ac50a4e4c2219c3d7eba98b85534229247a13ca4ca7ea4b2d1"
+    },
+    {
+      "path": "decomp/src/GameSource/src/password.c",
+      "bytes": 4368,
+      "sha256": "54326391a8c5950d93924fd6fcc8c6859ef1b6a6238829a26543ca3b659276b5"
+    },
+    {
+      "path": "decomp/src/GameSource/src/pathcommon.c",
+      "bytes": 21667,
+      "sha256": "fcbf8a5601adb0c98e96ac92a7c750adcad71e973e3237bd64972ce5a75b79df"
+    },
+    {
+      "path": "decomp/src/GameSource/src/pausescr.c",
+      "bytes": 38608,
+      "sha256": "69cefdd0ced15c6bdd8fdcf9880a8387f50c2a08dacaff906b0f5429f8d1296f"
+    },
+    {
+      "path": "decomp/src/GameSource/src/powerups.c",
+      "bytes": 7516,
+      "sha256": "7366162684f84011cdcaeb1d84564f924568cc8d296a63ecc2cb94f4e2ef9cc2"
+    },
+    {
+      "path": "decomp/src/GameSource/src/rekon.c",
+      "bytes": 2744,
+      "sha256": "6498bd222248bef48b6bece2c77c6c2ea2f9fe27b9c75b6a241b37adf51d0637"
+    },
+    {
+      "path": "decomp/src/GameSource/src/resurrect.c",
+      "bytes": 23065,
+      "sha256": "7f530d61557b385a96958a133586493478523aca3b763bba989ec283e0858e32"
+    },
+    {
+      "path": "decomp/src/GameSource/src/road.c",
+      "bytes": 3686,
+      "sha256": "e8fc270b63c04699e68b02ea8e39c7879c865581af8ab5c8f0d429bba16375d5"
+    },
+    {
+      "path": "decomp/src/GameSource/src/save.c",
+      "bytes": 58828,
+      "sha256": "b3dbeb247cd8db6746b1d5bf9ce73176c0277cc5debe6e42affb763d74f4e153"
+    },
+    {
+      "path": "decomp/src/GameSource/src/sched.c",
+      "bytes": 808,
+      "sha256": "966dbcfac1f8e0756adbd36e9d8ac74b376b6059e79b32b417137864df38c55a"
+    },
+    {
+      "path": "decomp/src/GameSource/src/selectcarload.c",
+      "bytes": 7753,
+      "sha256": "2efa09cd5cf9b7f851414f281ab789f5aa512e641e3cbe4a4aa1bdd0b0195063"
+    },
+    {
+      "path": "decomp/src/GameSource/src/shots.c",
+      "bytes": 44411,
+      "sha256": "e089752e447aa9e5e5674020d5b767ad44840ff32bfa256a58860b9798938f60"
+    },
+    {
+      "path": "decomp/src/GameSource/src/skids.c",
+      "bytes": 13968,
+      "sha256": "2289b026ab5778309f3fe6b6fc58842159f4039042e9f324f47f0913410704b6"
+    },
+    {
+      "path": "decomp/src/GameSource/src/sky.c",
+      "bytes": 1170,
+      "sha256": "a652f516e0df5c47439abad06bb052c395e9157064618c71115cbdc1085a1128"
+    },
+    {
+      "path": "decomp/src/GameSource/src/smoke.c",
+      "bytes": 10228,
+      "sha256": "921e54da2f3fe1c74a23b487c76c437e736f98c682d94d1e1b493e17296fcb02"
+    },
+    {
+      "path": "decomp/src/GameSource/src/startscr.c",
+      "bytes": 16022,
+      "sha256": "16b79f3130b6dfa0b5e29b712fa3daf9d261ddf53650c079debb59559dd3544d"
+    },
+    {
+      "path": "decomp/src/GameSource/src/state.c",
+      "bytes": 6821,
+      "sha256": "db876785f11dfd695d901cad820fc160f806f3ba81039c82470404b5b892906a"
+    },
+    {
+      "path": "decomp/src/GameSource/src/statll.c",
+      "bytes": 2033,
+      "sha256": "8a54cd391540661c606098788c845d3e4ed2ca441a4a4a93683744fea592ddfd"
+    },
+    {
+      "path": "decomp/src/GameSource/src/stats.c",
+      "bytes": 1955,
+      "sha256": "472150bbe7bfb7d9e9e85856290790f8a5719742ff4b2f90395cd6a1609ca3e9"
+    },
+    {
+      "path": "decomp/src/GameSource/src/streaks.c",
+      "bytes": 6570,
+      "sha256": "176198d1c060212abb5a148f85c0b536c2ca0d9c5914f1ecd2e82ed5f5854a5a"
+    },
+    {
+      "path": "decomp/src/GameSource/src/stree.c",
+      "bytes": 39346,
+      "sha256": "2d82b2803044fcde7b8a0f36be1b44620bdd869575e851ab1f89f2bec66e8c26"
+    },
+    {
+      "path": "decomp/src/GameSource/src/stunt.c",
+      "bytes": 18133,
+      "sha256": "00d231d4b9180043e4023cddd55f97af0aa19d5d527d2e243391e798c85a0644"
+    },
+    {
+      "path": "decomp/src/GameSource/src/tan.c",
+      "bytes": 1932,
+      "sha256": "4b4b06c8ca2a95bf354e02362e25e103b1c2731fde7863f6583e5450722866e8"
+    },
+    {
+      "path": "decomp/src/GameSource/src/targetpaths.c",
+      "bytes": 20891,
+      "sha256": "dd91655bf7c65a4aa0c9725fa353aee9f2ea5316ad9740c4f79c1b4e72286613"
+    },
+    {
+      "path": "decomp/src/GameSource/src/TB_text.c",
+      "bytes": 11009,
+      "sha256": "cbb9c9b255213d2d6479bd495ef564165e7f3d4978b70be8ee641f6ec77a83eb"
+    },
+    {
+      "path": "decomp/src/GameSource/src/TB_Vector.c",
+      "bytes": 760,
+      "sha256": "130cb068952e6aacaccb3c3265aefc40db3e344c48723db6212c8a377b6b0645"
+    },
+    {
+      "path": "decomp/src/GameSource/src/text.c",
+      "bytes": 5511,
+      "sha256": "8b62bf51abd37bdd09f590cab4b06e0eca595e21d34974a293b928b56a2e3e75"
+    },
+    {
+      "path": "decomp/src/GameSource/src/texture.c",
+      "bytes": 410,
+      "sha256": "8a7a79b5ab0449616e6d276f6cdbf18876e865a7f75c0836d9a4290841993628"
+    },
+    {
+      "path": "decomp/src/GameSource/src/textureanim.c",
+      "bytes": 24608,
+      "sha256": "b3fa3e99e0a270a87650d6eb2185ec0ef0bbb79cabc4f28f4caa3e9a419d46e4"
+    },
+    {
+      "path": "decomp/src/GameSource/src/timer.c",
+      "bytes": 2184,
+      "sha256": "f143695f0ae3fbd08b50e57c26aaca546ea578a74639c392ed937c3c287374b3"
+    },
+    {
+      "path": "decomp/src/GameSource/src/timingbar.c",
+      "bytes": 288,
+      "sha256": "d695b071d479482cd5832a2edbf6627b585e473a5d1c9d6a9614309e4bf0e90e"
+    },
+    {
+      "path": "decomp/src/GameSource/src/tires.c",
+      "bytes": 9690,
+      "sha256": "c9b662e5a29f53d9be91e621e8c2eb4404cffd8a68ec775c2b29d3f20d365b7d"
+    },
+    {
+      "path": "decomp/src/GameSource/src/titlescr.c",
+      "bytes": 2194,
+      "sha256": "d680bb7eee759ed55434f20be56728f8b9714720c894ac0117666fd50e578d04"
+    },
+    {
+      "path": "decomp/src/GameSource/src/tracks.c",
+      "bytes": 6537,
+      "sha256": "6866890e5ba88510d0e104d21cafa8f03132b55e3cce94c849a4480216540ac0"
+    },
+    {
+      "path": "decomp/src/GameSource/src/unzip.c",
+      "bytes": 11679,
+      "sha256": "cfde6253e9e3574211acaf0a1c8dcf9bc7d29318fa1dc2d8a2d3ed56529b7e09"
+    },
+    {
+      "path": "decomp/src/GameSource/src/videoscr.c",
+      "bytes": 16719,
+      "sha256": "d0dd51c36ef1c26d8886500427147373012a8cd56b3760e90020354c8e230bfa"
+    },
+    {
+      "path": "decomp/src/GameSource/src/warningscr.c",
+      "bytes": 445,
+      "sha256": "c446575c1bd90068205acdd6df4bf289d99bde4f30a09e815a42bb9dde62ba9e"
+    },
+    {
+      "path": "decomp/src/GameSource/src/waveinfo.c",
+      "bytes": 3270,
+      "sha256": "31df59af82d5ae88eca7f6f9d474562250693528f5a6850dc532f06c3fe4d731"
+    },
+    {
+      "path": "decomp/src/GameSource/src/waves.c",
+      "bytes": 21656,
+      "sha256": "b24af063890c9e75948d3f31d5f3910912dcaf8a154c6f129ef40accae9b636d"
+    },
+    {
+      "path": "decomp/src/GameSource/src/weapons.c",
+      "bytes": 21297,
+      "sha256": "f252b6dcf5fd7e1186a880e1fe3d231790a215797abf8a06a72087a00f208634"
+    },
+    {
+      "path": "decomp/src/GameSource/src/world.c",
+      "bytes": 32624,
+      "sha256": "cb12eabad2bdfea2569d199f0bcabb95ac3d6545a6010df1946a5d45e32aef93"
+    },
+    {
+      "path": "decomp/src/GameSource/src/worlddam.c",
+      "bytes": 4000,
+      "sha256": "a1605ed93b3576a4efa852c76a0213372daad157096a84f3c0e810012188ec2a"
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoid.c",
+      "bytes": 8844,
+      "sha256": "9d95dd5f92f5aaae64e5f29d9c9779a317db2b44fe8b4477eaac8ae79167699b"
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoidblit.c",
+      "bytes": 3493,
+      "sha256": "aff33afa48a10feef7bc8c63779302351141b787a6d06f74f894e469175bf44e"
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoidlight.c",
+      "bytes": 340,
+      "sha256": "40b060a4175fa6ff3670688a65495a4a819811ea010ccf6e270ea1cf64587059"
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoidpoly.c",
+      "bytes": 5053,
+      "sha256": "d82da52a4a73f8f82caf9d4ab3403740f75d2d5397efe3bbf6134cc5c84cec5a"
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoidtexture.c",
+      "bytes": 1672,
+      "sha256": "3c6c46b38ab700bf405e32bbbce3c5fabcb5ea7ed3e47799b2c293b883cebe43"
+    },
+    {
+      "path": "decomp/src/GameSource/src/zoidwindow.c",
+      "bytes": 11035,
+      "sha256": "ce9be99cc01cacae7aa684ee42b476348ea48c585c32ad6fb7d48adc59bf9d25"
+    },
+    {
+      "path": "decomp/src/NGC/BINK/ngcrad3d.c",
+      "bytes": 2854,
+      "sha256": "93604969ba050e6cdce72a1fb82694c79acb9e92fe86713338670349f2587247"
+    },
+    {
+      "path": "decomp/src/NGC/bonus.c",
+      "bytes": 20078,
+      "sha256": "76245da3b58ca84cf21e9eebf31794ceed46b546483784569dd7ee354c184661"
+    },
+    {
+      "path": "decomp/src/NGC/FONT/defaultFont.cpp",
+      "bytes": 176,
+      "sha256": "457dda396d74b2a187ff5f2afd53d661ad80ce5c5a74ef10ef316aab4aa5cfbe"
+    },
+    {
+      "path": "decomp/src/NGC/FONT/menuFont.cpp",
+      "bytes": 9652,
+      "sha256": "3b165f85e63eb99a5696ffe323808b164935eae004082bf7985e3c51c5d6d080"
+    },
+    {
+      "path": "decomp/src/NGC/FONT/menuFunc.c",
+      "bytes": 3006,
+      "sha256": "f82eced4aba9ec98d7cbf0655b51f0d4ec68cad9132f18ee94b6c69fb2e7cf19"
+    },
+    {
+      "path": "decomp/src/NGC/libgraph.c",
+      "bytes": 195,
+      "sha256": "ac2ff16a3b6d59acebc890fb93edb164719536580b3cf7e4c11ab1f8980c5718"
+    },
+    {
+      "path": "decomp/src/NGC/MATMEM/matmemorycard.c",
+      "bytes": 616,
+      "sha256": "0733e74828669f16d8d9042839a69f2df55c492a98e80e10fae3f4b952c4d022"
+    },
+    {
+      "path": "decomp/src/NGC/ngcAudio.c",
+      "bytes": 19946,
+      "sha256": "034e80655c0d2acff750f09bb3449e9b84ba99520447fe1dff3bbaa1ad49a911"
+    },
+    {
+      "path": "decomp/src/NGC/ngcCamera.c",
+      "bytes": 7673,
+      "sha256": "5e9cd6045ce5aa9ac86b5dba943a74698741f3dad266c129738dbee7a4ca8291"
+    },
+    {
+      "path": "decomp/src/NGC/ngcDmalist.c",
+      "bytes": 261,
+      "sha256": "3dd8005926438f0a7238437c4f9aa2c665b6ab0a91002d62ff6494f0a3768ce9"
+    },
+    {
+      "path": "decomp/src/NGC/ngcDvdCheck.c",
+      "bytes": 5476,
+      "sha256": "ad0ef215766816c723c04fa99d4ac1af1313c6e487ef03d18ce8fda1a1d42583"
+    },
+    {
+      "path": "decomp/src/NGC/ngcFile.c",
+      "bytes": 6969,
+      "sha256": "4f615e8a50a96d70d13035063fd1c6ca4dd94025f260a8bf80732b72dbb11abf"
+    },
+    {
+      "path": "decomp/src/NGC/ngcGraph.c",
+      "bytes": 2105,
+      "sha256": "7fab102fcd0d46ac01cf8a4f2c86b4e92d8749fdd46faafcbb4091bbe9f13f53"
+    },
+    {
+      "path": "decomp/src/NGC/ngcHelper.c",
+      "bytes": 5387,
+      "sha256": "a1bfb2320682c129ac9edb50813d6bb03cfdf98975631e60e1e2bc41e9e3d048"
+    },
+    {
+      "path": "decomp/src/NGC/ngcInit.c",
+      "bytes": 6959,
+      "sha256": "fa01cc523c32c0e26a851d617b989cd265b291243e25cec79da3472941ac81ef"
+    },
+    {
+      "path": "decomp/src/NGC/ngcLoadEffect.c",
+      "bytes": 10865,
+      "sha256": "e34f7e4dc8db1944e67b3a4a82a5e6066c0f62689baac9057b8246c23f1a96f4"
+    },
+    {
+      "path": "decomp/src/NGC/ngcMemcard.c",
+      "bytes": 12885,
+      "sha256": "27566754b1cde15723c1390729314813c6be81fac84fd04d8110f106d461a52c"
+    },
+    {
+      "path": "decomp/src/NGC/ngcMovie.c",
+      "bytes": 3841,
+      "sha256": "54c7d5c1c65a71d20cddc4b6eb112616d17bf467a54f9c8aa361513fe9b22c7e"
+    },
+    {
+      "path": "decomp/src/NGC/ngcMtx.c",
+      "bytes": 6211,
+      "sha256": "3e9b2c500aacf7741b09a00aab3e52fd36d91efb2d333cf9060f5a1aab7801a2"
+    },
+    {
+      "path": "decomp/src/NGC/ngcPad.c",
+      "bytes": 9832,
+      "sha256": "2cb9feb9c449152bafd988b6386fab555d8ccd81495a25efbc7b839de025ec32"
+    },
+    {
+      "path": "decomp/src/NGC/ngcSaveRegion.c",
+      "bytes": 2401,
+      "sha256": "2d35620ce4c7cbe4d5ab54b111fa51d76a353dc903b66bdffcdabd0b7d798304"
+    },
+    {
+      "path": "decomp/src/NGC/ngcTexHelp.c",
+      "bytes": 4827,
+      "sha256": "11a0e8982a91425db58a1dbe60354b43d4e7147456d8e05e2ac7f739466e604d"
+    },
+    {
+      "path": "decomp/src/NGC/ngcTexture.c",
+      "bytes": 27281,
+      "sha256": "b3239b563efed747fdc2ee266dc8142c95edb90b11fe12bbced104dc6e2f0798"
+    },
+    {
+      "path": "decomp/src/NGC/stdlib.c",
+      "bytes": 185,
+      "sha256": "3b7e34afae55859551fbaeebcba3a964908ddba9637be81cae93c39dc90f3b24"
+    },
+    {
+      "path": "decomp/tools/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "decomp/tools/add_ranges.py",
+      "bytes": 965,
+      "sha256": "6d903188c0a155f6ac51a9a13fb693bd8a0d4538379d40221c8532afefbe3ba4"
+    },
+    {
+      "path": "decomp/tools/bisect_link.py",
+      "bytes": 1767,
+      "sha256": "cbc7bb64470932b4c8afb297f4201f0d602c0d71433372b5aa078365c6698a4c"
+    },
+    {
+      "path": "decomp/tools/candidate.py",
+      "bytes": 17479,
+      "sha256": "2f68abdf77de35009226add502a225eb704a2d9e339f99c6ec282568950e76ed"
+    },
+    {
+      "path": "decomp/tools/candidate_README.md",
+      "bytes": 4607,
+      "sha256": "d2d9eb72737ab58669095052d723a72683218ab618a7aaf0dc2d319ca4dd3aea"
+    },
+    {
+      "path": "decomp/tools/changes_fmt.py",
+      "bytes": 5086,
+      "sha256": "e83c8e88bb511f78f6338c9503bbbbcc9cee973f04ad1b0ade1026c8b5d0241e"
+    },
+    {
+      "path": "decomp/tools/check.py",
+      "bytes": 6349,
+      "sha256": "74a0fd4e632e310b78b212a43f44b873ff752f830ccb4688863a39ee3cdc9f49"
+    },
+    {
+      "path": "decomp/tools/ctx.py",
+      "bytes": 2031,
+      "sha256": "3ebc522cc210a6ff44a25df4963b541a689da5d0f55a0926288fe1b8ff522454"
+    },
+    {
+      "path": "decomp/tools/cwmatch.py",
+      "bytes": 9700,
+      "sha256": "4f98eecd270953b8b2cae5b9951bd479cc371fab5be875104f8d9f66a9e909ca"
+    },
+    {
+      "path": "decomp/tools/cwobjdiff.py",
+      "bytes": 1900,
+      "sha256": "1ca50fefb3766c7cee3c1f86e37d32b33d8fa58ef251ab165bc396566f69d748"
+    },
+    {
+      "path": "decomp/tools/cwprobe.py",
+      "bytes": 2080,
+      "sha256": "88c053bf4f875678263594142ec9f141a59b20af40d75e5606c17309c0f23270"
+    },
+    {
+      "path": "decomp/tools/data2c.py",
+      "bytes": 6231,
+      "sha256": "dfd5e0cc10208a632e154d221d4137ad2d0286ad2da05f672dc98bacd296a8ce"
+    },
+    {
+      "path": "decomp/tools/decompctx.py",
+      "bytes": 5269,
+      "sha256": "2dc152e9f1c288082206ae3cb5862b2f10577a5eedbc550ac2d67665b5b8750b"
+    },
+    {
+      "path": "decomp/tools/dolbytes.py",
+      "bytes": 1188,
+      "sha256": "680c04b7d483cc4f597f1cf5c1155d3889a3ba22cabc859014e23d7520e239ad"
+    },
+    {
+      "path": "decomp/tools/doldiff.py",
+      "bytes": 2396,
+      "sha256": "b751fe77069e09cd25b5a8db27f96dc4ccba1413912f7e69b7378e75ecb493d2"
+    },
+    {
+      "path": "decomp/tools/download_tool.py",
+      "bytes": 4395,
+      "sha256": "01957b733d89866ca4e39c71e74acb078a1b0422c0e5ed332fc3105481bfdb71"
+    },
+    {
+      "path": "decomp/tools/fdiff.py",
+      "bytes": 2605,
+      "sha256": "2d0412cfc58c1829ac21eda6cd0318ed44a2c2880c80ab6972971736df795591"
+    },
+    {
+      "path": "decomp/tools/fields.py",
+      "bytes": 3091,
+      "sha256": "ff04de15611f10db0cbeb701976f5872d21d39178ad24816634854c2156f4d26"
+    },
+    {
+      "path": "decomp/tools/fill.py",
+      "bytes": 1912,
+      "sha256": "9b5fc6a6d76ba6982951ac0aeb3930e28cf111f687363839e40b372a1e176bde"
+    },
+    {
+      "path": "decomp/tools/fix_splits.py",
+      "bytes": 1192,
+      "sha256": "37c44ead7254dfab3bee25c55f543d97c234bcb47c1d178da13ffc0a0e3560f5"
+    },
+    {
+      "path": "decomp/tools/fvar.py",
+      "bytes": 3185,
+      "sha256": "e5ee2511e0e85e806ec3a4d164531b923e65a70af433c602774d8f6c05e0fa96"
+    },
+    {
+      "path": "decomp/tools/mark.py",
+      "bytes": 584,
+      "sha256": "53f6ee664a289740405036b9b439a8d7e5592a7e7043cf02b6ab75d95b5f6ddc"
+    },
+    {
+      "path": "decomp/tools/ninja_syntax.py",
+      "bytes": 8813,
+      "sha256": "ea1710f1787bf14e7706effbd56c76c7950abd0bdcde004555014b0baa8ea82f"
+    },
+    {
+      "path": "decomp/tools/permute.py",
+      "bytes": 2188,
+      "sha256": "1a8cd66d410e92911910e11f37523e3f2f5ff7e719cb32b954eb1e8a0f21830e"
+    },
+    {
+      "path": "decomp/tools/place_units.py",
+      "bytes": 1705,
+      "sha256": "20fe64be00426050ec6fd1bc6a5e2cb6a06433de8c98a3145cc0ca3a0418cefb"
+    },
+    {
+      "path": "decomp/tools/project.py",
+      "bytes": 73613,
+      "sha256": "75ade37a97a557cce630ea184039a1acfbf1ecafb25be7a0a7501591eaedd90f"
+    },
+    {
+      "path": "decomp/tools/skel.py",
+      "bytes": 6012,
+      "sha256": "b3e99caf68b81ce722b9b78d89f58c375603dfb5714deb491dec5a460b2ee224"
+    },
+    {
+      "path": "decomp/tools/status.py",
+      "bytes": 2598,
+      "sha256": "69bbcde3bc071c21e1d4ebe602670859992f0e5c7510c5df0510532736e0b838"
+    },
+    {
+      "path": "decomp/tools/test_candidate.py",
+      "bytes": 10675,
+      "sha256": "b5c4c87eb1de30a345ca516918cbcf4a9f249af0d2ea08702fff8714c10f3edb"
+    },
+    {
+      "path": "decomp/tools/tests/test_verification.py",
+      "bytes": 22907,
+      "sha256": "1289f7450ba5c31d4d4f36bbc65bf827213e78cae9aecc127ff7107a80f3bd60"
+    },
+    {
+      "path": "decomp/tools/transform_dep.py",
+      "bytes": 2514,
+      "sha256": "54cedfa8b4d913948def308f8cc0c690db595baf6d59b509aa25cb3578568438"
+    },
+    {
+      "path": "decomp/tools/unit2c.py",
+      "bytes": 11096,
+      "sha256": "f45ff09702cc119e14c004440111c24d45351d18cef56a532e7f8e952ba7b302"
+    },
+    {
+      "path": "decomp/tools/variants.py",
+      "bytes": 1176,
+      "sha256": "af6b24be23db22b72c3e90910fa5791646463b5ae731a0435f985baf0853c583"
+    },
+    {
+      "path": "decomp/tools/verify_layout.py",
+      "bytes": 2988,
+      "sha256": "70488b6a2c9810e8c87cdd4402eb073602b2a1c5adbb6819c30d2e06ea13f675"
+    },
+    {
+      "path": "decomp/tools/verify_link.py",
+      "bytes": 5678,
+      "sha256": "1c665f087e3a540900b735c5fa5f9535c8a023b277b780c1a12303f2eda3f8b7"
+    },
+    {
+      "path": "decomp/tools/verify_linked_layout.py",
+      "bytes": 12723,
+      "sha256": "6f58c1e99c89d12255f99073984d2c745e4bd4f1cb06974906bb587da8da6feb"
+    },
+    {
+      "path": "docs/BUILDING.md",
+      "bytes": 4841,
+      "sha256": "89792e1936795b6a3e8b198d77bb995844db015500362c5731a4c0cceebf9fd9"
+    },
+    {
+      "path": "docs/file-allowlist.json"
+    },
+    {
+      "path": "docs/licenses/dtk-template-CC0.txt",
+      "bytes": 6671,
+      "sha256": "4d2eef679d5faf924534bcc132646322e9a852ce50ae5616694e0b95f7b8275d"
+    },
+    {
+      "path": "docs/provenance/local-assets.json",
+      "bytes": 1406,
+      "sha256": "4d54955ee9d57a6b7b2364d65eb6bca4aad705f6dce86390422c45bed7ae168d"
+    },
+    {
+      "path": "docs/provenance/review-summary.json",
+      "bytes": 4195,
+      "sha256": "2b3c37986e8c97498e44f5151acb44f4d8a94b04f5b98fedf6a1014f6dd9fe14"
+    },
+    {
+      "path": "docs/provenance/source-baseline.json",
+      "bytes": 84797,
+      "sha256": "ba3e23c24a9995cc27e6a6161d21fa1e4fab31bfddded2543aa13baad3181709"
+    },
+    {
+      "path": "docs/provenance/wave25-baseline/hud.c",
+      "bytes": 27182,
+      "sha256": "52372ebdd33a6b997c548686f41b49b2b8a710074f1d11eb507d855011816e54"
+    },
+    {
+      "path": "docs/provenance/wave25-baseline/resurrect.c",
+      "bytes": 19596,
+      "sha256": "9d80249241c2b30c1cd56e1983c4774605809f882bf805a8442622dc3d380ad4"
+    },
+    {
+      "path": "docs/provenance/wave26-source-only.patch",
+      "bytes": 22849,
+      "sha256": "691ac78ece0192e55b93191d5b703bc5cd4dbc53157ffde09077c1d144328b32"
+    },
+    {
+      "path": "docs/publication-scan.json"
+    },
+    {
+      "path": "docs/REVIEW.md",
+      "bytes": 4213,
+      "sha256": "72a38fa0be2595ee6e91558cb2f1232f7d6e27bd1c15739dac02d4664c3fc421"
+    },
+    {
+      "path": "LICENSES.md",
+      "bytes": 885,
+      "sha256": "e01b70ab8670b4b49e376e5782ccb31640f037eadb5c726bef23ed44b962a770"
+    },
+    {
+      "path": "progress.json",
+      "bytes": 294996,
+      "sha256": "1d4b1313ae5404a07577cdceed4dd3a60946de01bb14ba424db03e708995719e"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1773,
+      "sha256": "7cd76e681a2bc5804eb7664f551fe0dd468dc84611181a2294ee29073838e912"
+    },
+    {
+      "path": "research/history/maxpath-wave25.json",
+      "bytes": 1876,
+      "sha256": "9305e36917b61d10030f1bbb1c70321df6c1d1ac556806ac910010ecef6c581d"
+    },
+    {
+      "path": "research/history/resurrect-wave25.json",
+      "bytes": 2033,
+      "sha256": "38364f7346b38dc41899eccab1e2bdd6063afd6cebad7091cbbe05d9058309ff"
+    },
+    {
+      "path": "research/history/stree-wave25.json",
+      "bytes": 3051,
+      "sha256": "4e9d3ef08e44b65b430f61dc64fc5d040743ea1424142a76ca4338f008f7ce6a"
+    },
+    {
+      "path": "research/README.md",
+      "bytes": 2354,
+      "sha256": "89af469915a2fe898d3079f282b2f4e5ce469986acce850d018f3cd365260656"
+    },
+    {
+      "path": "research/research-index.json",
+      "bytes": 2430,
+      "sha256": "67f349cce5a6121639bcbe71f96548a5cbf974ee99f30be5f2c0f9652ce24ba8"
+    },
+    {
+      "path": "research/wave26-maxpath-research-only.patch",
+      "bytes": 1488,
+      "sha256": "5f75e1981c92d484a868a372cd06773e685af3110f1e46a338c7cc23b4fafdcd"
+    },
+    {
+      "path": "research/wave26-mdrive-research-only.patch",
+      "bytes": 5823,
+      "sha256": "7d837aba6d0c286a1142c290543a642e6d264f13b6eb884ca6791c459564055b"
+    },
+    {
+      "path": "research/wave26-resurrect-research-only.patch",
+      "bytes": 1173,
+      "sha256": "ce07ae4ebcf8434f49f13d38693319f18395a539f3a548687d452fbec2cf54a0"
+    },
+    {
+      "path": "research/wave26-stree-research-only.patch",
+      "bytes": 6153,
+      "sha256": "b05d1ec9ccf75af57cecbd0d667415a96ea7d54004fc940b0beb883fc89e8a82"
+    },
+    {
+      "path": "tools/audit_publication.py",
+      "bytes": 5543,
+      "sha256": "0fb0a61636ca466ac7ca225462231fcb60f7651f6c5cd0e7b5c243aa0ab17873"
+    },
+    {
+      "path": "tools/bootstrap_local_assets.py",
+      "bytes": 2319,
+      "sha256": "690f84d7f639c8aa8c8d41516dddb8a896046e4872e3514d22489ea387c79002"
+    },
+    {
+      "path": "tools/dolcheck.py",
+      "bytes": 2042,
+      "sha256": "325ffd59b60d09efcd7103c24c19cd1402b4456d69ffab660d8ef24086fa6219"
+    },
+    {
+      "path": "tools/dwarf1.py",
+      "bytes": 14741,
+      "sha256": "ea776195bacd3b44dd74019ae9bfb297d7917d34ab01f4616c5d78dd44de4458"
+    },
+    {
+      "path": "tools/dwarftypes.py",
+      "bytes": 22968,
+      "sha256": "64811dd048343d910622de68c52bcb5c1f136f459719552049a78455bc87fab0"
+    },
+    {
+      "path": "tools/elfio.py",
+      "bytes": 2449,
+      "sha256": "3bfa8a78fcf61ebed6517948fe1d0eb78e25579ec70508dcd6926d6537adfa37"
+    },
+    {
+      "path": "tools/extract_syms.py",
+      "bytes": 2927,
+      "sha256": "c368613abe237486031e27677d5a652967c737aeba9aba4a94c134ac5a2ecaff"
+    },
+    {
+      "path": "tools/gcm.py",
+      "bytes": 2292,
+      "sha256": "215668dc982747977bfcc7e8e981d423bfe97582cf44011145ef95d831d91427"
+    },
+    {
+      "path": "tools/gdf.py",
+      "bytes": 3431,
+      "sha256": "d4dead3520b196253ec2deee81085da01fca5fa1f309b959817f7cea10495ac0"
+    }
+  ]
+}

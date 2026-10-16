@@ -1,0 +1,58 @@
+{
+  "resurrect": {
+    "unit": "resurrect",
+    "source_sha256": "56f1beb2b1be3247008254af778c5d010215b6740cc0c7c1c81bb27543c8d020",
+    "baseline_source_sha256": "7f530d61557b385a96958a133586493478523aca3b763bba989ec283e0858e32",
+    "expected_object_sha256": "901ef9a284d8e9e598d121a5503ab7d3a24e3bc045557231e19fe17c6104217a",
+    "function": "GetResPt",
+    "worker_reported_different_words": 18,
+    "diagnostic_relocations": 10,
+    "inherited_unchanged": false,
+    "new_functions": 0,
+    "new_bytes": 0,
+    "included_in_exact_aggregate": false,
+    "patch": "wave26-resurrect-research-only.patch"
+  },
+  "mdrive": {
+    "unit": "mdrive",
+    "source_sha256": "416da8c70406dff1a17e803c30931039d5f3b7956d0c2add4a73950b113f30b9",
+    "baseline_source_sha256": "e0fdc096ec8cc3903498838518cb2faa9f45d36178b48dd9288cefdc9c31062b",
+    "expected_object_sha256": "22d1761221b6f17d38ebf536b93da7c29c218d9fbab8af1b8c44c71c081f9f93",
+    "function": "update_game_data",
+    "worker_reported_different_words": 5,
+    "diagnostic_relocations": 36,
+    "inherited_unchanged": false,
+    "new_functions": 0,
+    "new_bytes": 0,
+    "included_in_exact_aggregate": false,
+    "patch": "wave26-mdrive-research-only.patch"
+  },
+  "maxpath": {
+    "unit": "maxpath",
+    "source_sha256": "49813e23059115e1cd2e0ca9d9f011beb0d37f68087e3237ebe0f0de1bf30889",
+    "baseline_source_sha256": "6d91ff9b8622cc66122f380336ad2c8c05b17c03b54094f8cda591cfb3896aa1",
+    "expected_object_sha256": "aae51c758c1f6a1a8457726561144fd266a4505c5871a1ba536e2a0ef7818af7",
+    "function": "AvoidAreas",
+    "worker_reported_different_words": 8,
+    "diagnostic_relocations": 69,
+    "inherited_unchanged": true,
+    "new_functions": 0,
+    "new_bytes": 0,
+    "included_in_exact_aggregate": false,
+    "patch": "wave26-maxpath-research-only.patch"
+  },
+  "stree": {
+    "unit": "stree",
+    "source_sha256": "6a7c640e5125ebdc09a7a4d984e669b16e20f53cddb6bfa04f4ed03c78186787",
+    "baseline_source_sha256": "2d82b2803044fcde7b8a0f36be1b44620bdd869575e851ab1f89f2bec66e8c26",
+    "expected_object_sha256": "d6c452b1db375f5e951bc33f61de2371de6a7fd4dd2cfe54fc25dc6d32c2cd4c",
+    "function": "ShotToWorldCollision",
+    "worker_reported_different_words": 94,
+    "diagnostic_relocations": 78,
+    "inherited_unchanged": true,
+    "new_functions": 0,
+    "new_bytes": 0,
+    "included_in_exact_aggregate": false,
+    "patch": "wave26-stree-research-only.patch"
+  }
+}
