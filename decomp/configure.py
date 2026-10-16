@@ -454,7 +454,7 @@ config.libs = [
             Object(Matching, "NGC/ngcDvdCheck.c"),
             Object(Matching, "NGC/FONT/menuFont.cpp", cflags=[f for f in cflags_game if f != "-lang c"] + ["-lang c++"]),
             Object(Matching, "NGC/FONT/menuFunc.c"),
-            Object(NonMatching, "NGC/ngcBeginMenu.c"),
+            Object(Matching, "NGC/ngcBeginMenu.c"),
             Object(Matching, "NGC/BINK/ngcrad3d.c"),
             Object(Matching, "NGC/ngcSaveRegion.c"),
             Object(Matching, "NGC/bonus.c"),

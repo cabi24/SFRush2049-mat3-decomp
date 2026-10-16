@@ -746,7 +746,7 @@ void XBX_BufferSwap2();
 void XBX_BufferSwap3();
 void XBX_DrawPausePic(float left, float up, float right, float down, unsigned long nIndex);
 void XBX_DrawPausePic2(float left, float up, float right, float down, unsigned long nIndex);
-void XBX_DrawSelectBar(int choice);
+void XBX_DrawSelectBar(int choice, int unused);
 void XBX_InitExtraPic();
 void XBX_InitPausePic();
 void XBX_Input_GetInput();
