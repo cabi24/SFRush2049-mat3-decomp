@@ -445,7 +445,7 @@ config.libs = [
             Object(Matching, "NGC/ngcCamera.c"),
             Object(NonMatching, "NGC/ngcZoid.c"),
             Object(Matching, "NGC/ngcLoadEffect.c"),
-            Object(NonMatching, "NGC/ngcBlit.c"),
+            Object(Matching, "NGC/ngcBlit.c"),
             Object(Matching, "NGC/ngcTexHelp.c"),
             Object(Matching, "NGC/ngcMtx.c"),
             Object(NonMatching, "NGC/ngcAudio.c"),

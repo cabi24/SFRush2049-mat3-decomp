@@ -406,7 +406,7 @@ void MySetCameraPos(float (*mtx)[3]);
 void MySetObjectPosition(float z);
 void NGCDC_SendBlit(void * tex, int nNumVertex, void * Vertices, unsigned int color);
 void NGCDC_SendBlit_MENU(void * tex, void * tex_a, int nNumVertex, void * Vertices, unsigned int color);
-void NGCDC_SendBlit_MENU_RGBA(int nNumVertex, void * Vertices, unsigned int color_1, unsigned int color_2, unsigned int color_3, unsigned int color_4);
+void NGCDC_SendBlit_MENU_RGBA(void *tex, void *tex_a, int nNumVertex, void *Vertices, unsigned int color_1, unsigned int color_2, unsigned int color_3, unsigned int color_4);
 void NGCResetPadStatus();
 void NGCRumblePad(unsigned int Controller, unsigned int power);
 void NGCSetFog(void * pInfo);
