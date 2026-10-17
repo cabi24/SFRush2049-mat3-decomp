@@ -19,6 +19,10 @@ static void initButtons(void);
 static void uninitButtons(void);
 static void updateButtons(void);
 
+static char *buttonNames[9] = {
+    "BUTTON_S3G1", "BUTTON_S1G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1", "ARROW_BGG1",
+    "ARROW_FGG1", "BAR_BGG1", "BAR_FGG1"
+};
 static const anon_texname_dulx_24 frontEndBlit[2] = {
     0, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animPanes, 0, (void *)0xffffffff, 0, 0, 0, 0, -1,
     -1, -1, -1, 0, 0, (void *)&animText, 0
@@ -26,10 +30,6 @@ static const anon_texname_dulx_24 frontEndBlit[2] = {
 static const anon_texname_dulx_24 pauseBlit[2] = {
     0, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animPanes, 0, (void *)0xffffffff, 0, 0, 0, 0, -1,
     -1, -1, -1, 0, 0, (void *)&animText, 0
-};
-static char *buttonNames[9] = {
-    "BUTTON_S3G1", "BUTTON_S1G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1", "ARROW_BGG1",
-    "ARROW_FGG1", "BAR_BGG1", "BAR_FGG1"
 };
 static anon_buttonType_objIdx_40 buttonInfo[12] = {
     { 0, -1, 0.0f, { 0 }, 0 },
@@ -321,19 +321,121 @@ static int animText(void)
     return 1;
 }
 
+/* Pass the flash colours by value; the copies are not named locals in the original DWARF. */
+static inline void flashText(anon_c_rgba_4 color1, anon_c_rgba_4 color2)
+{
+    TB_FlashTextColors(&color1, &color2);
+}
+
 /* 0x800648c0, size 0x610 */
 static void animButtonText(void)
 {
-    int i; /* r26 */
-    int j; /* r7 */
-    int x; /* r25 */
-    int y; /* r25 */
-    unsigned char *str; /* r26 */
-    unsigned char str1[40]; /* stack */
-    signed short screenPos[2]; /* stack */
-    signed short lines; /* r0 */
-    /* Separate inner-scope lines local will be recovered with this body. */
-    /* TODO: surviving original body has not been reconstructed. */
+    int i;
+    int j;
+    int x;
+    int y;
+    unsigned char *str;
+    unsigned char str1[40];
+    signed short screenPos[2];
+    HAL_SetTextDepth(0.0f);
+    TB_SetJust(0, 1);
+    HAL_SetFont(13);
+    TB_SetTextColor(1);
+    ZOID_ProjectWindow(0, buttonInfo[11].mat.mat3.pos, &gCamera[0].mat, 0, screenPos);
+    y = screenPos[1] / 2.0f;
+    str = gText.single[53];
+    TB_DrawText(TB_CenterText(str, screenPos[0] / 2), y, str);
+    HAL_SetFont(11);
+    for (i = 0; i < 4; i++) {
+        if (validOption(i)) {
+            if (buttonInfo[i].angle > 0.6981317f && buttonInfo[i].angle < 2.443461f) continue;
+            if (buttonInfo[i].angle > 0.34906584f && buttonInfo[i].angle < 2.7925267f)
+                HAL_SetTextTranslucency(128.0f);
+            else
+                HAL_SetTextTranslucency(-1.0f);
+            if (buttonInfo[i].angle < 1.5707964f) {
+                flashText(flashColors[0], flashColors[1]);
+                TB_SetTextColor(1);
+            } else {
+                flashText(flashColors[0], flashColors[1]);
+                TB_SetTextColor(22);
+            }
+            ZOID_ProjectWindow(0, buttonInfo[i].mat.mat3.pos, &gCamera[0].mat, 0, screenPos);
+            TB_DrawText(screenPos[0] / 2 - 55, (int)(screenPos[1] / 2.0f), gText.taba[gText.tab[42] + i]);
+            ZOID_ProjectWindow(0, buttonInfo[i+4].mat.mat3.pos, &gCamera[0].mat, 0, screenPos);
+            x = screenPos[0] / 2 - 35;
+            y = screenPos[1] / 2.0f;
+            switch (i) {
+            case 0:
+                TB_Sprintf(str1, "%s%d", gVertCenter > 0 ? "+" : "", gVertCenter);
+                TB_DrawText(x, y, str1);
+                break;
+            case 1:
+                TB_Sprintf(str1, "%s%d", gHorzCenter > 0 ? "+" : "", gHorzCenter);
+                TB_DrawText(x, y, str1);
+                break;
+            case 2:
+                j = osTvType == 1;
+                if (gConfirmFrequency == 1) j = 1;
+                TB_DrawText(x, y, gText.taba[gText.tab[43] + j]);
+                break;
+            }
+        }
+    }
+    TB_SetJust(1, 3);
+    HAL_SetTextTranslucency(-1.0f);
+    flashText(flashColors[0], flashColors[1]);
+    HAL_SetTextDepth(-1.0f);
+    if (gTestFrequency == 1) {
+        static signed short width = 160;
+        static signed short height = 1;
+        signed short lines;
+        HAL_SetFont(10);
+        if (!gTestPane) {
+            lines = TB_GetTextNumLines(width, gText.single[228]);
+            height = lines * TB_GetFontLineHeight();
+            gTestPane = InitPane(centeredLeft(width / 2) - 8, 52, 160 + width / 2 + 8, height + 60, 176, 0, 0, 0);
+        }
+        TB_DrawTextScrollBox(160, 56, width, height, -1, 0, gText.single[228]);
+    } else if (gTestPane) {
+        RemovePane(gTestPane);
+        gTestPane = 0;
+    }
+    if (gConfirmFrequency == 1) {
+        static signed short width = 160;
+        static signed short height = 1;
+        signed short lines;
+        HAL_SetFont(10);
+        if (!gConfirmPane) {
+            lines = TB_GetTextNumLines(width, gText.single[229]) + 1;
+            height = lines * TB_GetFontLineHeight();
+            gConfirmPane = InitPane(centeredLeft(width / 2) - 8, 52, 160 + width / 2 + 8, height + 60, 176, 0, 0, 0);
+        }
+        TB_DrawTextScrollBox(160, 56, width, height, -1, 0, gText.single[229]);
+        {
+            unsigned char *str;
+            j = height - TB_GetFontLineHeight() + 56;
+            x = 160 - width / 4;
+            str = gText.taba[gText.tab[25]];
+            TB_SetTextColor(gYesFrequency ? 22 : 1);
+            TB_DrawText(x, j, str);
+            x = 160 + width / 4;
+            str = gText.taba[gText.tab[25] + 1];
+            TB_SetTextColor(gYesFrequency ? 1 : 22);
+            TB_DrawText(x, j, str);
+        }
+    } else if (gConfirmPane) {
+        RemovePane(gConfirmPane);
+        gConfirmPane = 0;
+    }
+    TB_SetJust(0, 3);
+}
+
+/* Scale a 320x240 menu coordinate to the 640x480 frame buffer. */
+static inline int S2(int v)
+{
+    int r = v*2;
+    return r;
 }
 
 /* 0x80064ed0, size 0x29c */
@@ -341,22 +443,22 @@ static void drawColorBars(void)
 {
     int x;
     int i;
-    DC_SendFillRect(24*2, 140*2, 32*2, 160*2, 255, 255, 255, 255, 65500.0f);
-    x = 32;
+    for (x = 24; x < 32; x += 8)
+        DC_SendFillRect(S2(x), S2(140), S2(32), S2(160), 255, 255, 255, 255, 65500.0f);
     for (i = 0; i < 32; x += 8, i++)
-        DC_SendFillRect(x*2, 140*2, (x+8)*2, 160*2, i*8, i*8, i*8, 255, 65500.0f);
-    DC_SendFillRect(x*2, 140*2, (x+8)*2, 160*2, 0, 0, 0, 255, 65500.0f);
-    DC_SendFillRect(24*2, 160*2, 56*2, 180*2, 255, 255, 255, 255, 65500.0f);
-    DC_SendFillRect(24*2, 180*2, 56*2, 200*2, 0, 0, 0, 255, 65500.0f);
-    DC_SendFillRect(56*2, 160*2, 104*2, 200*2, 255, 0, 0, 255, 65500.0f);
-    DC_SendFillRect(104*2, 160*2, 136*2, 180*2, 255, 255, 255, 255, 65500.0f);
-    DC_SendFillRect(104*2, 180*2, 136*2, 200*2, 0, 0, 0, 255, 65500.0f);
-    DC_SendFillRect(136*2, 160*2, 184*2, 200*2, 0, 255, 0, 255, 65500.0f);
-    DC_SendFillRect(184*2, 160*2, 216*2, 180*2, 255, 255, 255, 255, 65500.0f);
-    DC_SendFillRect(184*2, 180*2, 216*2, 200*2, 0, 0, 0, 255, 65500.0f);
-    DC_SendFillRect(216*2, 160*2, 264*2, 200*2, 0, 0, 255, 255, 65500.0f);
-    DC_SendFillRect(264*2, 160*2, 296*2, 180*2, 255, 255, 255, 255, 65500.0f);
-    DC_SendFillRect(264*2, 180*2, 296*2, 200*2, 0, 0, 0, 255, 65500.0f);
+        DC_SendFillRect(S2(x), S2(140), S2(x+8), S2(160), i*8, i*8, i*8, 255, 65500.0f);
+    DC_SendFillRect(S2(x), S2(140), S2(x+8), S2(160), 0, 0, 0, 255, 65500.0f);
+    DC_SendFillRect(S2(24), S2(160), S2(56), S2(180), 255, 255, 255, 255, 65500.0f);
+    DC_SendFillRect(S2(24), S2(180), S2(56), S2(200), 0, 0, 0, 255, 65500.0f);
+    DC_SendFillRect(S2(56), S2(160), S2(104), S2(200), 255, 0, 0, 255, 65500.0f);
+    DC_SendFillRect(S2(104), S2(160), S2(136), S2(180), 255, 255, 255, 255, 65500.0f);
+    DC_SendFillRect(S2(104), S2(180), S2(136), S2(200), 0, 0, 0, 255, 65500.0f);
+    DC_SendFillRect(S2(136), S2(160), S2(184), S2(200), 0, 255, 0, 255, 65500.0f);
+    DC_SendFillRect(S2(184), S2(160), S2(216), S2(180), 255, 255, 255, 255, 65500.0f);
+    DC_SendFillRect(S2(184), S2(180), S2(216), S2(200), 0, 0, 0, 255, 65500.0f);
+    DC_SendFillRect(S2(216), S2(160), S2(264), S2(200), 0, 0, 255, 255, 65500.0f);
+    DC_SendFillRect(S2(264), S2(160), S2(296), S2(180), 255, 255, 255, 255, 65500.0f);
+    DC_SendFillRect(S2(264), S2(180), S2(296), S2(200), 0, 0, 0, 255, 65500.0f);
 }
 
 /* 0x8006516c, size 0x30 */
@@ -395,12 +497,10 @@ static void calcMenuRect(void)
             }
         }
     }
-    valueWidth += 10;
-    menuRect.w = optionWidth + valueWidth;
+    menuRect.w = optionWidth + valueWidth + 10;
     menuRect.h = menuSize * TB_GetFontLineHeight();
     menuRect.x = 160 - menuRect.w / 2;
-    optionWidth += 5;
-    menuRect.cx = menuRect.x + optionWidth;
+    menuRect.cx = menuRect.x + optionWidth + 5;
 }
 
 /* 0x80065338, size 0x2bc */

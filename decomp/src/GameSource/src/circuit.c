@@ -38,8 +38,8 @@ void ContinueCircuit(void)
     int b; /* r27 */
     int sortList[6]; /* stack */
     int numDrones; /* r22 */
-    int numCircuitTracks; /* r29 */
     anon_checksum_active_4c *circuit; /* r28 */
+    int numCircuitTracks; /* r29 */
     int orient; /* r6 */
     static int skills[6][12]={0,0,0,0,0,1,1,1,0,1,2,2,1,1,1,1,1,2,2,2,1,0,0,3,2,2,2,3,3,3,3,4,2,4,3,1,3,3,4,4,4,0,0,3,3,2,5,4,4,5,5,2,2,5,5,5,5,3,4,0,5,4,3,5,5,4,4,0,4,5,1,5};
 circuit=&(*(*gPlayers[gCircuitPlayer].save)->datah)->circuit;gCircuitSeed=circuit->seed;numCircuitTracks=gNumCircuitTracks[circuit->type];if(circuit->type==3)gCircuitSize=numCircuitTracks*4;else gCircuitSize=numCircuitTracks*2;gCircuitTrack=circuit->track<gCircuitSize-1?circuit->track:gCircuitSize-1;
@@ -52,7 +52,7 @@ for(i=0;i<12;i++){do{j=_CircuitRandom(11);}while(i==j);for(k=0;k<numDrones;k++){
 for(i=0;i<=gCircuitTrack;i++){
 if(circuit->type==3){gCircuitTracks[i].trackNum=_CircuitRandom(numCircuitTracks-1);gCircuitTracks[i].backward=_CircuitRandom(1);gCircuitTracks[i].mirror=_CircuitRandom(1);
 if(i){k=0;while((gCircuitTracks[i].trackNum==gCircuitTracks[i-1].trackNum&&k<numCircuitTracks)||gCircuitNumTrackRaces[gCircuitTracks[i].trackNum]==4){gCircuitTracks[i].trackNum++;if(gCircuitTracks[i].trackNum>=numCircuitTracks)gCircuitTracks[i].trackNum=0;k++;}
-do{for(j=0;j<i;j++)if(gCircuitTracks[i].trackNum==gCircuitTracks[j].trackNum&&gCircuitTracks[i].backward==gCircuitTracks[j].backward&&gCircuitTracks[i].mirror==gCircuitTracks[j].mirror){orient=(gCircuitTracks[i].backward|(gCircuitTracks[i].mirror<<1))+1;orient%=4;gCircuitTracks[i].backward=orient&1;gCircuitTracks[i].mirror=(orient>>1)&1;break;}}while(j!=i);}
+do{for(j=0;j<i;j++)if(gCircuitTracks[i].trackNum==gCircuitTracks[j].trackNum&&gCircuitTracks[i].backward==gCircuitTracks[j].backward&&gCircuitTracks[i].mirror==gCircuitTracks[j].mirror){orient=gCircuitTracks[i].mirror;orient<<=1;orient|=gCircuitTracks[i].backward;orient++;orient%=4;gCircuitTracks[i].backward=orient&1;gCircuitTracks[i].mirror=(orient>>1)&1;break;}}while(j!=i);}
 gCircuitNumTrackRaces[gCircuitTracks[i].trackNum]++;}else{gCircuitTracks[i].trackNum=i%numCircuitTracks;gCircuitTracks[i].backward=i>=numCircuitTracks;}
 n=_CircuitRandom(gCircuitFog[circuit->type]);gCircuitTracks[i].fog=n<4?0:n<7?1:n<9?2:3;gCircuitTracks[i].wind=_CircuitRandom(gCircuitWind[circuit->type]);}
 n=6-(gNumPlayers==1?0:2);

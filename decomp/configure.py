@@ -392,7 +392,7 @@ config.libs = [
             Object(Matching, "GameSource/src/zoidtexture.c"),
             Object(Matching, "GameSource/src/zoidwindow.c"),
             Object(Matching, "GameSource/src/stats.c"),
-            Object(NonMatching, "GameSource/src/videoscr.c"),
+            Object(Matching, "GameSource/src/videoscr.c"),
             Object(Matching, "GameSource/src/audioscr.c"),
             Object(Matching, "GameSource/src/cheatscr.c"),
             Object(Matching, "GameSource/src/circuitscr.c"),
