@@ -4,8 +4,8 @@ Last session: 2026-10-17 (Claude Code, sprint review + continuation). Read this 
 
 ## Where things stand
 
-- **Status (2026-10-17):** 1,840 / 1,844 functions, 710,652 / 715,968 code bytes (99.26%),
-  **145 / 148 files** linked from C. The GC/2.7 relink passes `decomp/tools/verify_link.py`
+- **Status (2026-10-17):** 1,841 / 1,844 functions, 713,440 / 715,968 code bytes (99.65%),
+  **146 / 148 files** linked from C. The GC/2.7 relink passes `decomp/tools/verify_link.py`
   (only the 5 recorded `.dtors`/copy-table bytes differ; built DOL SHA-256
   `eae81eee681311baaa8c2dfe1c262d2d8b8a6c44d471ef8d6929a67818485fd5`) on every commit.
 - **Branch:** `main` == `ngcblit-match` on <https://github.com/cabi24/SFRush2049-mat3-decomp>
@@ -15,8 +15,9 @@ Last session: 2026-10-17 (Claude Code, sprint review + continuation). Read this 
   smoke, hud, targets and stree, and added one `block_relocations` entry to
   `config/2049LE/config.yml` (commit `9957440`: a Bink LogoData word that dtk read as a pointer
   into `CylinderInSurf`, which had forced the static global and renamed it).
-- **Not matched (4 functions, 3 NonMatching units):** `GetCarsIRColor` (visuals, 55/179 words),
-  `ContinueCircuit` (circuit, 114/697), `Blits` and `Blits_First` (ngcZoid, 16 bytes short each).
+- **Not matched (3 functions, 2 NonMatching units):** `GetCarsIRColor` (visuals, 55/179 words),
+  `Blits` and `Blits_First` (ngcZoid, 20/219 and 76/234 words at the exact size). `ContinueCircuit`
+  matched 2026-10-17 (writeup: pointer locals naming hoisted `&a[i].field` addresses).
   All register-allocation / codegen-shape residue; see "Open work".
 - **Repo layout on this PC:** `C:\rush2049-mat3` *is* the git checkout (source-only). Originals
   (`Rush2049.iso`, `DATA.GDF`, `rush_d.elf`, `rush_d_*.csv`, `rush_d_dwarf.c`), compilers,
@@ -58,12 +59,7 @@ that is expected. `verify_link.py` is the real gate.
    `a // r0`, `b // r6`, `hobj // r11` as surviving locals; `a = gTrackNum;` used across blocks
    reproduces `a r0` with no code change, `b`/`hobj` not yet. Untried: a dead second assignment to
    `b`/`hobj` after the early-return branch; signed-shift spelling on the other three indices.
-1. **`GameSource/src/circuit` — `ContinueCircuit` 108/697** (5/6). Plain one-function form with
-   the three loop counters as a scalarised `int c[3]` (DWARF local list now identical to the
-   original); `&gCircuitCars` reaches r30 only when two of its neighbours are temporary-like, which
-   colours the counters too high (target r21). ~3,800 variants
-   (`C:\rush2049-mat3-review\work\circuit-rev{,2}\NOTES.md`); the address-taken-through-inline idea is refuted.
-2. **`NGC/ngcZoid` — `Blits`/`Blits_First`** (17/19). The target's `mr r6,rX / add r6,rY,r6` inside
+1. **`NGC/ngcZoid` — `Blits`/`Blits_First`** (17/19). The target's `mr r6,rX / add r6,rY,r6` inside
    the branchless BlitDraw arms is a phi-copy shape; CodeWarrior places phi copies at the
    definitions and never sinks them, every other integer copy is removed before codegen, and no
    compiler 1.0–2.7 produces it. **Found 2026-10-17:** a select whose alternative is an IR-distinct
@@ -74,11 +70,11 @@ that is expected. `verify_link.py` is the real gate.
    (`C:\rush2049-mat3-review\work\ngcZoid-rev2\NOTES.md`) rule out guard spellings, in-place adds, inline wrappers
    and evaluation order. The original IR must hold one more front-end temporary per arm that dies
    with the deleted branch.
-3. **Tooling:** run `tools/datacheck.py <unit>` (per-unit data-byte check incl. `.sdata2` literal
+2. **Tooling:** run `tools/datacheck.py <unit>` (per-unit data-byte check incl. `.sdata2` literal
    order) before `mark.py` in the per-file workflow; the `skel.py` gaps below still stand.
-4. **Linker:** only GC 2.7 completes a full link, hence the 5-byte `.dtors` difference; pre-2.7
+3. **Linker:** only GC 2.7 completes a full link, hence the 5-byte `.dtors` difference; pre-2.7
    linkers hang (writeup "Status" section). Research-grade.
-5. **`skel.py` gaps** (each cost a round-trip): (a) nested-block locals flattened into duplicate
+4. **`skel.py` gaps** (each cost a round-trip): (a) nested-block locals flattened into duplicate
    declarations, (b) DWARF definitions with fewer parameters than the header prototype
    (`DC_SendFillRect`), (c) a `static` function whose name is a global array in the shared header
    (`Blits`), (d) function-local statics omitted entirely, (e) the DWARF signature used even when
