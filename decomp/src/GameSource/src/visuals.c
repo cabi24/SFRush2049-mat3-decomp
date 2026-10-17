@@ -326,108 +326,6 @@ void SetSheen(signed short slot, signed short player, signed short sheenIdx)
     }
 }
 
-char *Car1BaseTextureNames[29] = {
-    "C1_BK_ROOF", "C1_BKWS1", "C1_BKWS2", "C1_BKWS", "C1_CONESDE", "C1_CONETOP", "C1_DKRAS",
-    "C1_ENDCAP", "C1_FEND", "C1_FTSCOOP", "C1_FTWIND", "C1_INTAKE", "C1_LOWSDE", "C1_LOWTOP",
-    "C1_MIRROR", "C1_SCPSD", "C1_SM_SDE", "C1_SPSDE", "C1_TAIL02", "C1_TAILBK", "C1_TLGHT",
-    "C1_TOP01", "C1_TOP02", "C1_TOP04", "C1_TOP05", "C1_TSTRAS", "C1_UNDR", "C1_WINSD1",
-    "C1_WINSDE"
-};
-char *Car2BaseTextureNames[24] = {
-    "C12_BKTP1", "C12_BKTP1A", "C12_BKTP1B", "C12_BKTP1C", "C12_SCOOP", "C12_SDE01", "C12_SDE02",
-    "C12_SDE03", "C12_SDE04", "C12_SDE05", "C12_SDE06", "C12_SDE07", "C12_SDE08", "C12_TLGHT1",
-    "C12_TLGHT2", "C12_TLGHT3", "C12_TLGHT4", "C12_TPHD1", "C12_WIN1", "C12_WIN1D", "C_12LOWB",
-    "C_12LOWFNT", "C_12LOWSIDE", "C_12LOWTOP"
-};
-char *Car3BaseTextureNames[10] = {
-    "C3_LOWNOSE2", "C3_LOWNOSE", "C3_LOWSIDE", "C3_LOWTOP", "C3_SDE01", "C3_SDE02", "C3_TAILCNR",
-    "C3_TPBDY1", "C3_TPBDY2", "C3_TPBDY3"
-};
-char *Car4BaseTextureNames[23] = {
-    "C4_BF1", "C4_BP", "C4_BW1", "C4_ENGINE", "C4_LOWBACK", "C4_LOWSDE", "C4_LOWTOP", "C4_NOSE01",
-    "C4_NOSE02", "C4_PANEL01", "C4_PANEL02", "C4_ROOF01", "C4_SIDE01", "C4_SIDE02", "C4_SIDE03",
-    "C4_SIDE05", "C4_SIDE06", "C4_SIDE07", "C4_TAIL", "C4_VENT", "C4_WR1", "C4_WS1", "C4_WS2"
-};
-char *Car5BaseTextureNames[26] = {
-    "C5_HOOD01", "C5_HOOD02", "C5_HOOD03", "C5_HOOD04", "C5_LOWBACK", "C5_LOWSIDE", "C5_LOWTOP",
-    "C5_NOSE01", "C5_SIDE01", "C5_SIDE02", "C5_SIDE03", "C5_SIDE04", "C5_SIDE05", "C5_SIDE06",
-    "C5_SIDE07", "C5_SIDE08", "C5_SPS", "C5_TE1", "C5_TE2", "C5_TE3", "C5_TE4", "C5_TOP01",
-    "C5_TOP02", "C5_TOP03", "C5_TOP04", "C5_VENT01"
-};
-char *Car6BaseTextureNames[20] = {
-    "C6_BACKWIN", "C6_FRONT01", "C6_FRONT02", "C6_FRONTW", "C6_HOOD01", "C6_HOOD02", "C6_LOWBACK",
-    "C6_LOWF", "C6_LOWSIDE", "C6_LOWTOP", "C6_ROOF", "C6_SIDE02", "C6_SIDE03", "C6_SIDE04",
-    "C6_SIDE05", "C6_SIDE06", "C6_SIDE08", "C6_TAIL01", "C6_TAIL02", "C6_TRUNK"
-};
-char *Car7BaseTextureNames[23] = {
-    "C7_B1", "C7_B2", "C7_F", "C7_LOWB", "C7_LOWF", "C7_LOWS", "C7_LOWT", "C7_S1", "C7_S2",
-    "C7_S3", "C7_S4", "C7_S5", "C7_S6", "C7_S7", "C7_S8", "C7_T1", "C7_T2", "C7_T3", "C7_T4",
-    "C7_T5", "C7_T6", "C7_T7", "C7_T8"
-};
-char *Car8BaseTextureNames[23] = {
-    "C8_B1", "C8_B2", "C8_B3", "C8_B4", "C8_LOWB", "C8_LOWF", "C8_LOWS", "C8_LOWT", "C8_S1",
-    "C8_S2", "C8_S3", "C8_S4", "C8_S5", "C8_S6", "C8_S7", "C8_S8", "C8_T1", "C8_T2", "C8_T3",
-    "C8_T4", "C8_T5", "C8_T6", "C8_W"
-};
-
-static const char *const Car9BaseTextureNames[22] = {
-    "C9_B1", "C9_B2", "C9_B3", "C9_F1", "C9_F2", "C9_F3", "C9_LOWB", "C9_LOWF", "C9_LOWS",
-    "C9_LOWT", "C9_ROOF", "C9_S10", "C9_S11", "C9_S1", "C9_S2", "C9_S3", "C9_S4", "C9_S5", "C9_S6",
-    "C9_S7", "C9_S8", "C9_S9"
-};
-static const char *const Car10BaseTextureNames[21] = {
-    "C10_B1", "C10_B2", "C10_B3", "C10_B4", "C10_FRONT", "C10_HOOD", "C10_LOWB", "C10_LOWF",
-    "C10_LOWS", "C10_LOWT", "C10_LOWW", "C10_SIDE", "C10_T1", "C10_T2", "C10_T3", "C10_T4",
-    "C10_T5", "C10_T6", "C10_W", "C10_WIN", "C10_WING"
-};
-static const char *const Car11BaseTextureNames[14] = {
-    "C11_2049", "C11_BACK", "C11_FRONT", "C11_GRILL", "C11_HOOD", "C11_LOW2", "C11_LOW3",
-    "C11_LOW4", "C11_LOW5", "C11_LOW", "C11_ROOF", "C11_SIDE01", "C11_SIDE02", "C11_TAIL"
-};
-static const char *const Car12BaseTextureNames[6] = { "C12A_LOWB", "C12A_LOWF", "C12A_LOWS", "C12A_LOWT", "C12A_SIDE", "C12A_TOP" };
-static char *Car13BaseTextureNames[6] = { "C13_BACK", "C13_LOW", "C13_LOWF", "C13_LOWT", "C13_SIDE", "C13_TOP" };
-static const char *const Car1TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_TEL", "_ORG", "_CHR", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car2TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORG", "_TEL", "_PNK", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car3TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_SGN", "_CYA", "_ORA", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car4TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_PLC", "_CYN", "_BLK", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car5TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_TEA", "_GOL", "_PNK", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car6TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_GRY", "_BWN", "_TBL", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car7TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ROY", "_ORA", "_SIL", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car8TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_CYA", "_ORA", "_PIN", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car9TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_LIM", "_ORA", "_PIN", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car10TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORA", "_LIM", "_BLK", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car11TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORA", "_CAM", "_WHT", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car12TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORA", "_TEA", "_SLV", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-static const char *const Car13TextureExt[12] = {
-    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORA", "_WHT", "_YER", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-
-
-
 /* 0x8005447c, size 0xa0 */
 void SetFrameColor(signed short slot, anon_c_rgba_4 *col)
 {
@@ -533,6 +431,108 @@ extra_done:
     SetFrameColor(slot, &Track1Colors[0]);
     if (idx == 3 && car->extraparts[0]) ZOID_SetColor(car->extraparts[0], &Track1Colors[0]);
 }
+
+char *Car1BaseTextureNames[29] = {
+    "C1_BK_ROOF", "C1_BKWS1", "C1_BKWS2", "C1_BKWS", "C1_CONESDE", "C1_CONETOP", "C1_DKRAS",
+    "C1_ENDCAP", "C1_FEND", "C1_FTSCOOP", "C1_FTWIND", "C1_INTAKE", "C1_LOWSDE", "C1_LOWTOP",
+    "C1_MIRROR", "C1_SCPSD", "C1_SM_SDE", "C1_SPSDE", "C1_TAIL02", "C1_TAILBK", "C1_TLGHT",
+    "C1_TOP01", "C1_TOP02", "C1_TOP04", "C1_TOP05", "C1_TSTRAS", "C1_UNDR", "C1_WINSD1",
+    "C1_WINSDE"
+};
+char *Car2BaseTextureNames[24] = {
+    "C12_BKTP1", "C12_BKTP1A", "C12_BKTP1B", "C12_BKTP1C", "C12_SCOOP", "C12_SDE01", "C12_SDE02",
+    "C12_SDE03", "C12_SDE04", "C12_SDE05", "C12_SDE06", "C12_SDE07", "C12_SDE08", "C12_TLGHT1",
+    "C12_TLGHT2", "C12_TLGHT3", "C12_TLGHT4", "C12_TPHD1", "C12_WIN1", "C12_WIN1D", "C_12LOWB",
+    "C_12LOWFNT", "C_12LOWSIDE", "C_12LOWTOP"
+};
+char *Car3BaseTextureNames[10] = {
+    "C3_LOWNOSE2", "C3_LOWNOSE", "C3_LOWSIDE", "C3_LOWTOP", "C3_SDE01", "C3_SDE02", "C3_TAILCNR",
+    "C3_TPBDY1", "C3_TPBDY2", "C3_TPBDY3"
+};
+char *Car4BaseTextureNames[23] = {
+    "C4_BF1", "C4_BP", "C4_BW1", "C4_ENGINE", "C4_LOWBACK", "C4_LOWSDE", "C4_LOWTOP", "C4_NOSE01",
+    "C4_NOSE02", "C4_PANEL01", "C4_PANEL02", "C4_ROOF01", "C4_SIDE01", "C4_SIDE02", "C4_SIDE03",
+    "C4_SIDE05", "C4_SIDE06", "C4_SIDE07", "C4_TAIL", "C4_VENT", "C4_WR1", "C4_WS1", "C4_WS2"
+};
+char *Car5BaseTextureNames[26] = {
+    "C5_HOOD01", "C5_HOOD02", "C5_HOOD03", "C5_HOOD04", "C5_LOWBACK", "C5_LOWSIDE", "C5_LOWTOP",
+    "C5_NOSE01", "C5_SIDE01", "C5_SIDE02", "C5_SIDE03", "C5_SIDE04", "C5_SIDE05", "C5_SIDE06",
+    "C5_SIDE07", "C5_SIDE08", "C5_SPS", "C5_TE1", "C5_TE2", "C5_TE3", "C5_TE4", "C5_TOP01",
+    "C5_TOP02", "C5_TOP03", "C5_TOP04", "C5_VENT01"
+};
+char *Car6BaseTextureNames[20] = {
+    "C6_BACKWIN", "C6_FRONT01", "C6_FRONT02", "C6_FRONTW", "C6_HOOD01", "C6_HOOD02", "C6_LOWBACK",
+    "C6_LOWF", "C6_LOWSIDE", "C6_LOWTOP", "C6_ROOF", "C6_SIDE02", "C6_SIDE03", "C6_SIDE04",
+    "C6_SIDE05", "C6_SIDE06", "C6_SIDE08", "C6_TAIL01", "C6_TAIL02", "C6_TRUNK"
+};
+char *Car7BaseTextureNames[23] = {
+    "C7_B1", "C7_B2", "C7_F", "C7_LOWB", "C7_LOWF", "C7_LOWS", "C7_LOWT", "C7_S1", "C7_S2",
+    "C7_S3", "C7_S4", "C7_S5", "C7_S6", "C7_S7", "C7_S8", "C7_T1", "C7_T2", "C7_T3", "C7_T4",
+    "C7_T5", "C7_T6", "C7_T7", "C7_T8"
+};
+char *Car8BaseTextureNames[23] = {
+    "C8_B1", "C8_B2", "C8_B3", "C8_B4", "C8_LOWB", "C8_LOWF", "C8_LOWS", "C8_LOWT", "C8_S1",
+    "C8_S2", "C8_S3", "C8_S4", "C8_S5", "C8_S6", "C8_S7", "C8_S8", "C8_T1", "C8_T2", "C8_T3",
+    "C8_T4", "C8_T5", "C8_T6", "C8_W"
+};
+
+static const char *const Car9BaseTextureNames[22] = {
+    "C9_B1", "C9_B2", "C9_B3", "C9_F1", "C9_F2", "C9_F3", "C9_LOWB", "C9_LOWF", "C9_LOWS",
+    "C9_LOWT", "C9_ROOF", "C9_S10", "C9_S11", "C9_S1", "C9_S2", "C9_S3", "C9_S4", "C9_S5", "C9_S6",
+    "C9_S7", "C9_S8", "C9_S9"
+};
+static const char *const Car10BaseTextureNames[21] = {
+    "C10_B1", "C10_B2", "C10_B3", "C10_B4", "C10_FRONT", "C10_HOOD", "C10_LOWB", "C10_LOWF",
+    "C10_LOWS", "C10_LOWT", "C10_LOWW", "C10_SIDE", "C10_T1", "C10_T2", "C10_T3", "C10_T4",
+    "C10_T5", "C10_T6", "C10_W", "C10_WIN", "C10_WING"
+};
+static const char *const Car11BaseTextureNames[14] = {
+    "C11_2049", "C11_BACK", "C11_FRONT", "C11_GRILL", "C11_HOOD", "C11_LOW2", "C11_LOW3",
+    "C11_LOW4", "C11_LOW5", "C11_LOW", "C11_ROOF", "C11_SIDE01", "C11_SIDE02", "C11_TAIL"
+};
+static const char *const Car12BaseTextureNames[6] = { "C12A_LOWB", "C12A_LOWF", "C12A_LOWS", "C12A_LOWT", "C12A_SIDE", "C12A_TOP" };
+static char *Car13BaseTextureNames[6] = { "C13_BACK", "C13_LOW", "C13_LOWF", "C13_LOWT", "C13_SIDE", "C13_TOP" };
+static const char *const Car1TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_TEL", "_ORG", "_CHR", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car2TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORG", "_TEL", "_PNK", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car3TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_SGN", "_CYA", "_ORA", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car4TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_PLC", "_CYN", "_BLK", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car5TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_TEA", "_GOL", "_PNK", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car6TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_GRY", "_BWN", "_TBL", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car7TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ROY", "_ORA", "_SIL", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car8TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_CYA", "_ORA", "_PIN", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car9TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_LIM", "_ORA", "_PIN", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car10TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORA", "_LIM", "_BLK", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car11TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORA", "_CAM", "_WHT", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car12TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORA", "_TEA", "_SLV", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+static const char *const Car13TextureExt[12] = {
+    "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORA", "_WHT", "_YER", "_PUR", "_PUR", "_PUR", "_PUR"
+};
+
+
 
 /* 0x80054cec, size 0x1e8 */
 void SetupCarColor(signed short slot, signed short car, unsigned char PaintJob)
