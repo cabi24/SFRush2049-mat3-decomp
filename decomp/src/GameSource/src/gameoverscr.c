@@ -1,6 +1,9 @@
 /* gameoverscr.c - post-race menu and score screens. In progress, NonMatching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\gameoverscr.c */
+#define DC_SendFillRect hidden_DC_SendFillRect
 #include "rush/rush_protos.h"
+#undef DC_SendFillRect
+void DC_SendFillRect(float z, int ulx, int uly, int lrx, int lry, int red, int green, int blue, int alpha);
 
 #define ABS_VALUE(value) ((value) >= 0 ? (value) : -(value))
 
@@ -791,6 +794,6 @@ static int animText(void)
 
 static void drawRect(int x, int y, int w, int h, unsigned char *color)
 {
-    DC_SendFillRect(x * 2, (int)(2.0f * y), (x + w) * 2, (int)(2.0f * (y + h)),
-                    color[0], color[1], color[2], color[3], 65400.0f);
+    DC_SendFillRect(65400.0f, x * 2, (int)(2.0f * y), (x + w) * 2, (int)(2.0f * (y + h)),
+                    color[0], color[1], color[2], color[3]);
 }

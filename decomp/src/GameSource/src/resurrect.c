@@ -578,3 +578,296 @@ void SetResurrectionData(signed short mode,tModelData *m,int abort)
         break;
     }
 }
+
+extern signed short gNumPlayers;
+extern float Random(float max);
+extern int FindResPt(int inPath, int inIdx, int *outPath, int *outIdx, int honorAltRes);
+
+#pragma force_active on
+static void FindHumanResPt(tModelData *m, int *outPath, int *outIdx)
+{
+    int a;
+    int p;
+    int path = -1;
+    int idx = 0;
+    float min = 1.0e20f;
+    float x, y, z;
+    float dx, dy, dz, dist;
+    if (gRace == kBattle) {
+        float min2 = 0.0f;
+        int bestfit = 0;
+        int pOffset = Random(gResPath.numPts);
+        int pReal;
+        for (p = 0; p < gResPath.numPts; p++) {
+            min = 1.0e20f;
+            pReal = pOffset + p;
+            if (pReal >= gResPath.numPts) pReal -= gResPath.numPts;
+            for (a = 0; a < gNumPlayers; a++) {
+                if (m->slot == a) continue;
+                if (model[a].resurrect.moving_state >= 0) {
+                    x = model[a].resurrect.pos[0];
+                    z = model[a].resurrect.pos[2];
+                } else {
+                    x = model[a].rwr[0];
+                    z = model[a].rwr[2];
+                }
+                dx = gResPath.pts[pReal][0] - x;
+                dz = gResPath.pts[pReal][2] - z;
+                dist = dx * dx + dz * dz;
+                if (dist < min) min = dist;
+            }
+            if (min > min2) {
+                bestfit = pReal;
+                min2 = min;
+            }
+        }
+        idx = bestfit;
+    } else if (gRace == kObstacle) {
+        idx = m->obResPt;
+    } else {
+        x = m->resurrect.save_pos[0];
+        y = m->resurrect.save_pos[1];
+        z = m->resurrect.save_pos[2];
+        for (p = 0; p < gResPath.numPts; p++) {
+            dx = gResPath.pts[p][0] - x;
+            dy = gResPath.pts[p][1] - y;
+            dz = gResPath.pts[p][2] - z;
+            dist = dx * dx + dy * dy + dz * dz;
+            if (dist < min) { min = dist; idx = p; }
+        }
+        if ((unsigned int)(gRace - kStunt) > 1) {
+            if (min > 1600.0f) {
+                for (a = 0; a < gResPath.numAlt; a++) {
+                    if ((gResPath.alt[a].resurrect == 0 && gRace == kPractice) ||
+                        (gResPath.alt[a].resurrect == 2 && gRace != kPractice)) continue;
+                    for (p = 0; p < gResPath.alt[a].numPts; p++) {
+                        dx = gResPath.alt[a].pts[p][0] - x;
+                        dy = gResPath.alt[a].pts[p][1] - y;
+                        dz = gResPath.alt[a].pts[p][2] - z;
+                        dist = dx * dx + dy * dy + dz * dz;
+                        if (dist < min) { min = dist; idx = p; path = a; }
+                    }
+                }
+            }
+            if (path >= 0 && gResPath.alt[path].resurrect == 0)
+                FindResPt(path,idx,&path,&idx,1);
+            if (!(path >= 0 && gResPath.alt[path].resurrect == 2)) {
+                if (path >= 0) {
+                    a = path + 5;
+                    if (gCheckpoints.points[m->last_cp_index].pathPts[a] >= 0) {
+                        if (gCheckpoints.points[m->next_cp_index].pathPts[a] >= 0) {
+                            if (idx < gCheckpoints.points[m->last_cp_index].pathPts[a] ||
+                                idx > gCheckpoints.points[m->next_cp_index].pathPts[a]) {
+                                min = 1.0e20f;
+                                for (p = gCheckpoints.points[m->last_cp_index].pathPts[a];
+                                     p <= gCheckpoints.points[m->next_cp_index].pathPts[a];p++) {
+                                    dx = gResPath.alt[path].pts[p][0] - x;
+                                    dy = gResPath.alt[path].pts[p][1] - y;
+                                    dz = gResPath.alt[path].pts[p][2] - z;
+                                    dist = dx * dx + dy * dy + dz * dz;
+                                    if (dist < min) { min = dist; idx = p; }
+                                }
+                            }
+                        } else if (idx < gCheckpoints.points[m->last_cp_index].pathPts[a]) {
+                            idx = gCheckpoints.points[m->last_cp_index].pathPts[a];
+                        }
+                    } else if (gCheckpoints.points[m->next_cp_index].pathPts[a] < 0 &&
+                               m->last_cp_index != gResPath.alt[path].startSection) {
+                        path = -1;
+                        idx = -1;
+                    }
+                }
+                if (path < 0) {
+                    a = m->next_cp_index < m->last_cp_index ? gResPath.numPts :
+                        gCheckpoints.points[m->next_cp_index].pathPts[0];
+                    if (idx < gCheckpoints.points[m->last_cp_index].pathPts[0] || idx >= a) {
+                        min = 1.0e20f;
+                        for (p = gCheckpoints.points[m->last_cp_index].pathPts[0];p < a;p++) {
+                            dx = gResPath.pts[p][0] - x;
+                            dy = gResPath.pts[p][1] - y;
+                            dz = gResPath.pts[p][2] - z;
+                            dist = dx * dx + dy * dy + dz * dz;
+                            if (dist < min) { min = dist; idx = p; }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    *outPath = path;
+    *outIdx = idx;
+}
+#pragma force_active reset
+
+extern signed char gResurrectInPlace;
+extern signed short gNumLaps;
+extern signed short FindClosestPathPt(signed short *pos, signed short path);
+extern int NumPtsToCheckpoint(int res,int inPath,int inIdx,int cp);
+extern void TracePathPtForward(int res,int inPath,int inIdx,int numPts,int *outPath,int *outIdx);
+extern int CountdownTimeOut(void);
+extern void PassedCP(tModelData *m,float time);
+
+static float res_last_time[4] = {0.0f,0.0f,0.0f,0.0f};
+static const float pole_pos_offset[12][3] = {
+    {0,0,0},{17,0,0},{-8.5f,0,-20},{8.5f,0,-20},{0,0,-40},{17,0,-40},
+    {-3.4f,0,0},{3.4f,0,0},{-23.8f,0,0},{-17,0,0},{-10.2f,0,0},{10.2f,0,0}
+};
+
+void Resurrect(tModelData *m)
+{
+    int inPlace;
+    signed short node = m->slot;
+    int i;
+    int startPath,endPath,startIdx,endIdx;
+    int jumpPts,numPts;
+    float time_scale,crash_time;
+    tCarData *gc = &gGameCar[node];
+    int human;
+    if (gDeathMode && m->resurrect.crash_time != 0.0f && !m->resurrect.autoAbort) return;
+    m->resurrect.autoAbort = 0;
+    human = gLink[node].owner == 6;
+    if (human && m->fastin.modelTime < res_last_time[m->slot]) res_last_time[m->slot] = 0.0f;
+    inPlace = 0;
+    if (human && !m->resurrect.waterAbort && gResurrectInPlace &&
+        2.0f + res_last_time[m->slot] < m->fastin.modelTime && !gDeathMode) {
+        inPlace = 1;
+        res_last_time[m->slot] = m->fastin.modelTime;
+    }
+    m->resurrect.waterAbort = 0;
+    if (m->resurrect.crash_time == 0.0f) {
+        m->initin.pos[0] = m->resurrect.save_pos[0];
+        m->initin.pos[1] = m->resurrect.save_pos[1];
+        m->initin.pos[2] = m->resurrect.save_pos[2];
+        CopyUV(m->resurrect.uvs,m->initin.uvs);
+        if ((unsigned int)(gRace-kStunt) <= 2 || m->initin.polepos >= 6) {
+            m->initin.offset[0] = 0.0f;
+            m->initin.offset[1] = 0.0f;
+            m->initin.offset[2] = 0.0f;
+        } else {
+            m->initin.offset[0] = pole_pos_offset[m->initin.polepos][0];
+            m->initin.offset[1] = pole_pos_offset[m->initin.polepos][1];
+            m->initin.offset[2] = pole_pos_offset[m->initin.polepos][2];
+        }
+        m->resurrect.moving_state = -1;
+        syminit(m);
+        if (gGameState & 8) {
+            m->resurrect.velocity = (1.4666667f * gDronePaths[gc->mpctl.path].pts[gCheckpoints.points[m->last_cp_index].pathPts[gc->mpctl.path+1]].mph) / 2.0f;
+            m->v[2] = m->resurrect.velocity;
+            for (i = 0;i < 4;i++) {
+                m->tireV[i][2] = m->resurrect.velocity;
+                m->tires[i].angvel = m->tireV[i][2] / m->tires[i].tradius;
+            }
+        }
+        multigo(node);
+        return;
+    }
+    if (inPlace) {
+        m->resurrect.pos[0] = m->rwr[0];
+        m->resurrect.pos[1] = m->rwr[1];
+        m->resurrect.pos[2] = m->rwr[2];
+        m->resurrect.velocity = 0;
+        if (!FindSurfaceUvsInPlace(m->resurrect.pos,m->reckon.uvs,m->resurrect.uvs)) {
+            m->resurrect.pos[1] += 10.0f;
+            m->appearance &= ~0x10;
+            m->crashflag = 0;
+            goto finish;
+        }
+    }
+    time_scale = gc->solid ? 1.1f : 0.8f;
+    gc->collidable = m->collidable = 0;
+    gc->solid = m->solid = 0;
+    gc->collide_time = m->fastin.modelTime;
+    gc->collide_count = gc->collide_state = -1;
+    m->hide_car = 1;
+    if (human) {
+        FindHumanResPt(m,&startPath,&startIdx);
+        if (startPath >= 0 && gResPath.alt[startPath].resurrect == 2) {
+            m->resurrect.pos[0] = gResPath.alt[startPath].pts[startIdx][0];
+            m->resurrect.pos[1] = 3.0f + gResPath.alt[startPath].pts[startIdx][1];
+            m->resurrect.pos[2] = gResPath.alt[startPath].pts[startIdx][2];
+            m->resurrect.velocity = 0;
+            FindSurfaceUvsFromResPoint(1,startPath,startIdx,m->resurrect.uvs);
+            m->appearance &= ~0x10;
+            m->crashflag = 0;
+            goto finish;
+        }
+    } else FindDroneResPt(m,&startPath,&startIdx);
+    m->resurrect.resurrect_time = m->fastin.modelTime;
+    if (gRace == kObstacle || (unsigned int)gRace <= 1 || gRace == kCircuit || gRace == kGhost)
+        resurrectTime = 0.01f;
+    else resurrectTime = 1.5f;
+    crash_time = resurrectTime + (m->resurrect.resurrect_time - m->resurrect.crash_time);
+    if (gRace == kPractice || (unsigned int)(gRace-kStunt) <= 2 || gResurrectInPlace) {
+        m->resurrect.velocity = 0;
+    } else if (m->resurrect.velocity < 0) {
+        m->resurrect.velocity = 1;
+    } else if (human) {
+        i = FindClosestPathPt(startPath >= 0 ? gResPath.alt[startPath].pts[startIdx] : gResPath.pts[startIdx],0);
+        m->resurrect.velocity = 1.4666667f * gDronePaths[0].pts[i].mph;
+    } else {
+        m->resurrect.velocity = 1.4666667f * gDronePaths[startPath].pts[startIdx].mph;
+    }
+    if (m->resurrect.velocity > 146.66667f) m->resurrect.velocity = 146.66667f;
+    jumpPts = crash_time * (m->resurrect.velocity * time_scale) / 20.0f;
+    if (m->next_cp_index == gCheckpoints.finishPt && m->laps == gNumLaps - 1 &&
+        gRace != kPractice && gRace != kStunt && gRace != kBattle && gRace != kObstacle) {
+        numPts = NumPtsToCheckpoint(human,startPath,startIdx,m->next_cp_index) / 2;
+        if (jumpPts > numPts) jumpPts = numPts;
+    }
+    TracePathPtForward(human,startPath,startIdx,jumpPts,&endPath,&endIdx);
+    if (endPath >= 0) {
+        if (human) {
+            m->resurrect.pos[0] = gResPath.alt[endPath].pts[endIdx][0];
+            m->resurrect.pos[1] = 3.0f + gResPath.alt[endPath].pts[endIdx][1];
+            m->resurrect.pos[2] = gResPath.alt[endPath].pts[endIdx][2];
+            if (gRace != kPractice && gRace != kBattle && gRace != kStunt &&
+                gCheckpoints.points[m->next_cp_index].pathPts[endPath+5] >= 0 &&
+                gCheckpoints.points[m->next_cp_index].pathPts[endPath+5] <= endIdx && !CountdownTimeOut())
+                PassedCP(m,m->fastin.modelTime);
+        } else {
+            m->resurrect.pos[0] = gDronePaths[endPath].pts[endIdx].pos[0];
+            m->resurrect.pos[1] = 3.0f + gDronePaths[endPath].pts[endIdx].pos[1];
+            m->resurrect.pos[2] = gDronePaths[endPath].pts[endIdx].pos[2];
+            if (((m->next_cp_index < m->last_cp_index && gCheckpoints.points[m->last_cp_index].pathPts[endPath+1] > endIdx) ||
+                 (m->next_cp_index > m->last_cp_index && gCheckpoints.points[m->next_cp_index].pathPts[endPath+1] <= endIdx)) &&
+                 !CountdownTimeOut()) PassedCP(m,m->fastin.modelTime);
+        }
+    } else {
+        m->resurrect.pos[0] = gResPath.pts[endIdx][0];
+        m->resurrect.pos[1] = 3.0f + gResPath.pts[endIdx][1];
+        m->resurrect.pos[2] = gResPath.pts[endIdx][2];
+        if (gRace != kPractice && gRace != kBattle && gRace != kStunt &&
+            ((m->next_cp_index < m->last_cp_index && gCheckpoints.points[m->last_cp_index].pathPts[0] > endIdx) ||
+             (m->next_cp_index > m->last_cp_index && gCheckpoints.points[m->next_cp_index].pathPts[0] <= endIdx)) &&
+             !CountdownTimeOut()) PassedCP(m,m->fastin.modelTime);
+    }
+    if (gRace != kPractice && gRace != kBattle && gRace != kStunt && gRace != kObstacle)
+        m->resurrect.velocity = 58;
+    FindSurfaceUvsFromResPoint(human,endPath,endIdx,m->resurrect.uvs);
+finish:
+    m->initin.offset[0] = 0.0f;
+    m->initin.offset[1] = 0.0f;
+    m->initin.offset[2] = 0.0f;
+    MakeQuatFromUvs(m->uvs,m->resurrect.quat_start);
+    MakeQuatFromUvs(m->resurrect.uvs,m->resurrect.quat_end);
+    FindBestQuat(m->resurrect.quat_start,m->resurrect.quat_end);
+    m->resurrect.moving_state = 0;
+    CopyUV(m->reckon.uvs,m->initin.uvs);
+    m->initin.pos[0] = m->reckon.rwr[0];
+    m->initin.pos[1] = m->reckon.rwr[1];
+    m->initin.pos[2] = m->reckon.rwr[2];
+    {
+        float vx=m->rwv[0],vy=m->rwv[1],vz=m->rwv[2];
+        syminit(m);
+        for (i=0;i<4;i++) {
+            m->suscomp[i] = 0.0f;
+            m->bodyForce[i][0] = 0.0f;
+            gc->sound_flags[i] = m->sound_flags[i] = 0;
+        }
+        m->topscrape = 0;
+        m->thumpflag = 0;
+        m->mthumpflag = 0;
+        m->rwv[0]=vx;m->rwv[1]=vy;m->rwv[2]=vz;
+    }
+    gc->restart = 1;
+}

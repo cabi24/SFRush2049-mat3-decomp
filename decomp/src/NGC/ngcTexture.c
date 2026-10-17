@@ -149,7 +149,8 @@ void LinkWithPS2Texture(char *packet, anon_name_width_30 *tex)
     int numsingle; /* r26 */
     int numresident; /* r25 */
     char **resident; /* r24 */
-    numresident = 0;
+    k = 0;
+    numresident = k;
     if (gTrackNum == 0) {
         singleside = tex_singleside_track1;
         resident = tex_resident_track1;
@@ -182,8 +183,8 @@ void LinkWithPS2Texture(char *packet, anon_name_width_30 *tex)
                     group->_Tex[i].ps2flags |= 1;
                     tex->flags |= 1;
                 }
-                for (j = 0; j < 59; j++) {
-                    if (!strcmp(tt, tex_alphatest[j])) {
+                for (k = 0; k < 59; k++) {
+                    if (!strcmp(tt, tex_alphatest[k])) {
                         group->_Tex[i].ps2flags |= 4;
                         group->_Tex[i].ps2flags |= 1;
                         break;
@@ -580,9 +581,7 @@ void ngcWriteTexelRGBA8(void * data, int w, int h, int x, int y, unsigned char r
     /* Keep the original signed divisions and the separate coordinate guards. */
     if (x / 4 < 0 || y / 4 < 0) return;
     {
-        ar = (unsigned char *)data;
-        ar += ((x / 16 + (y / 16) * (w / 16)) * 64) + ((x / 4) % 4) * 2;
-        ar += ((y / 4) % 4) * 8;
+        ar = (unsigned char *)data + (((x / 16 + (y / 16) * (w / 16)) * 64) + (((y / 4) % 4) * 8) + (((x / 4) % 4) * 2));
         gb = ar + 32;
         ar[0] = a;
         ar[1] = r;

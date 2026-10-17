@@ -1,6 +1,27 @@
 /* trackscr.c - private partial track-selection-screen reconstruction. Not link verified.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\trackscr.c; assembly: build/2049LE/asm/GameSource/src/trackscr.s */
 #include "rush/rush_protos.h"
+#define MSL_NO_SQRTF
+#include "msl_math_inline.h"
+
+inline float sqrtf(float x)
+{
+    const double _half = .5;
+    const double _three = 3.0;
+
+    if (x > 0.0f) {
+        double guess = __frsqrte((double)x);
+        guess = _half * guess * (_three - guess * guess * x);
+        guess = _half * guess * (_three - guess * guess * x);
+        guess = _half * guess * (_three - guess * guess * x);
+        return (float)(x * guess);
+    } else if (x < 0.0) {
+        return NAN;
+    } else if (fpclassify(x) == FP_NAN) {
+        return NAN;
+    }
+    return x;
+}
 
 static void _InitScreen(void);
 static void _UninitScreen(void);
@@ -220,14 +241,310 @@ static const anon_texname_dulx_24 mblit[18] = {
 /* 0x80087abc, size 0xcf0 */
 void updateTrackScreen(void)
 {
-    /* TODO: original body not recovered; research candidate excluded. */
+    int i;
+    int j;
+    anon_ll_fileh_4c **player;
+    int add;
+    if (gSkipToGameState != 1) {
+        if (gSkipToGameState != gGameState) { setGameState(0x100); return; }
+        gSkipToGameState = 1;
+    }
+    for (i = 0; i < gNumPlayers; i++) {
+        if (gPlayers[i].save != &gJustPlayers[i]) {
+            player = gPlayerFiles.head;
+            while (player) {
+                if (gPlayers[i].save == player) break;
+                player = (*player)->ll.next;
+            }
+            if (!player) { _UninitScreen(); setGameState(0x20); return; }
+        }
+    }
+    if (!inited) _InitScreen();
+    showTrackSelect();
+    if (gSoftReset) { _UninitScreen(); setGameState(4); return; }
+    if (gActiveEdges & 3) {
+        PlayStartABSound(gActiveEdges); setGameState(0x100); _UninitScreen();
+        for (j = 0; j < gNumPlayers; j++)
+            for (i = 21; i < 41; i++) SavePlayerOption(gPlayers[j].save,i,gOptions[i]);
+        return;
+    }
+    if (gActiveEdges & 4) {
+        AudPlayEffect(1,0,1,0); _UninitScreen();
+        if (gRace == kCircuit) setGameState(0x4000);
+        else setGameState(0x40);
+        return;
+    }
+    if (gActiveLevels & 0x3080) {
+        add = (gActiveAutoEdges & 0x1000) ? -1 : (gActiveAutoEdges & 0x2000) != 0;
+        if (gRace == kCircuit && (gCircuitTrack > 0 || gOpts[gActiveOption] != 20)) goto controls_done;
+        if (add == 0 && !gActiveZ) goto controls_done;
+        if (gRace == kGhost && gOpts[gActiveOption] == 2) goto controls_done;
+        PlayLRSound(gActiveAutoEdges);
+        if (gMirrorControls > 1) add = -add;
+        switch (gOpts[gActiveOption]) {
+        case 0:
+            if (add) {
+                gTrack += add;
+                if (gTrack < 0) gTrack = gNumTracks-1;
+                else if (gTrack >= gNumTracks) gTrack = 0;
+                do {
+                    gTrackNum += add;
+                    if (gTrackNum < 0) gTrackNum = 18;
+                    else if (gTrackNum >= 19) gTrackNum = 0;
+                } while (!TrackValid(gTrackNum));
+                for (i = 21; i < 41; i++) gOptions[i] = GetPlayerOption(gPlayers[0].save,i);
+            }
+            break;
+        case 1:
+            if (add) {
+                gOptions[25] += add;
+                if (gOptions[25] < 0) gOptions[25] = 1;
+                else if (gOptions[25] > 1) gOptions[25] = 0;
+            } else gOptions[25] = 0;
+            break;
+        case 2:
+            if (add) {
+                gOptions[21] += add;
+                if (gOptions[21] < 1) gOptions[21] = 8;
+                else if (gOptions[21] > 8) gOptions[21] = 1;
+            } else gOptions[21] = 3;
+            break;
+        case 3:
+            if (add) {
+                gOptions[32] += add;
+                if (gOptions[32] < 0) gOptions[32] = 2;
+                else if (gOptions[32] > 2) gOptions[32] = 0;
+            } else gOptions[32] = 0;
+            break;
+        case 4:
+            if (add) {
+                if (!gOptions[33]) gOptions[33] = 1;
+                else gOptions[33] = 0;
+            } else gOptions[33] = 0;
+            break;
+        case 5:
+            if (add) {
+                gOptions[34] += add;
+                if (gOptions[34] <= 0) gOptions[34] = 100;
+                else if (gOptions[34] > 100) gOptions[34] = 1;
+            } else gOptions[34] = 69;
+            break;
+        case 6:
+            if (add) {
+                gOptions[35] += add;
+                if (gOptions[35] <= 0) gOptions[35] = 20;
+                else if (gOptions[35] > 20) gOptions[35] = 1;
+            } else gOptions[35] = 5;
+            break;
+        case 7:
+            if (add) {
+                gOptions[36] += add;
+                if (gOptions[36] <= 0) gOptions[36] = 50;
+                else if (gOptions[36] > 50) gOptions[36] = 1;
+            } else gOptions[36] = 30;
+            break;
+        case 8:
+            if (add) {
+                if (!gOptions[37]) gOptions[37] = 1;
+                else gOptions[37] = 0;
+            } else gOptions[37] = 0;
+            break;
+        case 9:
+            if (add) {
+                gOptions[38] += 5*add;
+                if (gOptions[38] < 5) gOptions[38] = 50;
+                else if (gOptions[38] > 50) gOptions[38] = 5;
+            } else gOptions[38] = 10;
+            break;
+        case 10:
+            if (add) {
+                gOptions[39] += add;
+                if (gOptions[39] <= 0) gOptions[39] = 20;
+                else if (gOptions[39] > 20) gOptions[39] = 1;
+            } else gOptions[39] = 8;
+            break;
+        case 11:
+            if (add) {
+                gOptions[40] ^= 1;
+            } else gOptions[40] = 0;
+            break;
+        case 12:
+            if (add) {
+                gOptions[27] ^= 1;
+            } else gOptions[27] = 0;
+            clearTrackMap(); buildTrackMap(); pathPos = 1.0f-pathPos;
+            break;
+        case 13:
+            if (add) {
+                if ((gPlayers[0].levels & 0x3c000) == 0x3c000) gOptions[28] = 2;
+                else gOptions[28] = !gOptions[28];
+            } else gOptions[28] = 0;
+            clearTrackMap(); buildTrackMap();
+            break;
+        case 14:
+            if (add) {
+                gOptions[29] += add;
+                if (gOptions[29] < 0) gOptions[29] = 3;
+                else if (gOptions[29] > 3) gOptions[29] = 0;
+            } else gOptions[29] = 0;
+            break;
+        case 15:
+            if (add) {
+                gOptions[30] += add;
+                if (gOptions[30] < 0) gOptions[30] = 4;
+                else if (gOptions[30] > 4) gOptions[30] = 0;
+            } else gOptions[30] = 0;
+            break;
+        case 16:
+            if (add) {
+                gOptions[23] += add;
+                if (gOptions[23] < 0) gOptions[23] = 3;
+                else if (gOptions[23] > 3) gOptions[23] = 0;
+            } else gOptions[23] = 1;
+            break;
+        case 17:
+            if (add) {
+                gOptions[22] += add;
+                if (gOptions[22] > 5) gOptions[22] = 0;
+                else if (gOptions[22] < 0) gOptions[22] = 5;
+            } else gOptions[22] = 5;
+            break;
+        case 18:
+            if (add) {
+                gOptions[24] += add;
+                if (gOptions[24] < 0) gOptions[24] = 5;
+                else if (gOptions[24] > 5) gOptions[24] = 0;
+            } else gOptions[24] = 2;
+            break;
+        case 19:
+            if (add) {
+                gOptions[26] += add;
+                if (gOptions[26] < 0) gOptions[26] = 2;
+                else if (gOptions[26] > 2) gOptions[26] = 0;
+            } else gOptions[26] = 2;
+            break;
+        case 20:
+            if (add) {
+                gOptions[31] ^= 1;
+            } else gOptions[31] = 0;
+            if (gRace == kCircuit) (*(*gPlayers[gCircuitPlayer].save)->datah)->circuit.death = gOptions[31];
+            break;
+        }
+        SetOptions();
+        for (i = 21; i < 41; i++) SavePlayerOption(gPlayers[0].save,i,gOptions[i]);
+    } else if (gActiveAutoEdges & 0x400) {
+        AudPlayEffect(8,0,1,0);
+        if (--gActiveOption < 0) gActiveOption = gNumOptions-1;
+    } else if (gActiveAutoEdges & 0x800) {
+        AudPlayEffect(2,0,1,0);
+        if (++gActiveOption > gNumOptions-1) gActiveOption = 0;
+    }
+    if (gFirstOption > gActiveOption-1) gFirstOption = gActiveOption-1;
+    if (gFirstOption < gActiveOption-2) gFirstOption = gActiveOption-2;
+    if (gFirstOption > gNumOptions-4) gFirstOption = gNumOptions-4;
+    if (gFirstOption < 0) gFirstOption = 0;
+controls_done:
+    gActiveOptionEnabled = gRace != kCircuit || (gCircuitTrack == 0 && gOpts[gActiveOption] == 20);
+    if (gTrackNum != oldTrack) {
+        desiredTrackMap = gTrackNum;
+        oldTrack = gTrackNum;
+        for (i = 0; i < gNumPlayers; i++) {
+            switch (gRace) {
+            case kOneRace: case kPractice: case kGhost:
+                if (gTrackNum >= 0 && gTrackNum <= 5) SavePlayerTrack(gPlayers[i].save,gRace,gTrackNum+0);
+                break;
+            case kStunt:
+                if (gTrackNum >= 14 && gTrackNum <= 17) SavePlayerTrack(gPlayers[i].save,gRace,gTrackNum-14);
+                break;
+            case kBattle:
+                if (gTrackNum >= 6 && gTrackNum <= 13) SavePlayerTrack(gPlayers[i].save,gRace,gTrackNum-6);
+                break;
+            }
+        }
+    }
+    animTrackMap();
+    animTrackMaps();
+    SetFogIntensity(0);
+    setCamera();
 }
 
 /* 0x800887ac, size 0x4fc */
 static void _InitScreen(void)
 {
     static float fogPos[3];
-    /* TODO: original body not recovered; research candidate excluded. */
+    int i;
+    int j;
+    float pos;
+    gActiveOption = 0;
+    gFirstOption = 0;
+    gActiveZ = 0;
+    currentTrackMap = -1;
+    gNumOptions = 0;
+    for (i = 0; i < 21; i++) if (OptionValid(i)) gOpts[gNumOptions++] = i;
+    buildTrackMaps();
+    if (gRace == kCircuit) oldTrack = gTrackNum = gCircuitTracks[gCircuitTrack].trackNum;
+    else {
+        if (gRace == kStunt) oldTrack = gTrackNum = GetPlayerTrack(gPlayers[0].save,gRace)+14;
+        else if (gRace == kObstacle) oldTrack = gTrackNum = GetPlayerTrack(gPlayers[0].save,gRace)+18;
+        else if (gRace == kBattle) oldTrack = gTrackNum = GetPlayerTrack(gPlayers[0].save,gRace)+6;
+        else oldTrack = gTrackNum = GetPlayerTrack(gPlayers[0].save,gRace)+0;
+        if (!TrackValid(gTrackNum)) {
+            if (gRace == kStunt) oldTrack = gTrackNum = 14;
+            else if (gRace == kObstacle) oldTrack = gTrackNum = 18;
+            else if (gRace == kBattle) oldTrack = gTrackNum = 6;
+            else oldTrack = gTrackNum = 0;
+        }
+        for (i = 0; i < gNumPlayers; i++) {
+            if (gRace == kStunt) SavePlayerTrack(gPlayers[i].save,gRace,gTrackNum-14);
+            else if (gRace == kObstacle) SavePlayerTrack(gPlayers[i].save,gRace,gTrackNum-18);
+            else if (gRace == kBattle) SavePlayerTrack(gPlayers[i].save,gRace,gTrackNum-6);
+            else SavePlayerTrack(gPlayers[i].save,gRace,gTrackNum);
+        }
+        for (j = 21; j < 41; j++) gOptions[j] = GetPlayerOption(gPlayers[0].save,j);
+    }
+    SetOptions();
+    createBG();
+    initButtons();
+    blit = (_tBlit_2 *)NewMultiBlit(0,0,mblit,18);
+    { int j;
+    i = 0;
+    for (j = 0; j < 19; j++) {
+        if (TrackValid(j)) {
+            if (j == gTrackNum) {gTrack = i; break;}
+            i++;
+        }
+    }
+    }
+    gNumTracks = 19;
+    i = 0;
+    pos = 0.0f;
+    for (j = 0; j < 19; j++) {
+        if (TrackValid(j)) {
+            gTracks[i].gTrackNum = j;
+            gTracks[i].slot = i-gTrack;
+            if (gTracks[i].slot < 0) gTracks[i].slot += gNumTracks;
+            if (gTrack == i) gTracks[i].targetPos = 0.0f;
+            else if (gTrack >= gNumTracks/2) gTracks[i].targetPos = pos - (gNumTracks-gTrack)*100;
+            else gTracks[i].targetPos = pos + gTrack*100;
+            gTracks[i].pos[0] = gTracks[i].targetPos;
+            gTracks[i].pos[1] = -5.0f;
+            gTracks[i].pos[2] = 0.0f;
+            pos -= 100.0f;
+            if (pos < -(gNumTracks*100/2)) pos += gNumTracks*100;
+            i++;
+        }
+    }
+    fogPos[0] = 0.0f;
+    fogPos[1] = yFog[gTracks[gTrack].gTrackNum] - 5.0f;
+    fogPos[2] = 0.0f;
+    SetFogIntensity(1);
+    BlowFog();
+    setCamera();
+    ClearRushControls();
+    inited = 1;
+    currentTrackMap = -1;
+    desiredTrackMap = gTrackNum;
+    mapTransition = 0.0f;
 }
 
 /* 0x80088ca8, size 0x5c */
@@ -249,7 +566,46 @@ static void showTrackSelect(void)
 {
     static float angle;
     static float fogPos[3];
-    /* TODO: body excluded until original static layout is recovered. */
+    float uv[3][3];
+    float speed;
+    float frames;
+    int i;
+    int slot;
+    updateButtons();
+    gNumOptions = 0;
+    for (i = 0; i < 21; i++) if (OptionValid(i)) gOpts[gNumOptions++] = i;
+    frames = 30.0f * gFrameSeconds;
+    if ((gBackwards && !gMirrorWaves) || (!gBackwards && gMirrorWaves)) {
+        angle -= 0.01745329238474369f * frames;
+        if (angle < 0.0f) angle += 6.2831854820251465f;
+    } else {
+        angle += 0.01745329238474369f * frames;
+        if (angle >= 6.2831854820251465f) angle -= 6.2831854820251465f;
+    }
+    speed = frames * ((gTracks[gTrack].targetPos - gTracks[gTrack].pos[0]) / 10.0f);
+    for (i = 0; i < gNumTracks; i++) {
+        slot = i - gTrack;
+        if (slot < 0) slot += gNumTracks;
+        if (slot != gTracks[i].slot) {
+            if (gTracks[i].slot == (slot-1 < 0 ? gNumTracks-1 : slot-1)) gTracks[i].targetPos -= 100.0f;
+            else gTracks[i].targetPos += 100.0f;
+            gTracks[i].slot = slot;
+        }
+        if (speed != 0.0f) {
+            gTracks[i].pos[0] += speed;
+            if (gTracks[i].pos[0] < -(gNumTracks*100/2)) {
+                gTracks[i].pos[0] += gNumTracks*100;
+                gTracks[i].targetPos += gNumTracks*100;
+            } else if (gTracks[i].pos[0] > gNumTracks*100/2) {
+                gTracks[i].pos[0] -= gNumTracks*100;
+                gTracks[i].targetPos -= gNumTracks*100;
+            }
+        }
+    }
+    fogPos[1] += frames * ((yFog[gTracks[gTrack].gTrackNum] - 5.0f - fogPos[1])/10.0f);
+    CopyUV(unitmatrix,uv);
+    YawUV(angle,uv);
+    ScaleUVXYZ(uv,uv,2.0f,1.0f,2.5f);
 }
 
 /* 0x80089018, size 0x310 */
@@ -597,7 +953,28 @@ static void unloadTrackScreen(void)
 static void buildTrackMap(void)
 {
     static float mapPos[3] = {50.0f,-15.0f,100.0f};
-    /* TODO: body excluded until original static layout is recovered. */
+    loadTrackScreen();
+    if (desiredTrackMap >= 0 && desiredTrackMap <= 5) {
+        if (trackMap[19].objIdx != -1) {
+            selTrackRomObjDef->lod[0].displayList = (unsigned int *)&mapObj[desiredTrackMap];
+            ScaleUV(unitmatrix,trackMap[19].mat.mat3.uvs,2.0f);
+            WPitchUV(-0.7853981852531433f,trackMap[19].mat.mat3.uvs);
+            trackMap[19].mat.mat3.pos[0] = mapPos[0];
+            trackMap[19].mat.mat3.pos[1] = mapPos[1];
+            trackMap[19].mat.mat3.pos[2] = mapPos[2];
+        }
+    } else if ((desiredTrackMap >= 6 && desiredTrackMap <= 13) || (desiredTrackMap >= 14 && desiredTrackMap <= 17)) {
+        if (trackMapObj == -1) {
+            trackMapObj = MBOX_NewObject(MBOX_FindObject_WORK(trackMapObjNames[desiredTrackMap],0,gNumModels-1,1),&trackMapMat,-1,0x2000);
+            ZOID_SetColor(trackMapObj,&trackColors[desiredTrackMap]);
+            ScaleUV(unitmatrix,trackMapMat.mat3.uvs,2.0f);
+            WPitchUV(-0.7853981852531433f,trackMapMat.mat3.uvs);
+            trackMapMat.mat3.pos[0] = mapPos[0];
+            trackMapMat.mat3.pos[1] = mapPos[1];
+            trackMapMat.mat3.pos[2] = mapPos[2];
+        }
+    }
+    currentTrackMap = desiredTrackMap;
 }
 
 /* 0x8008a9b0, size 0x3c */
@@ -613,7 +990,44 @@ static void animTrackMap(void)
     static float cityPos[3] = {-100.0f,30.0f,200.0f};
     static float mapPos[3] = {50.0f,-15.0f,100.0f};
     static float rotAngle;
-    /* TODO: body excluded until original static layout is recovered. */
+    rotAngle += 6.2831854820251465f * gFrameSeconds / 10.0f;
+    if (rotAngle > 6.2831854820251465f) rotAngle -= 6.2831854820251465f;
+    if (currentTrackMap != desiredTrackMap) {
+        mapTransition -= 4.0f * gFrameSeconds;
+        if (mapTransition < 0.0f) {
+            mapTransition = 0.0f;
+            clearTrackMap();
+            buildTrackMap();
+        }
+    } else {
+        mapTransition += 4.0f * gFrameSeconds;
+        if (mapTransition > 1.0f) mapTransition = 1.0f;
+    }
+    trackMap[19].mat.mat3.pos[0] = cityPos[0];
+    trackMap[19].mat.mat3.pos[1] = cityPos[1];
+    trackMap[19].mat.mat3.pos[2] = cityPos[2];
+    trackMap[19].mat.mat3.pos[0] += trackMap[currentTrackMap].cityX;
+    trackMap[19].mat.mat3.pos[1] += trackMap[currentTrackMap].cityY;
+    trackMap[19].mat.mat3.pos[0] *= 1.0f-mapTransition;
+    trackMap[19].mat.mat3.pos[1] *= 1.0f-mapTransition;
+    trackMap[19].mat.mat3.pos[2] *= 1.0f-mapTransition;
+    trackMap[19].mat.mat3.pos[0] += mapPos[0]*mapTransition;
+    trackMap[19].mat.mat3.pos[1] += mapPos[1]*mapTransition;
+    trackMap[19].mat.mat3.pos[2] += mapPos[2]*mapTransition;
+    trackMapMat.mat3.pos[0] = trackMap[19].mat.mat3.pos[0];
+    trackMapMat.mat3.pos[1] = trackMap[19].mat.mat3.pos[1];
+    trackMapMat.mat3.pos[2] = trackMap[19].mat.mat3.pos[2];
+    ScaleUV(unitmatrix,trackMapMat.mat3.uvs,trackMap[currentTrackMap].scale*mapTransition+trackMap[currentTrackMap].cityScale*(1.0f-mapTransition));
+    ScaleUV(unitmatrix,trackMap[19].mat.mat3.uvs,trackMap[currentTrackMap].scale*mapTransition+trackMap[currentTrackMap].cityScale*(1.0f-mapTransition));
+    if ((gRace == kCircuit && gCircuitTracks[gCircuitTrack].mirror == 1) ||
+        (gRace != kCircuit && gRace != kStunt && gRace != kBattle && gRace != kObstacle && gOptions[28])) {
+        ScaleUVXYZ(trackMapMat.mat3.uvs,trackMapMat.mat3.uvs,-1.0f,1.0f,1.0f);
+        ScaleUVXYZ(trackMap[19].mat.mat3.uvs,trackMap[19].mat.mat3.uvs,-1.0f,1.0f,1.0f);
+    }
+    WYawUV(rotAngle*mapTransition+trackMap[currentTrackMap].cityRot*(1.0f-mapTransition),trackMapMat.mat3.uvs);
+    WPitchUV(-0.5235987901687622f*mapTransition+-1.5707963705062866f*(1.0f-mapTransition),trackMapMat.mat3.uvs);
+    WYawUV(rotAngle*mapTransition+trackMap[currentTrackMap].cityRot*(1.0f-mapTransition),trackMap[19].mat.mat3.uvs);
+    WPitchUV(-0.5235987901687622f*mapTransition+-1.5707963705062866f*(1.0f-mapTransition),trackMap[19].mat.mat3.uvs);
 }
 
 /* 0x8008ad10, size 0x64 */
@@ -665,22 +1079,186 @@ static void buildRaceTrackMaps(void)
     int i; /* r0 */
     float sectVerts[8][3]; /* stack */
     _tdstVertext ps2sectVertes[10]; /* stack */
-    { static float mapPos[3] = { -100.0f, 30.0f, 200.0f }; }
-    /* TODO */
+    saveTrackNum = gTrackNum;
+    for (gTrackNum = 0; gTrackNum <= 5; gTrackNum++) {
+        mapObj[gTrackNum].numPack = 0;
+        if (IsTrackUnlocked(gTrackNum)) {
+            loadPathData();
+            xoffset = -(gPathMin[0]+gPathMax[0])/2;
+            yoffset = -(gPathMin[2]+gPathMax[2])/2;
+            zoffset = -(gPathMin[1]+gPathMax[1])/2;
+            trackMap[gTrackNum].scale = 5000.0f / ((gPathMax[0]-gPathMin[0] > gPathMax[2]-gPathMin[2]) ? gPathMax[0]-gPathMin[0] : gPathMax[2]-gPathMin[2]);
+            trackMBIdx = MBOX_FindObject_WORK(trackMapObjNames[gTrackNum],0,gNumModels-1,1);
+            trackRomObjDef = &gRomObjDefPtrs[trackMBIdx >> 10].romObjDefs[trackMBIdx & 1023];
+            trackPS2 = &mapObj[gTrackNum];
+            trackPS2->numPack = kNumMapSects;
+            trackPS2->tex = (anon_name_width_30 **)AllocateMemoryHeap(0,kNumMapSects*4);
+            trackPS2->pPack = (unsigned int **)AllocateMemoryHeap(0,kNumMapSects*4);
+            trackPS2->nStrips = kNumMapSects;
+            trackPS2->strips = (anon_nVertex_iTex_10 *)AllocateMemoryHeap(0,trackPS2->nStrips*16);
+            for (pointIdx = 0; pointIdx < kNumMapSects; pointIdx++) {
+                float len0,len1,len2;
+                if (pointIdx > 0) prevPt = (gResPath.numPts*(pointIdx-1))/kNumMapSects; else prevPt = -1;
+                currStartPt = gResPath.numPts*pointIdx/kNumMapSects;
+                currEndPt = pointIdx < kNumMapSects-1 ? (gResPath.numPts*(pointIdx+1))/kNumMapSects : FindResPathIntersect(gCheckpoints.loopPt);
+                if (pointIdx < kNumMapSects-2) nextPt = (gResPath.numPts*(pointIdx+2))/kNumMapSects; else nextPt = -1;
+                x1 = xoffset + gResPath.pts[currStartPt][0];
+                y1 = yoffset + gResPath.pts[currStartPt][2];
+                x2 = xoffset + gResPath.pts[currEndPt][0];
+                y2 = yoffset + gResPath.pts[currEndPt][2];
+                if (prevPt != -1) {
+                    x0 = xoffset + gResPath.pts[prevPt][0];
+                    y0 = yoffset + gResPath.pts[prevPt][2];
+                } else {
+                    x0 = x1-(x2-x1);
+                    y0 = y1-(y2-y1);
+                }
+                if (nextPt != -1) {
+                    x3 = xoffset + gResPath.pts[nextPt][0];
+                    y3 = yoffset + gResPath.pts[nextPt][2];
+                } else {
+                    x3 = x2+(x2-x1);
+                    y3 = y2+(y2-y1);
+                }
+                dx0 = x0-x1; dy0 = y1-y0;
+                dx1 = x1-x2; dy1 = y2-y1;
+                dx2 = x2-x3; dy2 = y3-y2;
+                len0 = sqrtf(dx0*dx0+dy0*dy0);
+                len1 = sqrtf(dx1*dx1+dy1*dy1);
+                len2 = sqrtf(dx2*dx2+dy2*dy2);
+                dx0 *= 100.0f; dy0 *= 100.0f; dx1 *= 100.0f; dy1 *= 100.0f; dx2 *= 100.0f; dy2 *= 100.0f;
+                dx0 /= len0; dy0 /= len0; dx1 /= len1; dy1 /= len1; dx2 /= len2; dy2 /= len2;
+                sectVerts[0][0] = x1+(dy0+dy1)/2.0f;
+                sectVerts[0][2] = y1+(dx0+dx1)/2.0f;
+                sectVerts[0][1] = zoffset+gResPath.pts[currStartPt][1]+50.0f;
+                sectVerts[1][0] = x1-(dy0+dy1)/2.0f;
+                sectVerts[1][2] = y1-(dx0+dx1)/2.0f;
+                sectVerts[1][1] = zoffset+gResPath.pts[currStartPt][1]+50.0f;
+                sectVerts[2][0] = x1-(dy0+dy1)/2.0f;
+                sectVerts[2][2] = y1-(dx0+dx1)/2.0f;
+                sectVerts[2][1] = gPathMin[1]+zoffset-50.0f;
+                sectVerts[3][0] = x1+(dy0+dy1)/2.0f;
+                sectVerts[3][2] = y1+(dx0+dx1)/2.0f;
+                sectVerts[3][1] = gPathMin[1]+zoffset-50.0f;
+                sectVerts[4][0] = x2+(dy1+dy2)/2.0f;
+                sectVerts[4][2] = y2+(dx1+dx2)/2.0f;
+                sectVerts[4][1] = zoffset+gResPath.pts[currEndPt][1]+50.0f;
+                sectVerts[5][0] = x2-(dy1+dy2)/2.0f;
+                sectVerts[5][2] = y2-(dx1+dx2)/2.0f;
+                sectVerts[5][1] = zoffset+gResPath.pts[currEndPt][1]+50.0f;
+                sectVerts[6][0] = x2-(dy1+dy2)/2.0f;
+                sectVerts[6][2] = y2-(dx1+dx2)/2.0f;
+                sectVerts[6][1] = gPathMin[1]+zoffset-50.0f;
+                sectVerts[7][0] = x2+(dy1+dy2)/2.0f;
+                sectVerts[7][2] = y2+(dx1+dx2)/2.0f;
+                sectVerts[7][1] = gPathMin[1]+zoffset-50.0f;
+                if (pointIdx == kNumMapSects-1) {
+                    sectVerts[0][1] += 0.1f; sectVerts[1][1] += 0.1f;
+                    sectVerts[2][1] += 0.1f; sectVerts[3][1] += 0.1f;
+                }
+                for (i = 0; i < 8; i++) {
+                    sectVerts[i][0] *= 0.01f;
+                    sectVerts[i][1] *= 0.01f;
+                    sectVerts[i][2] *= 0.01f;
+                }
+                for (vertIdx = 0; vertIdx < 10; vertIdx++) {
+                    float *p = sectVerts[posIdxs[vertIdx]];
+                    ps2sectVertes[vertIdx].x = p[0];
+                    ps2sectVertes[vertIdx].y = p[1];
+                    ps2sectVertes[vertIdx].z = p[2];
+                    ps2sectVertes[vertIdx].nx = 0.0f;
+                    ps2sectVertes[vertIdx].ny = 0.0f;
+                    ps2sectVertes[vertIdx].nz = 1.0f;
+                    ps2sectVertes[vertIdx].r = 127;
+                    ps2sectVertes[vertIdx].g = 127;
+                    ps2sectVertes[vertIdx].b = 127;
+                    ps2sectVertes[vertIdx].a = 127;
+                    ps2sectVertes[vertIdx].u = 0.0f;
+                    ps2sectVertes[vertIdx].v = 0.0f;
+                }
+                trackPS2->pPack[pointIdx] = Vu1PackOneMaterialNoTexture(10,ps2sectVertes,&sizePS2);
+                trackPS2->tex[pointIdx] = MBOX_FindTexture_WORK("FOG",(unsigned short *)&sizePS2,0,gNumModels-1,1);
+                trackPS2->strips[pointIdx].nVertex = 10;
+                trackPS2->strips[pointIdx].iTex = -1;
+                trackPS2->strips[pointIdx].iHasAlpha = 0xfece0ee6;
+                trackPS2->strips[pointIdx].vertexs = (anon_pos_nom_24 *)AllocateMemoryHeap(0,360);
+                for (vertIdx = 0; vertIdx < 10; vertIdx++) {
+                    trackPS2->strips[pointIdx].vertexs[vertIdx].pos[0] = ps2sectVertes[vertIdx].x;
+                    trackPS2->strips[pointIdx].vertexs[vertIdx].pos[1] = ps2sectVertes[vertIdx].y;
+                    trackPS2->strips[pointIdx].vertexs[vertIdx].pos[2] = ps2sectVertes[vertIdx].z;
+                    trackPS2->strips[pointIdx].vertexs[vertIdx].nom[0] = ps2sectVertes[vertIdx].nx;
+                    trackPS2->strips[pointIdx].vertexs[vertIdx].nom[1] = ps2sectVertes[vertIdx].ny;
+                    trackPS2->strips[pointIdx].vertexs[vertIdx].nom[2] = ps2sectVertes[vertIdx].nz;
+                    trackPS2->strips[pointIdx].vertexs[vertIdx].uv[0] = ps2sectVertes[vertIdx].u;
+                    trackPS2->strips[pointIdx].vertexs[vertIdx].uv[1] = ps2sectVertes[vertIdx].v;
+                    trackPS2->strips[pointIdx].vertexs[vertIdx].color = ((unsigned int)ps2sectVertes[vertIdx].r<<24) + ((unsigned int)ps2sectVertes[vertIdx].g<<16) + ((unsigned int)ps2sectVertes[vertIdx].b<<8) + ps2sectVertes[vertIdx].a;
+                }
+            }
+            trackRomObjDef->lod[0].displayList = (unsigned int *)&mapObj[gTrackNum];
+            if (trackMap[gTrackNum].objIdx == -1) {
+                trackMap[gTrackNum].objIdx = MBOX_NewObject(trackMBIdx,&trackMap[gTrackNum].mat,-1,0);
+                ScaleUV(unitmatrix,trackMap[gTrackNum].mat.mat3.uvs,1.0f);
+                WPitchUV(-1.5707963705062866f,trackMap[gTrackNum].mat.mat3.uvs);
+                trackMap[gTrackNum].mat.mat3.pos[0] = mapPos[0];
+                trackMap[gTrackNum].mat.mat3.pos[1] = mapPos[1];
+                trackMap[gTrackNum].mat.mat3.pos[2] = mapPos[2];
+            }
+            unloadPathData();
+        }
+    }
+    gTrackNum = saveTrackNum;
+    trackMBIdx = MBOX_FindObject_WORK(trackMapObjNames[19],0,gNumModels-1,1);
+    selTrackRomObjDef = &gRomObjDefPtrs[trackMBIdx >> 10].romObjDefs[trackMBIdx & 1023];
+    selTrackRomObjDef->lod[0].displayList = (unsigned int *)&mapObj[6];
+    if (trackMap[19].objIdx == -1) {
+        static float mapPos[3] = { -100.0f, 30.0f, 200.0f };
+        trackMap[19].objIdx = MBOX_NewObject(trackMBIdx,&trackMap[19].mat,-1,0);
+        ScaleUV(unitmatrix,trackMap[19].mat.mat3.uvs,1.0f);
+        WPitchUV(-1.5707963705062866f,trackMap[19].mat.mat3.uvs);
+        trackMap[19].mat.mat3.pos[0] = mapPos[0];
+        trackMap[19].mat.mat3.pos[1] = mapPos[1];
+        trackMap[19].mat.mat3.pos[2] = mapPos[2];
+    }
 }
 
 /* 0x8008bca0, size 0x184 */
 static void buildStuntTrackMaps(void)
 {
     static float mapPos[3] = {-100.0f,30.0f,200.0f};
-    /* TODO: body excluded until original static layout is recovered. */
+    int saveTrackNum;
+    saveTrackNum = gTrackNum;
+    for (gTrackNum = 14; gTrackNum <= 17; gTrackNum++) {
+        if (IsTrackUnlocked(gTrackNum) && trackMap[gTrackNum].objIdx == -1) {
+            trackMap[gTrackNum].objIdx = MBOX_NewObject(MBOX_FindObject_WORK(trackMapObjNames[gTrackNum],0,gNumModels-1,1), &trackMap[gTrackNum].mat, -1, 0x2000);
+            ZOID_SetColor(trackMap[gTrackNum].objIdx, &trackColors[gTrackNum]);
+            ScaleUV(unitmatrix, trackMap[gTrackNum].mat.mat3.uvs, 1.0f);
+            WPitchUV(-1.5707963705062866f, trackMap[gTrackNum].mat.mat3.uvs);
+            trackMap[gTrackNum].mat.mat3.pos[0] = mapPos[0];
+            trackMap[gTrackNum].mat.mat3.pos[1] = mapPos[1];
+            trackMap[gTrackNum].mat.mat3.pos[2] = mapPos[2];
+        }
+    }
+    gTrackNum = saveTrackNum;
 }
 
 /* 0x8008be24, size 0x184 */
 static void buildBattleTrackMaps(void)
 {
     static float mapPos[3] = {-100.0f,30.0f,200.0f};
-    /* TODO: body excluded until original static layout is recovered. */
+    int saveTrackNum;
+    saveTrackNum = gTrackNum;
+    for (gTrackNum = 6; gTrackNum <= 13; gTrackNum++) {
+        if (IsTrackUnlocked(gTrackNum) && trackMap[gTrackNum].objIdx == -1) {
+            trackMap[gTrackNum].objIdx = MBOX_NewObject(MBOX_FindObject_WORK(trackMapObjNames[gTrackNum],0,gNumModels-1,1), &trackMap[gTrackNum].mat, -1, 0x2000);
+            ZOID_SetColor(trackMap[gTrackNum].objIdx, &trackColors[gTrackNum]);
+            ScaleUV(unitmatrix, trackMap[gTrackNum].mat.mat3.uvs, 1.0f);
+            WPitchUV(-1.5707963705062866f, trackMap[gTrackNum].mat.mat3.uvs);
+            trackMap[gTrackNum].mat.mat3.pos[0] = mapPos[0];
+            trackMap[gTrackNum].mat.mat3.pos[1] = mapPos[1];
+            trackMap[gTrackNum].mat.mat3.pos[2] = mapPos[2];
+        }
+    }
+    gTrackNum = saveTrackNum;
 }
 
 /* 0x8008bfa8, size 0x4 */
@@ -814,14 +1392,109 @@ static void uninitButtons(void)
 /* 0x8008cb54, size 0x7b8 */
 static void updateButtons(void)
 {
-    int buttonIdx; /* r27 */
-    float prevPos[3]; /* stack */
-    float buttonY; /* f27 */
-    float selectedPos; /* f27 */
-    signed char clearScrollSpeed; /* r26 */
-    anon_name_width_30 *tex; /* r0 */
-    unsigned short texIdx; /* stack */
-    anon_c_rgba_4 buttonColor; /* stack */
-    /* TODO */
+    static float cursorSpeed;
+    static float scrollSpeed;
+    int buttonIdx;
+    float prevPos[3];
+    float buttonY;
+    float selectedPos;
+    signed char clearScrollSpeed = 1;
+    anon_name_width_30 *tex;
+    unsigned short texIdx;
+    anon_c_rgba_4 buttonColor = {{255,255,255,255}};
+    if (buttonsInited) {
+        if (gButtonScale * ((gNumOptions-1)*gButtonSpace) > maxY-minY)
+            selectedPos = maxY - gActiveOption*(maxY-minY)/(gNumOptions-1);
+        else selectedPos = maxY - gButtonScale*(gActiveOption*gButtonSpace);
+        memcpy(prevPos,buttonInfo[43].mat.mat3.pos,12);
+        buttonInfo[43].angle += 6.2831854820251465f*gFrameSeconds;
+        if (buttonInfo[43].angle > 6.2831854820251465f) buttonInfo[43].angle -= 6.2831854820251465f;
+        buttonInfo[43].mat.mat3.pos[0] = buttonX*cursorZ/buttonZ + -180.0f*gButtonScale;
+        buttonInfo[43].mat.mat3.pos[1] = selectedPos*cursorZ/buttonZ;
+        buttonInfo[43].mat.mat3.pos[2] = cursorZ;
+        if (!buttonsJustInited) {
+            if (60.0*fabs(buttonInfo[43].mat.mat3.pos[1]-prevPos[1])/10.0 > cursorSpeed) {
+                cursorSpeed = 60.0*fabs(buttonInfo[43].mat.mat3.pos[1]-prevPos[1])/10.0;
+                cursorSpeed = cursorSpeed < 540.0f*gButtonScale ? cursorSpeed : 540.0f*gButtonScale;
+                cursorSpeed = cursorSpeed > 180.0f*gButtonScale ? cursorSpeed : 180.0f*gButtonScale;
+            }
+            if (buttonInfo[43].mat.mat3.pos[1] > prevPos[1]+cursorSpeed*gFrameSeconds)
+                buttonInfo[43].mat.mat3.pos[1] = prevPos[1]+cursorSpeed*gFrameSeconds;
+            else if (buttonInfo[43].mat.mat3.pos[1] < prevPos[1]-cursorSpeed*gFrameSeconds)
+                buttonInfo[43].mat.mat3.pos[1] = prevPos[1]-cursorSpeed*gFrameSeconds;
+            else cursorSpeed = 180.0f*gButtonScale;
+        }
+        ScaleUV(unitmatrix,buttonInfo[43].mat.mat3.uvs,0.4f*gButtonScale);
+        WRollUV(buttonInfo[43].angle,buttonInfo[43].mat.mat3.uvs);
+        WPitchUV(1.5707963705062866f,buttonInfo[43].mat.mat3.uvs);
+        buttonY = selectedPos + gButtonScale*(gActiveOption*gButtonSpace);
+        for (buttonIdx = 0; buttonIdx < 21; buttonIdx++) {
+            if (buttonIdx == gOpts[gActiveOption]) {
+                if (buttonInfo[buttonIdx].angle < 3.1415927410125732f) buttonInfo[buttonIdx].angle += 12.566370964050293f*gFrameSeconds;
+                if (buttonInfo[buttonIdx].angle > 3.1415927410125732f) buttonInfo[buttonIdx].angle = 3.1415927410125732f;
+                if (buttonsJustInited) buttonInfo[buttonIdx].angle = 3.1415927410125732f;
+            } else {
+                if (buttonInfo[buttonIdx].angle > 0.0f) buttonInfo[buttonIdx].angle -= 12.566370964050293f*gFrameSeconds;
+                if (buttonInfo[buttonIdx].angle < 0.0f) buttonInfo[buttonIdx].angle = 0.0f;
+                if (buttonsJustInited) buttonInfo[buttonIdx].angle = 0.0f;
+            }
+            if ((gRace != kCircuit || (gCircuitTrack == 0 && buttonIdx == 20)) && (gRace != kGhost || buttonIdx != 2)) buttonInfo[buttonIdx+21].angle = buttonInfo[buttonIdx].angle;
+            else buttonInfo[buttonIdx+21].angle = 0.0f;
+            memcpy(prevPos,buttonInfo[buttonIdx].mat.mat3.pos,12);
+            buttonInfo[buttonIdx].mat.mat3.pos[0] = buttonX + -155.0f*gButtonScale;
+            buttonInfo[buttonIdx].mat.mat3.pos[1] = buttonY;
+            buttonInfo[buttonIdx].mat.mat3.pos[2] = buttonZ;
+            if (!buttonsJustInited) {
+                if (60.0*fabs(buttonInfo[buttonIdx].mat.mat3.pos[1]-prevPos[1])/10.0 > scrollSpeed) {
+                    scrollSpeed = 60.0*fabs(buttonInfo[buttonIdx].mat.mat3.pos[1]-prevPos[1])/10.0;
+                    scrollSpeed = scrollSpeed < 540.0f*gButtonScale ? scrollSpeed : 540.0f*gButtonScale;
+                    scrollSpeed = scrollSpeed > 180.0f*gButtonScale ? scrollSpeed : 180.0f*gButtonScale;
+                }
+                if (buttonInfo[buttonIdx].mat.mat3.pos[1] > prevPos[1]+scrollSpeed*gFrameSeconds) {
+                    buttonInfo[buttonIdx].mat.mat3.pos[1] = prevPos[1]+scrollSpeed*gFrameSeconds;
+                    clearScrollSpeed = 0;
+                } else if (buttonInfo[buttonIdx].mat.mat3.pos[1] < prevPos[1]-scrollSpeed*gFrameSeconds) {
+                    buttonInfo[buttonIdx].mat.mat3.pos[1] = prevPos[1]-scrollSpeed*gFrameSeconds;
+                    clearScrollSpeed = 0;
+                }
+            }
+            buttonInfo[buttonIdx+21].mat.mat3.pos[0] = buttonX + 50.0f*gButtonScale;
+            buttonInfo[buttonIdx+21].mat.mat3.pos[1] = buttonInfo[buttonIdx].mat.mat3.pos[1];
+            buttonInfo[buttonIdx+21].mat.mat3.pos[2] = buttonInfo[buttonIdx].mat.mat3.pos[2];
+            ScaleUV(unitmatrix,buttonInfo[buttonIdx].mat.mat3.uvs,gButtonScale);
+            ScaleUV(unitmatrix,buttonInfo[buttonIdx+21].mat.mat3.uvs,gButtonScale);
+            WPitchUV(3.1415927410125732f + (buttonInfo[buttonIdx].angle - 1.5707963705062866f),buttonInfo[buttonIdx].mat.mat3.uvs);
+            WPitchUV(3.1415927410125732f + (buttonInfo[buttonIdx+21].angle - 1.5707963705062866f),buttonInfo[buttonIdx+21].mat.mat3.uvs);
+            if (buttonInfo[buttonIdx].angle > 1.5707963705062866f) tex = MBOX_FindTexture_WORK("BUTTON_SELECT",&texIdx,0,gNumModels-1,1);
+            else tex = MBOX_FindTexture_WORK("BUTTON",&texIdx,0,gNumModels-1,1);
+            ZOID_SetTexture(buttonInfo[buttonIdx].objIdx,tex,-1);
+            if (buttonInfo[buttonIdx+21].angle > 1.5707963705062866f) tex = MBOX_FindTexture_WORK("BUTTON_SELECT",&texIdx,0,gNumModels-1,1);
+            else tex = MBOX_FindTexture_WORK("BUTTON",&texIdx,0,gNumModels-1,1);
+            ZOID_SetTexture(buttonInfo[buttonIdx+21].objIdx,tex,-1);
+            if (buttonInfo[buttonIdx].mat.mat3.pos[1] > maxY+gButtonSpace*gButtonScale || buttonInfo[buttonIdx].mat.mat3.pos[1] < minY-gButtonSpace*gButtonScale) buttonInfo[buttonIdx].alpha = 0;
+            else if (buttonInfo[buttonIdx].mat.mat3.pos[1] > maxY) buttonInfo[buttonIdx].alpha = 80;
+            else if (buttonInfo[buttonIdx].mat.mat3.pos[1] < minY) buttonInfo[buttonIdx].alpha = 80;
+            else buttonInfo[buttonIdx].alpha = 255;
+            if (!OptionValid(buttonIdx)) buttonInfo[buttonIdx].alpha = 0;
+            buttonInfo[buttonIdx+21].alpha = buttonInfo[buttonIdx].alpha;
+            buttonColor.c[3] = buttonInfo[buttonIdx].alpha;
+            ZOID_SetColor(buttonInfo[buttonIdx].objIdx,&buttonColor);
+            ZOID_SetColor(buttonInfo[buttonIdx+21].objIdx,&buttonColor);
+            if (!OptionValid(buttonIdx)) {
+                MBOX_HideObject(buttonInfo[buttonIdx].objIdx,0,15);
+                MBOX_HideObject(buttonInfo[buttonIdx+21].objIdx,0,15);
+            } else if (buttonInfo[buttonIdx].alpha == 0) {
+                MBOX_HideObject(buttonInfo[buttonIdx].objIdx,0,15);
+                MBOX_HideObject(buttonInfo[buttonIdx+21].objIdx,0,15);
+                buttonY -= gButtonSpace*gButtonScale;
+            } else {
+                MBOX_ShowObject(buttonInfo[buttonIdx].objIdx,0,15);
+                MBOX_ShowObject(buttonInfo[buttonIdx+21].objIdx,0,15);
+                buttonY -= gButtonSpace*gButtonScale;
+            }
+        }
+        if (clearScrollSpeed == 1) scrollSpeed = 0.0f;
+        buttonsJustInited = 0;
+    }
 }
 

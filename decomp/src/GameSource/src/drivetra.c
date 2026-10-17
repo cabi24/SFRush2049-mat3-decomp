@@ -142,6 +142,7 @@ void downshift(tModelData *m)
 /* 0x8000f090, size 0x1a4 */
 signed short enginetorque(tModelData *m, signed short rpm, signed short throttle, const signed short *torquecurve)
 {
+    int promoted[2];
     signed short rindex; /* r7 */
     signed short tindex; /* r3 */
     signed short rrem; /* r8 */
@@ -166,10 +167,12 @@ signed short enginetorque(tModelData *m, signed short rpm, signed short throttle
         tindex = 8;
         trem = 13;
     }
-    low_ptr = (signed short *)(torquecurve + tindex * 12 + rindex);
-    left = interp(low_ptr[0], low_ptr[1], rrem, 1149);
-    low_ptr = (signed short *)(torquecurve + (tindex + 1) * 12 + rindex);
-    right = interp(low_ptr[0], low_ptr[1], rrem, 1149);
+    promoted[0] = rindex;
+    promoted[1] = rrem;
+    low_ptr = (signed short *)(torquecurve + tindex * 12 + promoted[0]);
+    left = interp(low_ptr[0], low_ptr[1], promoted[1], 1149);
+    low_ptr = (signed short *)(torquecurve + (tindex + 1) * 12 + promoted[0]);
+    right = interp(low_ptr[0], low_ptr[1], promoted[1], 1149);
     left = interp(left, right, trem, 14);
     left *= m->tune->torque_scale * carEngineTorque[m->engine_type][m->handling];
     return left;

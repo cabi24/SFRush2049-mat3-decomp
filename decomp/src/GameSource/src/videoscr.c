@@ -1,6 +1,7 @@
 /* videoscr.c - video menu and display offsets. Status: partial, NonMatching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\videoscr.c; assembly: build/2049LE/asm/GameSource/src/videoscr.s */
 #include "rush/rush_protos.h"
+#include "msl_math_inline.h"
 
 /* Inferred inline centering helper preserves the separate border calculation. */
 static inline int centeredLeft(int halfWidth) { return 160 - halfWidth; }
@@ -465,14 +466,89 @@ static void uninitButtons(void)
 /* 0x80065668, size 0x4c4 */
 static void updateButtons(void)
 {
-    int buttonIdx; /* r28 */
-    float prevPos[3]; /* stack */
-    float buttonY; /* f29 */
-    float selectY; /* f28 */
-    anon_name_width_30 *tex; /* r0 */
-    unsigned short texIdx; /* stack */
-    /* TODO: surviving original body has not been reconstructed. */
+    int buttonIdx;
+    float prevPos[3];
+    float buttonY;
+    float selectY;
+    anon_name_width_30 *tex;
+    unsigned short texIdx;
+    if (buttonsInited) {
+        buttonY = 100.0f;
+        for (buttonIdx = 0; buttonIdx < 4; buttonIdx++) {
+            if (buttonIdx == gVideoMenuSelect) {
+                selectY = buttonY;
+                if (buttonInfo[buttonIdx].angle < 3.1415927f)
+                    buttonInfo[buttonIdx].angle += 12.566371f * gFrameSeconds;
+                if (buttonInfo[buttonIdx].angle > 3.1415927f || buttonsJustInited == 1)
+                    buttonInfo[buttonIdx].angle = 3.1415927f;
+            } else {
+                if (buttonInfo[buttonIdx].angle > 0.0f)
+                    buttonInfo[buttonIdx].angle -= 12.566371f * gFrameSeconds;
+                if (buttonInfo[buttonIdx].angle < 0.0f || buttonsJustInited == 1)
+                    buttonInfo[buttonIdx].angle = 0.0f;
+            }
+            memcpy(buttonInfo[buttonIdx].mat.mat3.uvs, unitmatrix, 36);
+            memcpy(prevPos, buttonInfo[buttonIdx].mat.mat3.pos, 12);
+            buttonInfo[buttonIdx].mat.mat3.pos[0] = -90.0f;
+            buttonInfo[buttonIdx].mat.mat3.pos[1] = buttonY;
+            buttonInfo[buttonIdx].mat.mat3.pos[2] = 300.0f;
+            if (!buttonsJustInited) {
+                if (buttonInfo[buttonIdx].mat.mat3.pos[1] > prevPos[1] + 180.0f * gFrameSeconds)
+                    buttonInfo[buttonIdx].mat.mat3.pos[1] = prevPos[1] + 180.0f * gFrameSeconds;
+                if (buttonInfo[buttonIdx].mat.mat3.pos[1] < prevPos[1] - 180.0f * gFrameSeconds)
+                    buttonInfo[buttonIdx].mat.mat3.pos[1] = prevPos[1] - 180.0f * gFrameSeconds;
+            }
+            buttonInfo[buttonIdx+4].mat.mat3.pos[0] = 150.0f;
+            buttonInfo[buttonIdx+4].mat.mat3.pos[1] = buttonInfo[buttonIdx].mat.mat3.pos[1];
+            buttonInfo[buttonIdx+4].mat.mat3.pos[2] = buttonInfo[buttonIdx].mat.mat3.pos[2];
+            buttonInfo[buttonIdx+4].angle = buttonInfo[buttonIdx].angle;
+            WPitchUV(buttonInfo[buttonIdx].angle - 1.5707964f, buttonInfo[buttonIdx].mat.mat3.uvs);
+            memcpy(buttonInfo[buttonIdx+4].mat.mat3.uvs, buttonInfo[buttonIdx].mat.mat3.uvs, 36);
+            if (buttonInfo[buttonIdx].angle > 1.5707964f)
+                tex = MBOX_FindTexture_WORK("BUTTON_SELECT", &texIdx, 0, gNumModels-1, 1);
+            else
+                tex = MBOX_FindTexture_WORK("BUTTON", &texIdx, 0, gNumModels-1, 1);
+            ZOID_SetTexture(buttonInfo[buttonIdx].objIdx, tex, -1);
+            ZOID_SetTexture(buttonInfo[buttonIdx+4].objIdx, tex, -1);
+            if (!validOption(buttonIdx)) {
+                MBOX_HideObject(buttonInfo[buttonIdx].objIdx, 1, 15);
+                MBOX_HideObject(buttonInfo[buttonIdx+4].objIdx, 1, 15);
+            } else {
+                MBOX_ShowObject(buttonInfo[buttonIdx].objIdx, 0, 15);
+                if (buttonIdx < 3)
+                    MBOX_ShowObject(buttonInfo[buttonIdx+4].objIdx, 0, 15);
+                else
+                    MBOX_HideObject(buttonInfo[buttonIdx+4].objIdx, 1, 15);
+                buttonY -= 40.0f;
+            }
+        }
+        memcpy(prevPos, buttonInfo[8].mat.mat3.pos, 12);
+        buttonInfo[8].angle += 6.2831855f * gFrameSeconds;
+        if (buttonInfo[8].angle > 6.2831855f) buttonInfo[8].angle -= 6.2831855f;
+        memcpy(buttonInfo[8].mat.mat3.uvs, unitmatrix, 36);
+        buttonInfo[8].mat.mat3.pos[0] = -160.0f;
+        buttonInfo[8].mat.mat3.pos[1] = 225.0f * selectY / 300.0f;
+        buttonInfo[8].mat.mat3.pos[2] = 225.0f;
+        if (!buttonsJustInited) {
+            if (60.0 * fabs(buttonInfo[8].mat.mat3.pos[1] - prevPos[1]) / 10.0 > cursorSpeed) {
+                cursorSpeed = 60.0 * fabs(buttonInfo[8].mat.mat3.pos[1] - prevPos[1]) / 10.0;
+                cursorSpeed = cursorSpeed < 540.0f * gButtonScale ? cursorSpeed : 540.0f * gButtonScale;
+                cursorSpeed = cursorSpeed > 180.0f * gButtonScale ? cursorSpeed : 180.0f * gButtonScale;
+            }
+            if (buttonInfo[8].mat.mat3.pos[1] > prevPos[1] + cursorSpeed * gFrameSeconds)
+                buttonInfo[8].mat.mat3.pos[1] = prevPos[1] + cursorSpeed * gFrameSeconds;
+            else if (buttonInfo[8].mat.mat3.pos[1] < prevPos[1] - cursorSpeed * gFrameSeconds)
+                buttonInfo[8].mat.mat3.pos[1] = prevPos[1] - cursorSpeed * gFrameSeconds;
+            else
+                cursorSpeed = 180.0f * gButtonScale;
+        }
+        WRollUV(buttonInfo[8].angle, buttonInfo[8].mat.mat3.uvs);
+        WPitchUV(1.5707964f, buttonInfo[8].mat.mat3.uvs);
+        ScaleUV(buttonInfo[8].mat.mat3.uvs, buttonInfo[8].mat.mat3.uvs, 0.4f);
+        buttonsJustInited = 0;
+    }
 }
+
 
 /* 0x80065b2c, size 0x14 */
 void VideoSetOffset(int xo, int yo)

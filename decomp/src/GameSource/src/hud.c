@@ -1139,3 +1139,491 @@ void ShowCheckpointTime(int slot, float time)
     gElapsedTime[slot] = time;
     cvt_time(time, CheckpointStr[slot], 'f');
 }
+
+static int odometerPos[4][4][2] = {
+    30, 32, 0, 0, 0, 0, 0, 0,
+    30, 30, 30, 142, 0, 0, 0, 0,
+    30, 30, 290, 30, 30, 142, 0, 0,
+    30, 30, 290, 30, 30, 142, 290, 142,
+};
+
+static inline tCarData *hudCar(int slot) { return &gGameCar[slot]; }
+
+static int animOdometer(_tBlit *blt)
+{
+    int p = (blt->animID >> 4) & 15;
+    int d = blt->animID & 15;
+    float carMileage = hudCar(p)->mileage;
+    float flipAmount = 0.0f;
+    if (gOptions[9])
+        carMileage /= 0.6f;
+    if (p >= gNumWindows || gRace == kObstacle) {
+        blt->animFunc = 0;
+        Hidden((_tBlit_2 *)blt, 1);
+        return 1;
+    }
+    if (Hidden((_tBlit_2 *)blt, !gShowOdometer || !(gGameState & 0x400000) || gGameCar[model[p].slot].place_locked == 1))
+        return 1;
+    if ((int)(carMileage / 528.0f) % 10 == 9)
+        flipAmount = carMileage / 528.0f - (int)(carMileage / 528.0f);
+    switch (d) {
+    case 0:
+        blt->x = odometerPos[gNumWindows - 1][p][0] - (blt->width / 2 * 2) / 2;
+        blt->y = odometerPos[gNumWindows - 1][p][1];
+        blt->left = 0;
+        blt->top = ((int)(carMileage / 528000.0f) % 10) * (blt->width / 2);
+        if ((int)(carMileage / 52800.0f) % 10 == 9 && (int)(carMileage / 5280.0f) % 10 == 9 && (int)(carMileage / 528.0f) % 10 == 9)
+            blt->top += flipAmount * (blt->width / 2);
+        break;
+    case 1:
+        blt->x = odometerPos[gNumWindows - 1][p][0] - (blt->width / 2) / 2;
+        blt->y = odometerPos[gNumWindows - 1][p][1];
+        blt->left = 0;
+        blt->top = ((int)(carMileage / 52800.0f) % 10) * (blt->width / 2);
+        if ((int)(carMileage / 5280.0f) % 10 == 9 && (int)(carMileage / 528.0f) % 10 == 9)
+            blt->top += flipAmount * (blt->width / 2);
+        break;
+    case 2:
+        blt->x = odometerPos[gNumWindows - 1][p][0];
+        blt->y = odometerPos[gNumWindows - 1][p][1];
+        blt->left = 0;
+        blt->top = ((int)(carMileage / 5280.0f) % 10) * (blt->width / 2);
+        if ((int)(carMileage / 528.0f) % 10 == 9)
+            blt->top += flipAmount * (blt->width / 2);
+        break;
+    case 3:
+        blt->x = odometerPos[gNumWindows - 1][p][0] + (blt->width / 2) / 2;
+        blt->y = odometerPos[gNumWindows - 1][p][1];
+        blt->left = blt->width / 2;
+        flipAmount = (int)(carMileage / 528.0f) % 10 + carMileage / 528.0f - (int)(carMileage / 528.0f);
+        blt->top = flipAmount * (blt->width / 2);
+        break;
+    }
+    blt->right = blt->left + blt->width / 2 - 1;
+    blt->bot = blt->top + blt->width / 2 - 1;
+    UpdateBlit(blt);
+    return 1;
+}
+
+static void *dataMap;
+static void *dataObj;
+static int whichCam[4] = {1,2,4,8};
+
+static int animDot(_tBlit *blt)
+{
+    int gDotSize;
+    short flash;
+    short slot = dot_order_list[blt->animID & 15];
+    tModelData *m;
+    tCarData *c;
+    int width, height, w, h, yOffset;
+    if (Hidden((_tBlit_2 *)blt, gNumWindows > 4 || slot == -1 || !(gGameState & 0x400000) || !gShowTrackMap))
+        return 1;
+    gDotSize = blt->height;
+    m = &model[slot];
+    c = &gGameCar[slot];
+    width = gPathMax[0] - gPathMin[0];
+    height = gPathMax[2] - gPathMin[2];
+    if (width > height) {
+        w = kMapSize - 8;
+        h = height * (kMapSize - 8) / width;
+    } else {
+        w = kMapSize - 8;
+        h = kMapSize - 8;
+    }
+    yOffset = (kMapSize - 8 - h) / 2 + 4;
+    blt->x = mapPos[gNumWindows - 1][0] + ((kMapSize - 8 - w) / 2 + 4 - (gDotSize + kMapSize) / 2) / 2;
+    blt->y = mapPos[gNumWindows - 1][1] + (yOffset - (gDotSize + kMapSize) / 2) / 2.0f;
+    if (gMirrorWaves)
+        blt->x += w * (c->dr_pos[0] - gPathMin[0]) / width / 2.0f;
+    else
+        blt->x += (w - 1 - w * (c->dr_pos[0] - gPathMin[0]) / width) / 2.0f;
+    blt->y += h * (c->dr_pos[2] - gPathMin[2]) / height / 2.0f;
+    flash = c->crash_state || m->crashflag || !m->solid || m->hide_car || m->resurrect.moving_state != -1;
+    if (c->dead > 0)
+        flash = 0;
+    if (slot < gNumCars) {
+        blt->alpha = (sc.frameCount & 8) && flash ? 64 : 255;
+        if (m->drone_type == 2)
+            SelectBlit(blt, slot, gDotSize, gDotSize);
+        else if (m->drone_type == 1)
+            SelectBlit(blt, 7, gDotSize, gDotSize);
+    } else {
+        return Hidden((_tBlit_2 *)blt, 1);
+    }
+    UpdateBlit(blt);
+    return 1;
+}
+
+static int animFlag(_tBlit *blt)
+{
+    int x, y, width, height, w, h;
+    if (Hidden((_tBlit_2 *)blt, gNumWindows > 4 || !(gGameState & 0x400000) || gNumLapsLeft > 1 || gRace == 6 || gRace == 4 || gRace == 5 || !gShowTrackMap))
+        return 1;
+    width = gPathMax[0] - gPathMin[0];
+    height = gPathMax[2] - gPathMin[2];
+    if (width > height) {
+        w = kMapSize - 8;
+        h = height * (kMapSize - 8) / width;
+    } else {
+        h = kMapSize - 8;
+        w = width * (kMapSize - 8) / height;
+    }
+    x = mapPos[gNumWindows - 1][0] + ((kMapSize - 8 - w) / 2 + 4 - kMapSize / 2) / 2;
+    y = mapPos[gNumWindows - 1][1] + ((kMapSize - 8 - h) / 2 + 4 - kMapSize / 2) / 2.0f;
+    if (gMirrorWaves)
+        x += w * (gCheckpoints.points[gCheckpoints.finishPt].pos[0] - gPathMin[0]) / width / 2.0f;
+    else
+        x += (w - 1 - w * (gCheckpoints.points[gCheckpoints.finishPt].pos[0] - gPathMin[0]) / width) / 2.0f;
+    y += h * (gCheckpoints.points[gCheckpoints.finishPt].pos[2] - gPathMin[2]) / height / 2.0f;
+    blt->x = x - (blt->width / 2) / 2;
+    blt->y = y - (blt->width / 2) / 2.0f;
+    if (Hidden((_tBlit_2 *)blt, gRace == 1 || gNumLapsLeft > 1 || (gGameState & 8))) {
+        if (gRace != 1 && !(gGameState & 8)) {
+            if (gNumWindows < 4)
+                HAL_SetFont(6);
+            else
+                HAL_SetFont(7);
+            HAL_SetTextDepth(0.0f);
+            TB_SetJust(1, 1);
+            TB_SetTextColor(0);
+            TB_Printf(x + 1, y + 1, "%d", gNumLapsLeft);
+            TB_SetTextColor(11);
+            TB_Printf(x, y, "%d", gNumLapsLeft);
+            TB_SetJust(0, 3);
+            HAL_SetTextDepth(-1.0f);
+        }
+        return 1;
+    }
+    if (gMirrorWaves)
+        blt->flip = 1;
+    blt->alpha = 128;
+    if (!gPauseState)
+        blt->animDTA -= 1000.0f * gFrameSeconds;
+    if (blt->animDTA <= 0) {
+        blt->animDTA = 100;
+        blt->animID = (blt->animID + 1) % 5;
+    }
+    SelectBlit(blt, blt->animID, blt->width, blt->width);
+    return 1;
+}
+
+static int animRadarBlip(_tBlit *blt)
+{
+    float scale = 1.0f / 480.0f;
+    int window = (blt->animID >> 8) & 15;
+    short slot;
+    float rpos[3], lpos[3];
+    tCarData *gc;
+    tModelData *m;
+    int blipWidth = blt->width / 8.0f / 2.0f;
+    int blipHeight = blt->height / 2.0f;
+    if (window >= gNumWindows || (gGameState & 8) || gNumCars < 2) {
+        blt->animFunc = 0;
+        return Hidden((_tBlit_2 *)blt, 1);
+    }
+    slot = blt->animID & 15;
+    m = &model[slot];
+    gc = &gGameCar[slot];
+    if (Hidden((_tBlit_2 *)blt, !gShowRadar || !(gGameState & 0x400000) || gGameCar[window].place_locked == 1))
+        return 1;
+    if (!m->in_game) {
+        blt->animFunc = 0;
+        return Hidden((_tBlit_2 *)blt, 1);
+    }
+    if (Hidden((_tBlit_2 *)blt, slot != window && !AreWeSolid(slot)))
+        return 1;
+    lpos[0] = gc->dr_pos[0] - gGameCar[window].dr_pos[0];
+    lpos[1] = gc->dr_pos[1] - gGameCar[window].dr_pos[1];
+    lpos[2] = gc->dr_pos[2] - gGameCar[window].dr_pos[2];
+    BodyVector(lpos, rpos, gGameCar[window].dr_uvs);
+    blt->x = radarWidth / 2.0f;
+    blt->y = 16;
+    if (gMirrorWaves)
+        blt->x += radarWidth * (-rpos[0] * scale);
+    else
+        blt->x += radarWidth * (rpos[0] * scale);
+    blt->y += radarHeight * (rpos[2] * -scale);
+    if (Hidden((_tBlit_2 *)blt, blt->x < blipWidth || blt->x > radarWidth - blipWidth || blt->y < blipHeight || blt->y > radarHeight - blipHeight))
+        return 1;
+    blt->x += radarPos[gNumWindows - 1][window][0];
+    blt->y += radarPos[gNumWindows - 1][window][1];
+    if (m->drone_type == 2)
+        SelectBlit(blt, m->slot, blt->width / 8.0f, blt->height);
+    else if (m->drone_type == 1)
+        SelectBlit(blt, 5, blt->width / 8.0f, blt->height);
+    blt->x -= blipWidth / 2;
+    blt->y -= blipHeight / 2;
+    UpdateBlit(blt);
+    return 1;
+}
+
+static int animTrackMap(_tBlit *blt)
+{
+    int width, height, w, h, xOffset, yOffset;
+    int x, y, x1, y1, x2, p, i;
+    anon_name_width_38 *ps2tex;
+    unsigned char *data;
+    _GXTexObj *pTexObj;
+    if (Hidden((_tBlit_2 *)blt, gNumWindows > 4 || !(gGameState & 0x400000) || !gShowTrackMap))
+        return 1;
+    if (!(blt->animID & 16))
+        return 1;
+    if (gNumWindows == 4)
+        RenameBlit(blt, "MAP_MD", 0);
+    kMapSize = blt->width;
+    if (blt->animID & 16) {
+        blt->animID &= 15;
+        blt->x = mapPos[gNumWindows - 1][0] - (kMapSize / 2) / 2;
+        blt->y = mapPos[gNumWindows - 1][1] - (kMapSize / 2) / 2.0f;
+        UpdateBlit(blt);
+    }
+    width = gPathMax[0] - gPathMin[0];
+    height = gPathMax[2] - gPathMin[2];
+    if (width > height) {
+        w = kMapSize - 8;
+        h = height * (kMapSize - 8) / width;
+    } else {
+        w = kMapSize - 8;
+        h = kMapSize - 8;
+    }
+    xOffset = (kMapSize - 8 - w) / 2 + 4;
+    yOffset = (kMapSize - 8 - h) / 2 + 4;
+    ps2tex = (anon_name_width_38 *)blt->texture->strip;
+    if (ps2tex) {
+        if (dataMap) {
+            DeallocateMemory(dataMap);
+            DeallocateMemory(dataObj);
+        }
+        pTexObj = ngcCreateTextureMapRGBA8(kMapSize * 4, kMapSize * 4, &data);
+        ps2tex->texBase = (char *)pTexObj;
+        dataObj = pTexObj;
+        dataMap = data;
+        for (y = 0; y < kMapSize; y++) {
+        }
+        for (p = 0; p < gResPath.numPts; p++) {
+            if (p >= gResPath.numPts) {
+                for (i = 0; i < gResPath.numAlt; i++) {
+                    if (gResPathPtList + p >= gResPath.alt[i].pts && gResPathPtList + p < gResPath.alt[i].pts + gResPath.alt[i].numPts)
+                        break;
+                }
+                if (!gResPath.alt[i].resurrect) {
+                    p += gResPath.alt[i].numPts - 1;
+                    continue;
+                }
+            }
+            x = xOffset + w * (gResPath.pts[p][0] - gPathMin[0]) / width;
+            y = yOffset + h * (gResPath.pts[p][2] - gPathMin[2]) / height;
+            for (y1 = y - 3; y1 <= y + 3; y1++) {
+                for (x1 = x - 3; x1 <= x + 3; x1++) {
+                    if (x1 >= 0 && x1 < kMapSize && y1 >= 0 && y1 < kMapSize) {
+                        x2 = gMirrorWaves ? x1 : kMapSize - 1 - x1;
+                        ngcWriteTexelRGBA8(data, kMapSize * 4, kMapSize * 4, x2 * 4, y1 * 4, 255, 255, 255, 255);
+                    }
+                }
+            }
+        }
+        ngcFlushTexObjDataRGBA8(pTexObj, data, kMapSize * 4, kMapSize * 4);
+        return 1;
+    }
+}
+
+int animCoins(void)
+{
+    short screenPos[2];
+    short player, coin;
+    float xoffset, yoffset;
+    screenPos[0] = 0;
+    screenPos[1] = 0;
+    HAL_SetTextDepth(0.0f);
+    if (gNumWindows == 1)
+        HAL_SetFont(10);
+    else
+        HAL_SetFont(12);
+    TB_SetJust(0, 1);
+    for (player = 0; player < gNumWindows; player++) {
+        for (coin = 0; coin < 2; coin++) {
+            if (gPlayerCoin[player][coin].idx == -1) {
+                char *playerCoinName[2] = {"GOLDCOINL4_LOD1", "SILVERCOINL4_LO"};
+                gPlayerCoin[player][coin].idx = MBOX_NewObject(MBOX_FindObject_WORK(playerCoinName[coin], 0, gNumModels - 1, 1), &gPlayerCoin[player][coin].mat, -1, 0);
+                MBOX_HideObject(gPlayerCoin[player][coin].idx, 1, 15);
+                ObjInstanceList[gPlayerCoin[player][coin].idx].w = 10.0f;
+            }
+            ScaleUV(gCamera[player].mat.mat3.uvs, gPlayerCoin[player][coin].mat.mat3.uvs, gNumPlayers == 1 ? 0.03f : gNumPlayers == 2 ? 0.03f : 0.04f);
+            YawUV(hudObjAngle, gPlayerCoin[player][coin].mat.mat3.uvs);
+            if (gRace == kStunt) {
+            if (gNumWindows == 1) {
+                if (coin == 0) {
+                    xoffset = 0.0f; yoffset = -8.0f;
+                } else {
+                    xoffset = 0.0f; yoffset = 48.0f;
+                }
+            }
+            else if (gNumWindows == 2) {
+                if (player == 0) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = -8.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 48.0f;
+                    }
+                }                 else {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = -8.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 164.0f;
+                    }
+                } 
+            }
+            else if (gNumWindows == 3) {
+                if (player == 0) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 48.0f;
+                    }
+                }                 else if (player == 1) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 48.0f;
+                    }
+                }                 else {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 160.0f;
+                    }
+                } 
+            }
+            else {
+                if (player == 0) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 48.0f;
+                    }
+                }                 else if (player == 1) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 48.0f;
+                    }
+                }                 else if (player == 2) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 160.0f;
+                    }
+                }                 else {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 160.0f;
+                    }
+                } 
+            }
+            screenPos[0] = (xoffset + coinStuntPos[gNumWindows - 1][player][0]) * 2.0f;
+            screenPos[1] = (yoffset + (coinStuntPos[gNumWindows - 1][player][1] + coin * (gNumWindows == 1 ? 15 : gNumWindows == 2 ? 12 : 8))) * 2.0f;
+            } else if (gRace == kGhost) {
+                if (coin == 0) {
+                    xoffset = 0.0f; yoffset = -4.0f;
+                } else {
+                    xoffset = 0.0f; yoffset = 64.0f;
+                }
+            screenPos[0] = (xoffset + coinPos[gNumWindows - 1][player][0]) * 2.0f;
+            screenPos[1] = (yoffset + (coinPos[gNumWindows - 1][player][1] + coin * (gNumWindows == 1 ? 15 : gNumWindows == 2 ? 12 : 8))) * 2.0f;
+            } else if (gRace == kCircuit) {
+                if (coin == 0) {
+                    xoffset = 0.0f; yoffset = -4.0f;
+                } else {
+                    xoffset = 0.0f; yoffset = 64.0f;
+                }
+            screenPos[0] = (xoffset + coinPos[gNumWindows - 1][player][0]) * 2.0f;
+            screenPos[1] = (yoffset + (coinPos[gNumWindows - 1][player][1] + coin * (gNumWindows == 1 ? 15 : gNumWindows == 2 ? 12 : 8))) * 2.0f;
+            } else {
+            if (gNumWindows == 1) {
+                if (coin == 0) {
+                    xoffset = 0.0f; yoffset = -4.0f;
+                } else {
+                    xoffset = 0.0f; yoffset = 64.0f;
+                }
+            }
+            else if (gNumWindows == 2) {
+                if (player == 0) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = -8.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 52.0f;
+                    }
+                }                 else {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = -8.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 164.0f;
+                    }
+                } 
+            }
+            else if (gNumWindows == 3) {
+                if (player == 0) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 48.0f;
+                    }
+                }                 else if (player == 1) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 48.0f;
+                    }
+                }                 else {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 160.0f;
+                    }
+                } 
+            }
+            else {
+                if (player == 0) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 48.0f;
+                    }
+                }                 else if (player == 1) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 48.0f;
+                    }
+                }                 else if (player == 2) {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 184.0f;
+                    }
+                }                 else {
+                    if (coin == 0) {
+                        xoffset = 0.0f; yoffset = 0.0f;
+                    } else {
+                        xoffset = 0.0f; yoffset = 184.0f;
+                    }
+                } 
+            }
+            screenPos[0] = (xoffset + coinPos[gNumWindows - 1][player][0]) * 2.0f;
+            screenPos[1] = (yoffset + (coinPos[gNumWindows - 1][player][1] + coin * (gNumWindows == 1 ? 15 : gNumWindows == 2 ? 12 : 8))) * 2.0f;
+            }
+            if (isInLowRes())
+                screenPos[1] /= 2.0f;
+            ZOID_WindowTo3D(player, screenPos, &gCamera[player].mat, 2.0f, gPlayerCoin[player][coin].mat.mat3.pos);
+            if (gOptions[11] && (gGameState & 0x400000) && gGameCar[player].place_locked != 1)
+                MBOX_ShowObject(gPlayerCoin[player][coin].idx, 0, whichCam[player]);
+            else
+                MBOX_HideObject(gPlayerCoin[player][coin].idx, 1, 15);
+        }
+    }
+    TB_SetJust(0, 3);
+    HAL_SetTextDepth(-1.0f);
+    return 1;
+}

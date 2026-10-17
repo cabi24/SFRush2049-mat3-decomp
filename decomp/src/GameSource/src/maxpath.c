@@ -526,6 +526,156 @@ static void AdjustSteer(tModelData *m, float *pos)
 }
 
 /* 0x80027a94, 0x290 bytes */
+/* AvoidAreas: private function-level match, 0x800273c4 /1,744 bytes.
+ * copyAvoidVector reconstructs an inline vector-copy primitive; no separate
+ * original helper symbol or whole-unit matching claim is made. */
+static inline void copyAvoidVector(const float *src,float *dst)
+{
+    dst[0]=src[0]; dst[1]=src[1]; dst[2]=src[2];
+}
+
+static void AvoidAreas(signed short drone_index)
+{
+    signed char hints;
+    signed short i;
+    signed short index;
+    signed short can_we_cheat;
+    float dist;
+    float scale;
+    float scale1;
+    float scale2;
+    float rpos[3];
+    float pos[3];
+    anon_xrel_yrel_2c *cp;
+    tModelData *m;
+    float dir[3], save_dir[3];
+    float mpos0, mpos1, mpos2;
+    m = &model[drone_index];
+    cp = &gGameCar[drone_index].mpctl;
+    {
+        float c0, m1, c1, c2;
+        c0 = cp->tgtpos[0];
+        c1 = cp->tgtpos[1]; m1 = m->reckon.rwr[1];
+        c2 = cp->tgtpos[2];
+        pos[0] = c0 - m->reckon.rwr[0];
+        pos[1] = c1 - m1;
+        pos[2] = c2 - m->reckon.rwr[2];
+    }
+    BodyVector(pos, rpos, m->reckon.uvs);
+    if (m->idt == 0.0f || m->magvel < 0.1f) {
+        float *ld = last_dir[drone_index];
+        cp->tgtspd = 100.0f;
+        ld[0] = 0.0f;
+        cp->tgtpos[0] = 0.0f;
+        cp->tgtpos[1] = rpos[1];
+        ld[1] = 0.0f;
+        model[drone_index].can_we_cheat = 0;
+        rpos[0] = 0.0f;
+        cp->tgtpos[2] = rpos[2];
+        ld[2] = 0.0f;
+        return;
+    }
+    if (m->magvel < 0.5f * (1.4666667f * gDronePaths[cp->path].pts[cp->idx].mph)) {
+        rpos[0] *= 0.2f;
+        cp->tgtspd = 1.5f * (1.4666667f * gDronePaths[cp->path].pts[cp->idx].mph);
+        for (i = 0; i < 3; i++) {
+            last_dir[drone_index][i] = 0.0f;
+            cp->tgtpos[i] = rpos[i];
+        }
+        model[drone_index].can_we_cheat = 0;
+        return;
+    }
+    if (rpos[2] < fabs(2.0f * rpos[0])) {
+        for (i = 0; i < 3; i++) {
+            cp->tgtpos[i] = rpos[i];
+            last_dir[drone_index][i] = 0.0f;
+        }
+        model[drone_index].can_we_cheat = 0;
+        return;
+    }
+    scale = m->magvel * m->dt / magnitude(rpos);
+    
+    dir[0] = rpos[0] * scale;
+    dir[1] = rpos[1] * scale;
+    dir[2] = rpos[2] * scale;
+    save_dir[0] = dir[0];
+    save_dir[1] = dir[1];
+    save_dir[2] = dir[2];
+    mpos0 = model[drone_index].reckon.rwr[0];
+    mpos1 = model[drone_index].reckon.rwr[1];
+    mpos2 = model[drone_index].reckon.rwr[2];
+    scale1 = 1.0f;
+    can_we_cheat = 1;
+    for (i = 0; i < gNumActiveCars; i++) {
+        index = model[i].slot;
+        if (index == drone_index)
+            continue;
+        m = &model[index];
+        pos[0] = m->reckon.rwr[0] - mpos0;
+        pos[1] = m->reckon.rwr[1] - mpos1;
+        pos[2] = m->reckon.rwr[2] - mpos2;
+        BodyVector(pos, rpos, model[drone_index].reckon.uvs);
+        dist = rpos[0] * rpos[0] + rpos[2] * rpos[2];
+        if (dist > 90000.0f)
+            continue;
+        if (m->drone_type == 2 && fabs(rpos[0]) < 60.0 && fabs(rpos[2]) < 200.0)
+            can_we_cheat = 0;
+        if (rpos[2] < 0.0f || fabs(rpos[0]) > 8.0)
+            continue;
+        scale2 = 1.0f;
+        if (rpos[2] < 20.0f)
+            scale2 = 0.9f;
+        else if (rpos[2] < 100.0f)
+            scale2 -= 0.0012500003213062882f * (100.0f - rpos[2]);
+        if (scale2 < scale1)
+            scale1 = scale2;
+    }
+    TargetPathAvoid(&model[drone_index], &scale1);
+    if (4.0 * fabs(dir[0]) < fabs(dir[2])) {
+        if (dir[0] < 0.0f)
+            dir[0] += 8.0f * (1.0f - scale1);
+        else
+            dir[0] -= 8.0f * (1.0f - scale1);
+    } else if (scale1 < 0.9f) {
+        if (dir[0] < 0.0f)
+            dir[0] = 4.0f * (1.0f - scale1);
+        else
+            dir[0] = 4.0f * -(1.0f - scale1);
+    }
+    hints = gDronePaths[cp->path].pts[cp->idx].hints;
+    if (last_dir[drone_index][0] == 0.0f && last_dir[drone_index][2] == 0.0f) {
+        dir[0] = 0.0f;
+        cp->tgtspd *= 1.0f - 0.3f * (1.0f - scale1);
+    } else if (hints == 5 || m->resurrect.moving_state > -1) {
+        dir[0] *= 0.4f;
+    } else if (hints == 2 || (last_dir[drone_index][0] == 0.0f && last_dir[drone_index][2] == 0.0f)) {
+        dir[0] = save_dir[0];
+        cp->tgtspd *= 1.0f - 0.3f * (1.0f - scale1);
+    } else if (hints == 1) {
+        if (last_dir[drone_index][0] == 0.0f && last_dir[drone_index][2] == 0.0f)
+            dir[0] = save_dir[0];
+        else
+            dir[0] = 0.15f * save_dir[0] + 0.85f * last_dir[drone_index][0];
+        cp->tgtspd *= 1.0f - 0.1f * (1.0f - scale1);
+    } else if (hints == 3) {
+        dir[0] = save_dir[0] - last_save_dir[drone_index][0];
+        save_dir[0] = last_save_dir[drone_index][0];
+        save_dir[1] = last_save_dir[drone_index][1];
+        save_dir[2] = last_save_dir[drone_index][2];
+    } else if (hints == 4) {
+        dir[0] = save_dir[0] - last_save_dir[drone_index][0];
+    } else {
+        dir[0] = 0.5f * dir[0] + 0.5f * last_dir[drone_index][0];
+    }
+    
+    model[drone_index].can_we_cheat = can_we_cheat;
+    copyAvoidVector(dir,cp->tgtpos);
+    copyAvoidVector(dir,last_dir[drone_index]);
+    copyAvoidVector(save_dir,last_save_dir[drone_index]);
+}
+
+/* 0x80028580, 0x314 bytes */
+
 void SetDroneResPathIndex(tModelData *m, signed short path, signed short idx)
 {
     anon_xrel_yrel_2c *cp;
@@ -733,166 +883,6 @@ int NumPtsToCheckpoint(int res, int inPath, int inIdx, int cp)
 }
 
 /* 0x80028894, 0x58 bytes */
-int FindResPt(int inPath, int inIdx, int *outPath, int *outIdx, int honorAltRes)
-{
-    if (honorAltRes && gResPath.alt[inPath].resurrect) {
-        *outPath = inPath;
-        *outIdx = inIdx;
-        return 1;
-    }
-    return FindResPtRecurse(inPath, inIdx, outPath, outIdx, honorAltRes, 0);
-}
-
-/* 0x800273c4, 0x6d0 bytes. Complete reconstruction used only as an
-   uncredited state-layout dependency. The native body still differs in 21
-   instruction words; AvoidAreas remains NonMatching. */
-static void AvoidAreas(signed short drone_index)
-{
-    signed char hints;
-    signed short i;
-    signed short index;
-    signed short can_we_cheat;
-    float dist;
-    float scale;
-    float scale1;
-    float scale2;
-    float rpos[3];
-    float pos[3];
-    anon_xrel_yrel_2c *cp;
-    tModelData *m;
-    float dir0, dir1, dir2, save_dir0, save_dir1, save_dir2;
-    float mpos0, mpos1, mpos2;
-    m = &model[drone_index];
-    cp = &gGameCar[drone_index].mpctl;
-    pos[1] = cp->tgtpos[1] - m->reckon.rwr[1];
-    pos[2] = cp->tgtpos[2] - m->reckon.rwr[2];
-    pos[0] = cp->tgtpos[0] - m->reckon.rwr[0];
-    BodyVector(pos, rpos, m->reckon.uvs);
-    if (m->idt == 0.0f || m->magvel < 0.1f) {
-        float *ld = last_dir[drone_index];
-        cp->tgtspd = 100.0f;
-        ld[0] = 0.0f;
-        cp->tgtpos[0] = 0.0f;
-        cp->tgtpos[1] = rpos[1];
-        ld[1] = 0.0f;
-        model[drone_index].can_we_cheat = 0;
-        rpos[0] = 0.0f;
-        cp->tgtpos[2] = rpos[2];
-        ld[2] = 0.0f;
-        return;
-    }
-    if (m->magvel < 0.5f * (1.4666667f * gDronePaths[cp->path].pts[cp->idx].mph)) {
-        rpos[0] *= 0.2f;
-        cp->tgtspd = 1.5f * (1.4666667f * gDronePaths[cp->path].pts[cp->idx].mph);
-        for (i = 0; i < 3; i++) {
-            last_dir[drone_index][i] = 0.0f;
-            cp->tgtpos[i] = rpos[i];
-        }
-        model[drone_index].can_we_cheat = 0;
-        return;
-    }
-    if (rpos[2] < fabs(2.0f * rpos[0])) {
-        for (i = 0; i < 3; i++) {
-            cp->tgtpos[i] = rpos[i];
-            last_dir[drone_index][i] = 0.0f;
-        }
-        model[drone_index].can_we_cheat = 0;
-        return;
-    }
-    scale = m->magvel * m->dt / magnitude(rpos);
-    
-        dir0 = rpos[0] * scale;
-        save_dir0 = dir0;
-        mpos0 = model[drone_index].reckon.rwr[0];
-
-        dir1 = rpos[1] * scale;
-        save_dir1 = dir1;
-        mpos1 = model[drone_index].reckon.rwr[1];
-
-        dir2 = rpos[2] * scale;
-        save_dir2 = dir2;
-        mpos2 = model[drone_index].reckon.rwr[2];
-    
-    scale1 = 1.0f;
-    can_we_cheat = 1;
-    for (i = 0; i < gNumActiveCars; i++) {
-        index = model[i].slot;
-        if (index == drone_index)
-            continue;
-        m = &model[index];
-        pos[0] = m->reckon.rwr[0] - mpos0;
-        pos[1] = m->reckon.rwr[1] - mpos1;
-        pos[2] = m->reckon.rwr[2] - mpos2;
-        BodyVector(pos, rpos, model[drone_index].reckon.uvs);
-        dist = rpos[0] * rpos[0] + rpos[2] * rpos[2];
-        if (dist > 90000.0f)
-            continue;
-        if (m->drone_type == 2 && fabs(rpos[0]) < 60.0 && fabs(rpos[2]) < 200.0)
-            can_we_cheat = 0;
-        if (rpos[2] < 0.0f || fabs(rpos[0]) > 8.0)
-            continue;
-        scale2 = 1.0f;
-        if (rpos[2] < 20.0f)
-            scale2 = 0.9f;
-        else if (rpos[2] < 100.0f)
-            scale2 -= 0.0012500003213062882f * (100.0f - rpos[2]);
-        if (scale2 < scale1)
-            scale1 = scale2;
-    }
-    TargetPathAvoid(&model[drone_index], &scale1);
-    if (4.0 * fabs(dir0) < fabs(dir2)) {
-        if (dir0 < 0.0f)
-            dir0 += 8.0f * (1.0f - scale1);
-        else
-            dir0 -= 8.0f * (1.0f - scale1);
-    } else if (scale1 < 0.9f) {
-        if (dir0 < 0.0f)
-            dir0 = 4.0f * (1.0f - scale1);
-        else
-            dir0 = 4.0f * -(1.0f - scale1);
-    }
-    hints = gDronePaths[cp->path].pts[cp->idx].hints;
-    if (last_dir[drone_index][0] == 0.0f && last_dir[drone_index][2] == 0.0f) {
-        dir0 = 0.0f;
-        cp->tgtspd *= 1.0f - 0.3f * (1.0f - scale1);
-    } else if (hints == 5 || m->resurrect.moving_state > -1) {
-        dir0 *= 0.4f;
-    } else if (hints == 2 || (last_dir[drone_index][0] == 0.0f && last_dir[drone_index][2] == 0.0f)) {
-        dir0 = save_dir0;
-        cp->tgtspd *= 1.0f - 0.3f * (1.0f - scale1);
-    } else if (hints == 1) {
-        if (last_dir[drone_index][0] == 0.0f && last_dir[drone_index][2] == 0.0f)
-            dir0 = save_dir0;
-        else
-            dir0 = 0.15f * save_dir0 + 0.85f * last_dir[drone_index][0];
-        cp->tgtspd *= 1.0f - 0.1f * (1.0f - scale1);
-    } else if (hints == 3) {
-        dir0 = save_dir0 - last_save_dir[drone_index][0];
-        save_dir0 = last_save_dir[drone_index][0];
-        save_dir1 = last_save_dir[drone_index][1];
-        save_dir2 = last_save_dir[drone_index][2];
-    } else if (hints == 4) {
-        dir0 = save_dir0 - last_save_dir[drone_index][0];
-    } else {
-        dir0 = 0.5f * dir0 + 0.5f * last_dir[drone_index][0];
-    }
-    
-        cp->tgtpos[0] = dir0;
-        last_dir[drone_index][0] = dir0;
-        model[drone_index].can_we_cheat = can_we_cheat;
-        last_save_dir[drone_index][0] = save_dir0;
-
-        cp->tgtpos[1] = dir1;
-        last_dir[drone_index][1] = dir1;
-        last_save_dir[drone_index][1] = save_dir1;
-
-        cp->tgtpos[2] = dir2;
-        last_dir[drone_index][2] = dir2;
-        last_save_dir[drone_index][2] = save_dir2;
-    
-}
-
-/* 0x80028580, 0x314 bytes */
 static int FindResPtRecurse(int inPath, int inIdx, int *outPath, int *outIdx, int honorAltRes, int depth)
 {
     int numPts;
@@ -958,3 +948,14 @@ static int FindResPtRecurse(int inPath, int inIdx, int *outPath, int *outIdx, in
     TraceToIndex(endPath, endIndex, numPtsOnRes - numPtsFromMain * numPtsOnRes / numPtsOnShortcut, outPath, outIdx);
     return 1;
 }
+
+int FindResPt(int inPath, int inIdx, int *outPath, int *outIdx, int honorAltRes)
+{
+    if (honorAltRes && gResPath.alt[inPath].resurrect) {
+        *outPath = inPath;
+        *outIdx = inIdx;
+        return 1;
+    }
+    return FindResPtRecurse(inPath, inIdx, outPath, outIdx, honorAltRes, 0);
+}
+

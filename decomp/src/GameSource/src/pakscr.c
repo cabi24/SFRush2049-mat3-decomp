@@ -292,8 +292,6 @@ static void _DrawFileDel(void)
 {
     int y;
     int yDel;
-    int i;
-    int idx;
     tPS_File **file;
     char str[64];
     char str1[16];
@@ -309,10 +307,12 @@ static void _DrawFileDel(void)
         TB_DrawText(TB_CenterText(str, 160), yDel, str);
         yDel += 10;
     }
-    TB_DrawText(35, 65, gText.single[0x160 / 4]);
-    TB_DrawText(TB_CenterText(gText.single[0x17c / 4], 255), 65, gText.single[0x17c / 4]);
+    y = 65;
+    TB_DrawText(35, y, gText.single[0x160 / 4]);
+    TB_DrawText(TB_CenterText(gText.single[0x17c / 4], 255), y, gText.single[0x17c / 4]);
+    { int i; int idx;
+    y += 15;
     HAL_SetFont(14);
-    y = 80;
     for (i = 0; i < gDeleteHeight; i++, y += 12) {
         idx = i + gDeleteSelTop;
         if (idx >= gDeleteSize) idx -= gDeleteSize;
@@ -330,6 +330,7 @@ static void _DrawFileDel(void)
             TB_DrawText(TB_CenterText(str, 160), yDel, str);
             yDel += 10;
         }
+    }
     }
     HAL_SetFont(11);
     TB_SetTextColor(1);

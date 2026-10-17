@@ -492,3 +492,117 @@ signed short are_all_cars_stopped(void)
     }
     return done_flag;
 }
+
+static inline float model_magnitude(float *vec)
+{
+    float v[3];
+    v[0] = vec[0] * vec[0];
+    v[1] = vec[1] * vec[1];
+    v[2] = vec[2] * vec[2];
+    return sqrtf(v[0] + v[1] + v[2]);
+}
+
+
+
+static void _UpdateModel(int slot)
+{
+    tModelData *m = &model[slot];
+    anon_slot_controller_50 *player = gGameCar[slot].player;
+    if (gGameCar[slot].dead == 1 && (m->magvel < 5.0f || !m->fastin.modelrun)) {
+        int i;
+        gGameCar[slot].dead = 2;
+        m->crashflag = 0;
+        m->magvel = 0.0f;
+        gGameCar[slot].crash_state = 0;
+        m->fastin.modelrun = 0;
+        if (player) {
+            if (new_sched_to_use >= 7) new_sched_to_use -= 7;
+            PS_SetRumblePercent(player->controller, 0);
+        } else {
+            for (i = cur_drone; i < num_our_drones - 1; i++) our_drones[i] = our_drones[i + 1];
+            num_our_drones--;
+            cur_drone--;
+            new_sched_to_use--;
+        }
+        return;
+    }
+    CheckCrash(slot);
+    FinishResurrecting(m);
+    if (gGameCar[slot].crash_state == 2 && gGameCar[slot].dead <= 0) {
+        End_MDrive(slot);
+        Init_MDrive(2, slot);
+    } else if (m->crashflag && gGameCar[slot].dead >= 2) {
+        model[slot].crashflag = 0;
+    }
+    m->time_fudge = (1.0f + 0.02f * m->roadboost[0]) * (m->catchup * m->time_boost);
+    if (m->fastin.dt > 0.045f) m->fastin.dt = 2.0f * gRetraceTime;
+    m->fastin.dt *= m->time_fudge;
+    if (m->resurrect.moving_state > -1) {
+        if (player) {
+            UpdateResurrectingCar(m);
+            if (gGameState & 0x400000) PS_SetRumblePercent(player->controller, 0);
+        } else {
+            UpdateResurrectingCar(m);
+        }
+        ((void (*)(int, float))update_reckon_base)(slot, m->fastin.modelTime);
+    } else if (m->fastin.modelrun) {
+        if (player) {
+            sym(m);
+            if ((gGameState & 0x400000) && !(gRace == kGhost && gGhosts[m->slot] && (**(**gGhosts[m->slot]).header).flag >= 0)) {
+                static int percentTable[36] = {
+                    4000,5000,6500,8000,10000,12000,15000,20000,25000,
+                    30000,40000,50000,60000,70000,80000,90000,100000,125000,
+                    150000,175000,200000,225000,250000,275000,300000,325000,350000,
+                    375000,400000,425000,450000,475000,500000,525000,550000,600000
+                };
+                int i;
+                int force = 0;
+                int percent;
+                for (i = 0; i < 4; i++) force += 4.0f * model_magnitude(m->bodyForce[i]);
+                force += 4.0f * model_magnitude(m->centerForceLast);
+                force += m->tireForce[0][1];
+                force += m->tireForce[1][1];
+                force += m->tireForce[2][1];
+                force += m->tireForce[3][1];
+                if (gRace == kBattle) {
+                    force += (gGameCar[slot].battle.damageThisFrame * 500000) / 800;
+                    gGameCar[slot].battle.damageThisFrame = 0;
+                }
+                if (gGameCar[slot].crash_state == 1) {
+                    float delta_time = m->fastin.modelTime - gGameCar[slot].crashtime;
+                    if (delta_time < 1.0f) force += 100000.0f * (1.0f - delta_time);
+                }
+                for (percent = 0; percent < 36; percent++) if (force < percentTable[percent]) break;
+                if (!(**player->save).rumble) percent = 0;
+                else if ((**player->save).rumble == 1) {
+                    percent -= 4;
+                    if (percent < 0) percent = 0;
+                }
+                PS_SetRumblePercent(player->controller, percent);
+            }
+        } else {
+            MaxPathControls(m);
+            sym(m);
+        }
+        ((void (*)(int, float))update_reckon_base)(slot, m->fastin.modelTime);
+    }
+    if (gRace != kGhost || !m->slot) UpdateCarSounds(m);
+    if (m->crashflag) m->appearance |= 0x70;
+    else if (!(m->appearance & 0x10)) m->appearance &= ~0x60;
+    if (!m->solid) {
+        float delta_time;
+        if (m->resurrect.moving_state > -1) {
+            gGameCar[slot].collide_time = m->fastin.modelTime;
+            delta_time = 0.0f;
+        } else {
+            delta_time = m->fastin.modelTime - gGameCar[slot].collide_time;
+        }
+        if (gCoastFlag || ((gRace != kBattle || gRace != kObstacle) && delta_time >= 5.0f) || ((gRace == kBattle || gRace == kObstacle) && delta_time > 0.6f)) {
+            if (gLink[m->slot].owner == 0 || gLink[m->slot].owner == 6) {
+                m->collidable = 1;
+                m->solid = 1;
+                gGameCar[slot].collide_time = 0.0f;
+            }
+        }
+    }
+}

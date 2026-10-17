@@ -26,12 +26,20 @@ int appVBlankHandler(void)
 /* 0x80097b5c, size 0x5c */
 float appGetTime(void)
 {
-    unsigned long long tick; /* r0 */
-    double time3; /* f0 */
+    unsigned long long tick;
+    double time3;
 
     tick = OSTicksToMilliseconds((unsigned long long)OSGetTime());
     time3 = tick / 1000.0;
-    return time3 - s_gBeginTime;
+    {
+        double delta;
+        /* Retain the native subtraction temporary before narrowing to float. */
+        do {
+            delta = time3 - s_gBeginTime;
+            if (delta) break;
+        } while (0);
+        return delta;
+    }
 }
 
 /* 0x80097bb8, size 0x74 */

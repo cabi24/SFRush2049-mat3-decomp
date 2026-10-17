@@ -45,19 +45,20 @@ unsigned int gFrames;
 int g_bIfReload;
 signed char carsetup_flag[6];
 int gAPlayerReallyFinished;
-_tBlit_2 *inactiveBlit;
-static int _PAD_Pause;
-static _tBlit_2 *_PAD_ScrollBlit;
-signed char gGamePointPlayed;
-signed char gRestartGame;
+/* explicitly zero-initialised, in this order (.sbss layout; see writeup ngcBeginMenu/ngcVu1pack) */
+signed char gRestartGame = 0;
+signed char gGamePointPlayed = 0;
+static _tBlit_2 *_PAD_ScrollBlit = 0;
+static int _PAD_Pause = 0;
+_tBlit_2 *inactiveBlit = 0;
 anon_track_car_a gLink[13];
 
 /* 0x8001407c, size 0x200 */
 int GameLoop(void)
 {
     int renderFlag;
-    static signed char sInited;
-    static signed char gPauseAllowed;
+    static signed char sInited = 0;
+    static signed char gPauseAllowed = 0;
     renderFlag = 0;
     statsClock(6);
     if (!sInited) {
@@ -154,29 +155,335 @@ void UpdateFrame(void)
 /* 0x80014340, size 0x9e0 */
 static void _UpdateGame(void)
 {
-    int i; /* r5 */
-    signed char allSolid; /* r30 */
-    int p; /* r31 */
-    int numDeaths; /* r7 */
-    /* TODO */
+    static signed char startCountdown = 0;
+    int i;
+    signed char allSolid;
+    int p;
+    int numDeaths;
+    if (gGameState & 0x40000) {
+        for (i = 0; i < gNumPlayers; i++) gPakInserted[i] = (*gPlayers[i].save)->fileh != 0;
+        gSkipToGameState = 1;
+        SetOptions();
+        _CalcPolePositions();
+        gUseCatchup = gCatchup;
+        setGameState(0x80000);
+        goto preplay;
+    } else if (gGameState & 0x80000) {
+    preplay:
+        if (PrePlay(1, 0)) {
+            startCountdown = 1;
+            setGameState(0x200000);
+            ClearRushControls();
+            goto countdown;
+        } else {
+            SaveServer(0, 1);
+            goto done;
+        }
+    } else if (gGameState & 0x200000) {
+    countdown:
+        SwitchFrameMode(1);
+        if (gRestartGame) goto done;
+        CarSetup();
+        Update_MDrive();
+        TextureAnimation();
+        CheckTargetCollision(model[0].slot);
+        if (startCountdown) {
+            SetCountdownTimer(3.5f);
+            init_model_task(3.5f * gRetraceRate);
+            startCountdown = 0;
+        }
+        CountDown();
+        _CheckButtons();
+    } else if (gGameState & 0x100000) {
+        if (gRace == kPractice) SetCountdownTimer(1800.0f);
+        else if (gRace == kStunt) {
+            if (gStuntMode == 0) SetCountdownTimer(gStuntModeMins * 60);
+            else SetCountdownTimer(600.0f);
+        } else if (gRace == kObstacle) SetCountdownTimer(300.0f);
+        else if (gRace == kBattle) {
+            if (gBattleMode == 1) SetCountdownTimer(gBattleModeMins * 60);
+            else SetCountdownTimer(1200.0f);
+        } else SetCountdownTimer(CalcRaceTime());
+        PlayGameSound(84, 0, 1, 0);
+        StartGameMusic();
+        InitCPTime();
+        setGameState(0x400000);
+    } else if (gGameState & 0x400000) {
+        DisableDrawFace();
+        SwitchFrameMode(1);
+        PlayGame();
+        _CheckButtons();
+        UpdateStationaryEmitters();
+        if (gRetireGame) {
+            FindWinner();
+            setGameState(0x1000000);
+            GhostEnd();
+            RemoveHUD();
+            goto done;
+        }
+        if (gCoastFlag) {
+            allSolid = 1;
+            for (p = 0; p < gNumPlayers; p++) {
+                if (!gDeathMode && !AreWeSolid(p)) allSolid = 0;
+            }
+            if (are_all_cars_stopped() && allSolid) {
+                if (gRace == kStunt) FindWinner();
+                setGameState(0x1000000);
+                GhostEnd();
+                RemoveHUD();
+            }
+            if (!CountdownTimeOut() && gRace != kStunt && gRace != kObstacle && gRace != kBattle) {
+                gCoastFlag = 0; gOutOfTime = 0;
+            }
+        } else if (gRace == kStunt) {
+            switch (gStuntMode) {
+            case 0:
+                if (CountdownTimeOut()) { gCoastFlag = 1; gOutOfTime = 1; }
+                break;
+            case 1:
+                for (i = 0; i < gNumPlayers; i++) {
+                    if (gStuntPlayer[i].totalPoints >= gStuntModePoints) { gCoastFlag = 1; gOutOfTime = 1; }
+                }
+                break;
+            case 2:
+                numDeaths = 0;
+                for (i = 0; i < gNumPlayers; i++) {
+                    if (gGameCar[i].player->numCrashes >= gStuntModeDeaths) { gGameCar[i].dead = 1; numDeaths++; }
+                }
+                if (numDeaths == gNumPlayers) { gCoastFlag = 1; gOutOfTime = 1; }
+                break;
+            }
+        } else if (gRace == kBattle) {
+            switch (gBattleMode) {
+            case 1:
+                if (CountdownTimeOut()) { FindWinner(); gCoastFlag = 1; gOutOfTime = 1; }
+                break;
+            case 0:
+                memset(gTeamPoints, 0, 4);
+                for (i = 0; i < gNumPlayers; i++) gTeamPoints[gCarTeam[i]] += gGameCar[i].battle.Points;
+                for (p = 0; p < 4; p++) {
+                    if (!gGamePointPlayed && gTeamPoints[p] == gBattleModePoints - 1) {
+                        gGamePointPlayed = 1;
+                        PlayGameSound(54, 0, 2, 0);
+                    }
+                    if (gTeamPoints[p] >= gBattleModePoints) {
+                        FindWinner(); gCoastFlag = 1; gOutOfTime = 1;
+                    }
+                }
+                break;
+            }
+        } else if (gRace == kOneRace || gRace == kPractice) {
+            for (i = 0; i < gNumPlayers; i++) if (!gGameCar[gPlayers[i].slot].place_locked) goto done;
+            gAPlayerReallyFinished = 0;
+            for (i = 0; i < gNumPlayers; i++) if (gNumLaps == model[i].laps) gAPlayerReallyFinished = 1;
+            if (!gCoastFlag) {
+                if (gDeathMode) gDeathWaitEnd = 0.0f;
+                gCoastFlag = 1;
+                FindWinner();
+                AudSetMusicVol(0.0f, 3.0f);
+            }
+        } else {
+            if (CountdownTimeOut()) {
+                if (!gCoastFlag) {
+                    gCoastFlag = 1;
+                    FindWinner();
+                    AudSetMusicVol(0.0f, 3.0f);
+                }
+                for (i = 0; i < gNumPlayers; i++) {
+                    if (gNumLaps != model[gPlayers[i].slot].laps) {
+                        if (gRace != kGhost || !gGhosts[gPlayers[i].slot] || (*(*gGhosts[gPlayers[i].slot])->header)->flag < 0)
+                            PlayGameSound(87, 0, 1, 0);
+                        gOutOfTime = 1;
+                        break;
+                    }
+                }
+            }
+        }
+    } else if (gGameState & 0x1000000) {
+        EnableDrawFace();
+        _EndGame();
+        SwitchFrameMode(0);
+    } else if (gGameState & 0x2000000) updateHighScoreScreen();
+    else if (gGameState & 0x800000) updateGameOverScreen();
+    done:
+    if (gGameState & 0x600000) {
+        for (i = 0; i < gNumWindows; i++) WorldFogDensity(i, gCamera[i].mat.uvs[3]);
+    }
 }
 
 /* 0x80014d20, size 0x624 */
 int PrePlay(int useHud, int cancel)
 {
-    int i; /* r28 */
-    int slot; /* r4 */
-    int rrr; /* r0 */
-    /* TODO */
+    static signed char inited = 0;
+    int i, slot, rrr;
+    if (cancel) { inited = 0; return 0; }
+    if (!inited) {
+        inited = 1;
+        SetOptions();
+        EnableGameSounds(!(gGameState & 8) && !(gGameState & 0x2000000));
+        if (gGameState & 0x2000000) {
+            *(volatile short *)&num_our_drones = 0;
+            *(volatile short *)&num_drones = 0;
+            *(volatile short *)&num_humans = 0;
+            for (i = 0; i < gNumPlayers; i++) {
+                slot = gPlayers[i].slot;
+                gLink[slot].owner -= 6;
+                gGameCar[gPlayers[i].slot].dead = 0;
+                model[gPlayers[i].slot].drone_type = 1;
+                model[gPlayers[i].slot].we_control = 1;
+                model[gPlayers[i].slot].autotrans = 1;
+                gGameCar[gPlayers[i].slot].place_locked = 0;
+                gGameCar[gPlayers[i].slot].player = 0;
+                model[gPlayers[i].slot].appearance = 0;
+                gGameCar[gPlayers[i].slot].appearance = 0;
+                SetupCar(gPlayers[i].slot, model[gPlayers[i].slot].body_type, 1);
+                drones[num_drones++] = i;
+                our_drones[num_our_drones++] = i;
+            }
+            for (; i < gNumActiveCars; i++) {
+                gGameCar[i].dead = 0;
+                gGameCar[i].place_locked = 0;
+                model[i].appearance = 0;
+                gGameCar[i].appearance = 0;
+                SetupCar(i, model[i].body_type, 1);
+                drones[num_drones++] = i;
+                our_drones[num_our_drones++] = i;
+            }
+            sched_index = -1;
+            sched_to_use = num_our_drones;
+            new_sched_to_use = num_our_drones;
+            cur_drone = 0;
+            _CalcPolePositions();
+            InitCPS();
+            InitDrones();
+            gCoastFlag = 0;
+            gRetireGame = 0;
+            gGravity = 32.2f;
+            for (i = 0; i < gNumActiveCars; i++) Init_MDrive(0, model[i].slot);
+            ShowHUD();
+            inited = 0;
+            return 1;
+        }
+        HFOV = 90.0f;
+        if (!(gGameState & 8)) AudKillSong();
+        if (gRestartGame) { ZOID_Reset(); InitBlits(); }
+        else if (!(gGameState & 8)) InitWaves();
+        munge_gLink_data();
+        GhostStart();
+        ResetHighScores();
+    }
+    if (gFogColor < 19) gFogColor = gTrackNum;
+    if (!(gGameState & 8)) {
+        HFOV = 90.0f;
+        ZOID_ResetWindows();
+        gNumWindows = gRace == kGhost ? (short)1 : gNumPlayers; ZOID_SplitScreen(gNumWindows);
+    }
+    g_bIfReload = 0;
+    if (gRestartGame) { g_bIfReload = 1; ReloadTrack(); }
+    else {
+        static int bPadInited = 0;
+        if (!bPadInited) { ChooseNewControl(0); bPadInited = 1; }
+        leStartLoadingEffect();
+        lePrepareLoading();
+        HAL_SetFont(13); HAL_SetFont(10); HAL_SetFont(11); HAL_SetFont(12);
+        HAL_SetFont(4); HAL_SetFont(1); HAL_SetFont(2); HAL_SetFont(3);
+        HAL_SetFont(9); HAL_SetFont(8); HAL_SetFont(5); HAL_SetFont(6); HAL_SetFont(7);
+        rrr = LoadTrack(gTrackNum, 1, 0);
+        leEndLoadingEffect();
+        if (!rrr) return 0;
+    }
+    g_bIfReload = 0;
+    InitTextureAnimation();
+    gRestartGame = 0;
+    for (i = 0; i < gNumWindows; i++) {
+        ZOID_SetFog(0, 0, gFogColors[gFogColor][0], gFogColors[gFogColor][1], gFogColors[gFogColor][2], 255, i);
+        WorldFogDensity(i, gCamera[i].mat.uvs[3]);
+    }
+    if (!(gGameState & 8)) AudStopAllEffects();
+    InitCPS();
+    init_cars();
+    for (i = 0; i < 6; i++) carsetup_flag[i] = 0;
+    InitDrones();
+    gCoastFlag = 0; gRetireGame = 0; gOutOfTime = 0;
+    gGravity = 32.2f * gravityArray[gGravityScale];
+    for (i = 0; i < gNumActiveCars; i++) {
+        slot = model[i].slot;
+        if (gLink[slot].owner == 0 || gLink[slot].owner == 6) Init_MDrive(0, slot);
+    }
+    StartEnvironment();
+    init_views();
+    if (useHud) ShowHUD();
+    for (i = 0; i < gNumPlayers; i++) {
+        gPlayers[i].numCrashes = 0;
+        gGameCar[i].battle.health = 800;
+        gGameCar[i].battle.Points = 0;
+        gGameCar[i].battle.reloadingTime = 0.0f;
+        if (gRace == kBattle) InitBattlePlayer((signed short)i);
+        gGamePointPlayed = 0;
+    }
+    if (!(gGameState & 8)) ClearRushControls();
+    StartListeners();
+    if (gRace == kBattle) { InitBattlePoints(); ShotInit(); }
+    if (gRace == kStunt) InitStunt();
+    if (!(gGameState & 8)) PS_RumbleGo();
+    inited = 0;
+    gUpsideDownTrack = gCheatState[3];
+    return 1;
 }
 
 /* 0x80015344, size 0x2ac */
 void PlayGame(void)
 {
-    int i; /* r28 */
-    signed short slot; /* stack */
-    int camera; /* r5 */
-    /* TODO */
+    int i;
+    signed short slot;
+    int camera;
+    Update_MDrive();
+    if (gRace == kStunt) CheckForStunt();
+    else if (gRace == kBattle) { ShotUpdate(); UpdateBattlePowerUps(); }
+    else {
+        if (gRace == kObstacle) GetResPt();
+        else DoDrones();
+        CheckCPs();
+    }
+    UpdateSmoke();
+    UpdateArrowVis();
+    for (i = 0; i < gNumActiveCars; i++) {
+        signed char restart = *(volatile signed char *)&gGameCar[i].restart;
+        slot = model[i].slot;
+        if (restart < 0) {
+            camera = gGameCar[i].camera;
+            if (!(gGameState & 8) && slot < gNumPlayers) gPlayers[slot].numCrashes++;
+            if (camera >= 0) {
+                gGameCar[i].saveview = gGameCar[i].view;
+                gGameCar[i].view = 4;
+                gCamera[camera].fcam.mat.uvs[3][0] = gCamera[camera].mat.uvs[3][0];
+                gCamera[camera].fcam.mat.uvs[3][1] = gCamera[camera].mat.uvs[3][1];
+                gCamera[camera].fcam.mat.uvs[3][2] = gCamera[camera].mat.uvs[3][2];
+            }
+            StartBlast(&slot, 1, 1.0f, 0);
+            StopCarSounds(&model[i]);
+            if (model[i].drone_type == 2) {
+                if (gRace != kGhost || !gGhosts[model[i].slot] || (*(*gGhosts[model[i].slot])->header)->flag < 0)
+                    PlayGameSound(9, model[i].slot, 1, 1);
+            } else EmitGameSound(model[i].rwr, unitmatrix[3], 400.0f, 0.0f, 1.0f, 0.0f, 9, model[i].slot, 0, 128);
+            if (gRace == kStunt) CrashedStunt(slot);
+            gGameCar[i].restart = 0;
+        } else if (*(volatile signed char *)&gGameCar[i].restart > 0) {
+            InitSmokeBlast(slot);
+            if (gGameCar[i].camera >= 0) {
+                gGameCar[i].view = gGameCar[i].saveview;
+                SetCameraView(gGameCar[i].camera);
+            }
+            gGameCar[i].restart = 0;
+        }
+        UpdateVisuals(slot);
+        if (gLink[slot].owner == 0 || gLink[slot].owner == 6) {
+            if (gRace != kGhost || (gRace == kGhost && slot == 0)) CheckTargetCollision(slot);
+        }
+    }
+    TextureAnimation();
+    DetectDroneAbort();
+    if (!gRestartGame) ShowHUD();
 }
 
 /* 0x800155f0, size 0xcc */
@@ -297,8 +604,8 @@ static int _animScrollText(void)
     static char *sContName1[4] = { "1", "2", "3", "4" };
     static char *sContName2[4] = { "1-A", "1-B", "1-C", "1-D" };
     static int x = 320;
-    static int i;
-    static unsigned long vsync;
+    static unsigned long vsync = 0;
+    static int i = 0;
     int numPlayers;
     numPlayers = gRace == kGhost ? 1 : gNumPlayers;
     for (i = 0; i < numPlayers; i++) if (!gControllerData[i].attached) break;
@@ -326,7 +633,7 @@ static void _DrawNoControllers(void)
         (const char *)-1, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0,
         (int (*)(_tBlit *))_animScrollText, 0
     };
-    static int i;
+    static int i = 0;
     int numPlayers;
     numPlayers = gRace == kGhost ? 1 : gNumPlayers;
     for (i = 0; i < numPlayers; i++) if (!gControllerData[i].attached) break;
