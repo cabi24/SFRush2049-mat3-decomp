@@ -408,7 +408,7 @@ config.libs = [
             Object(Matching, "GameSource/src/recordscr.c"),
             Object(Matching, "GameSource/src/startscr.c"),
             Object(Matching, "GameSource/src/titlescr.c"),
-            Object(NonMatching, "GameSource/src/trackscr.c"),
+            Object(Matching, "GameSource/src/trackscr.c"),
             Object(Matching, "GameSource/src/warningscr.c"),
             Object(Matching, "GameSource/src/carscr.c"),
             Object(Matching, "GameSource/src/fmath.c"),

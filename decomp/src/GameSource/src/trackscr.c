@@ -204,14 +204,13 @@ static signed char trackMapsBuilt;
 int currentTrackMap;
 int desiredTrackMap;
 float mapTransition;
-static anon_name_radius_48 *selTrackRomObjDef;
-anon_nverts_flags_68 *trackFogPoly;
-anon_nverts_flags_68 *trackScreenPoly;
-static float pathPos;
-static signed char inited;
-static _tBlit_2 *blit;
-static int buttonsJustInited;
-static int buttonsInited;
+static int buttonsInited = 0;
+static int buttonsJustInited = 0;
+static _tBlit_2 *blit = 0;
+static signed char inited = 0;
+static float pathPos = 0.0f;
+anon_nverts_flags_68 *trackScreenPoly = 0;
+anon_nverts_flags_68 *trackFogPoly = 0;
 static float gCameraMatrix[4][4];
 anon_mat3_mat4_30 trackMapMat;
 static anon_gTrackNum_pos_18 gTracks[19];
@@ -564,7 +563,7 @@ static void _UninitScreen(void)
 /* 0x80088d04, size 0x314 */
 static void showTrackSelect(void)
 {
-    static float angle;
+    static float angle = 0.0f;
     static float fogPos[3];
     float uv[3][3];
     float speed;
@@ -860,6 +859,7 @@ static int OptionValid(int opt)
 static void SetFogIntensity(int now)
 {
     static anon_c_rgba_4 fogColor[2];
+    static anon_name_start_18 n64FogPal;
     int red, green, blue;
     if (gFogColor < 19) gFogColor = gTrackNum;
     red = gFogColors[gFogColor][0];
@@ -949,6 +949,8 @@ static void unloadTrackScreen(void)
     if (trackFogPoly) { ZOID_RemovePoly(trackFogPoly); trackFogPoly = 0; }
 }
 
+static anon_name_radius_48 *selTrackRomObjDef;
+
 /* 0x8008a824, size 0x18c */
 static void buildTrackMap(void)
 {
@@ -989,7 +991,7 @@ static void animTrackMap(void)
 {
     static float cityPos[3] = {-100.0f,30.0f,200.0f};
     static float mapPos[3] = {50.0f,-15.0f,100.0f};
-    static float rotAngle;
+    static float rotAngle = 0.0f;
     rotAngle += 6.2831854820251465f * gFrameSeconds / 10.0f;
     if (rotAngle > 6.2831854820251465f) rotAngle -= 6.2831854820251465f;
     if (currentTrackMap != desiredTrackMap) {
@@ -1296,11 +1298,87 @@ static void clearTrackMaps(void)
     }
 }
 
+/* animTrackMaps strip helper: inlined, no code of its own */
+static inline void animTrackMapStrip(int mapIdx,int pointIdx,anon_nVertex_iTex_10 *pStrip)
+{
+    int fade,i;
+    unsigned char red,green,blue;
+    if (gOptions[27] == 0) fade = pathPos*kNumMapSects-pointIdx;
+    else fade = pathPos*kNumMapSects+pointIdx;
+    if (fade < 0) fade += kNumMapSects;
+    if (fade > kNumMapSects-1) fade -= kNumMapSects;
+    fade *= 2;
+    if (mapIdx != gTrackNum && mapIdx < 6) {
+        red = (mapIdx+1)&1 ? (unsigned char)127 : (unsigned char)31;
+        green = (mapIdx+1)&2 ? (unsigned char)127 : (unsigned char)31;
+        if ((mapIdx+1)&4) blue = 127; else blue = 31;
+    } else if (mapIdx < 6) {
+        if (fade > 63) fade = 64;
+        if ((gTrackNum+1)&1) red = (unsigned char)(255-fade); else red = (unsigned char)(255-fade*3);
+        if ((gTrackNum+1)&2) green = (unsigned char)(255-fade); else green = (unsigned char)(255-fade*3);
+        if ((gTrackNum+1)&4) blue = (unsigned char)(255-fade); else blue = (unsigned char)(255-fade*3);
+    } else {
+        if (fade > 63) fade = 64;
+        if ((currentTrackMap+1)&1) red = (unsigned char)(255-fade); else red = (unsigned char)(255-fade*3);
+        if ((currentTrackMap+1)&2) green = (unsigned char)(255-fade); else green = (unsigned char)(255-fade*3);
+        if ((currentTrackMap+1)&4) blue = (unsigned char)(255-fade); else blue = (unsigned char)(255-fade*3);
+    }
+    for (i = 0; i < 10; i++) {
+        pStrip->vertexs[i].color |= 0xffffff00;
+        pStrip->vertexs[i].color &= ((unsigned int)blue << 24) + ((unsigned int)green << 16) + ((unsigned int)red << 8) + 255;
+    }
+    if (pointIdx == kNumMapSects-1) {
+        for (i = 0; i < 10; i++) pStrip->vertexs[i].color |= 0xffffff00;
+    }
+}
+
 /* 0x8008c0f4, size 0x580 */
 static void animTrackMaps(void)
 {
-    static float mapPos[3] = { -100.0f, 30.0f, 200.0f };
-    /* TODO: original body not recovered; research candidate excluded. */
+    static float mapPos[3] = {-100.0f,30.0f,200.0f};
+    int trackIdx;
+    int pointIdx;
+    anon_numPack_name_2c *trackPS2;
+    anon_nVertex_iTex_10 *pStrip;
+    int fade;
+    int i;
+    int mapIdx;
+    if (trackMapsBuilt) {
+        sceGsSyncPath(0,0);
+        for (trackIdx = 0; trackIdx <= 19; trackIdx++) {
+            if (trackMap[trackIdx].objIdx != -1) {
+                if (trackIdx < 19) {
+                    ScaleUV(unitmatrix,trackMap[trackIdx].mat.mat3.uvs,trackMap[trackIdx].cityScale);
+                    WPitchUV(-1.5707963705062866f,trackMap[trackIdx].mat.mat3.uvs);
+                    WRollUV(-trackMap[trackIdx].cityRot,trackMap[trackIdx].mat.mat3.uvs);
+                    trackMap[trackIdx].mat.mat3.pos[0] = mapPos[0];
+                    trackMap[trackIdx].mat.mat3.pos[1] = mapPos[1];
+                    trackMap[trackIdx].mat.mat3.pos[2] = mapPos[2];
+                    trackMap[trackIdx].mat.mat3.pos[0] += trackMap[trackIdx].cityX;
+                    trackMap[trackIdx].mat.mat3.pos[1] += trackMap[trackIdx].cityY;
+                    if (trackIdx == gTrackNum) {
+                        ScaleUV(trackMap[trackIdx].mat.mat3.uvs,trackMap[trackIdx].mat.mat3.uvs,0.8f);
+                        trackMap[trackIdx].mat.mat3.pos[0] = 0.8f * trackMap[trackIdx].mat.mat3.pos[0];
+                        trackMap[trackIdx].mat.mat3.pos[1] = 0.8f * trackMap[trackIdx].mat.mat3.pos[1];
+                        trackMap[trackIdx].mat.mat3.pos[2] = 0.8f * trackMap[trackIdx].mat.mat3.pos[2];
+                    }
+                }
+                mapIdx = trackIdx == 19 ? 6 : trackIdx;
+                if (trackIdx < 6 || trackIdx == 19) {
+                    if (mapObj[mapIdx].numPack) {
+                        trackPS2 = &mapObj[mapIdx];
+                        for (pointIdx = 0; pointIdx < kNumMapSects; pointIdx++) {
+                            GetThePacket(trackPS2->pPack[pointIdx],0);
+                            pStrip = &trackPS2->strips[pointIdx];
+                            animTrackMapStrip(mapIdx,pointIdx,pStrip);
+                        }
+                    }
+                }
+            }
+        }
+        pathPos += gFrameSeconds/5.0f;
+        while (pathPos > 1.0f) pathPos -= 1.0f;
+    }
 }
 
 /* 0x8008c674, size 0x6c */
@@ -1392,8 +1470,8 @@ static void uninitButtons(void)
 /* 0x8008cb54, size 0x7b8 */
 static void updateButtons(void)
 {
-    static float cursorSpeed;
-    static float scrollSpeed;
+    static float scrollSpeed = 0.0f;
+    static float cursorSpeed = 0.0f;
     int buttonIdx;
     float prevPos[3];
     float buttonY;
