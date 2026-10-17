@@ -322,7 +322,7 @@ config.libs = [
             Object(Matching, "GameSource/src/fake.c"),
             Object(Matching, "GameSource/src/fakegdfs.c"),
             Object(Matching, "GameSource/src/front.c"),
-            Object(NonMatching, "GameSource/src/game.c"),
+            Object(Matching, "GameSource/src/game.c"),
             Object(Matching, "GameSource/src/gamerecords.c"),
             Object(Matching, "GameSource/src/gfx.c"),
             Object(Matching, "GameSource/src/ghost.c"),

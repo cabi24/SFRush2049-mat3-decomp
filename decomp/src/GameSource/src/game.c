@@ -118,6 +118,44 @@ void OncePerFrame(void)
     HAL_CallOncePerFrameFuncs();
 }
 
+/* The original has seven unreferenced static functions here (controller-warning code, DWARF
+ * `// Erased`): _animControllerDim, _animControllerText, _ShowControllerWarning,
+ * ResumeControllerWarning, ShowControllerWarning, UpdateFrameForPad, UpdateFrameForMC.
+ * CodeWarrior parses them (numbering their float literals) but emits no code, data or strings
+ * for them, so the .sdata2 pool starts with the literals they mention: 0.0f, -1.0f, the
+ * int->float constant, 3.0f, 4.0f. These placeholders reproduce only that. */
+static int _animControllerDim(_tBlit *blt)
+{
+    return 1;
+}
+
+static int _animControllerText(void)
+{
+    unsigned char str[40];
+    HAL_SetTextDepth(0.0f);
+    HAL_SetTextTranslucency((float)gNumPlayers);
+    HAL_SetTextDepth(-1.0f);
+    return 1;
+}
+
+static void _ShowControllerWarning(void)
+{
+    float time;
+    /* only the two literals matter: 3.0f must be numbered before 4.0f */
+    time = 3.0f;
+    HAL_SetTextTranslucency(time);
+    time = 4.0f;
+    HAL_SetTextTranslucency(time);
+}
+
+static void ResumeControllerWarning(void)
+{
+}
+
+static void ShowControllerWarning(void)
+{
+}
+
 /* 0x800142a8, size 0x4 */
 static void _CheckControls(void)
 {
@@ -139,6 +177,10 @@ void HideControllerWarning(void)
     }
 }
 
+static void UpdateFrameForPad(void)
+{
+}
+
 /* 0x800142ec, size 0x54 */
 void UpdateFrame(void)
 {
@@ -150,6 +192,10 @@ void UpdateFrame(void)
     if (gExitGame) ExitSystem();
     StartGraphics();
     OncePerFrame();
+}
+
+static void UpdateFrameForMC(void)
+{
 }
 
 /* 0x80014340, size 0x9e0 */
@@ -604,8 +650,8 @@ static int _animScrollText(void)
     static char *sContName1[4] = { "1", "2", "3", "4" };
     static char *sContName2[4] = { "1-A", "1-B", "1-C", "1-D" };
     static int x = 320;
+    static int i;
     static unsigned long vsync = 0;
-    static int i = 0;
     int numPlayers;
     numPlayers = gRace == kGhost ? 1 : gNumPlayers;
     for (i = 0; i < numPlayers; i++) if (!gControllerData[i].attached) break;
@@ -633,7 +679,7 @@ static void _DrawNoControllers(void)
         (const char *)-1, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0,
         (int (*)(_tBlit *))_animScrollText, 0
     };
-    static int i = 0;
+    static int i;
     int numPlayers;
     numPlayers = gRace == kGhost ? 1 : gNumPlayers;
     for (i = 0; i < numPlayers; i++) if (!gControllerData[i].attached) break;
