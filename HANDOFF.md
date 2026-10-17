@@ -54,11 +54,11 @@ that is expected. `verify_link.py` is the real gate.
 
 0. **`GameSource/src/visuals` — `GetCarsIRColor` 55/179 words** (61/62, data exact, layout full).
    Pure register allocation: target (base, base+1, base+2, idx0..3) = (r5, r31, r28, r12, r11, r30,
-   r29), ours (r5, r31, r12, r28, r11, r30, r29). Four sessions, ~40,000 objects (notes in
-   `C:\rush2049-mat3-review\work\visuals-rev{,3,4}\NOTES.md`). Best lead: the original DWARF lists
+   r29), ours (r5, r31, r12, r28, r11, r30, r29). Five sessions, ~60,000 objects (notes in
+   `C:\rush2049-mat3-review\work\visuals-rev{,3,4,5}\NOTES.md`). Best lead: the original DWARF lists
    `a // r0`, `b // r6`, `hobj // r11` as surviving locals; `a = gTrackNum;` used across blocks
-   reproduces `a r0` with no code change, `b`/`hobj` not yet. Untried: a dead second assignment to
-   `b`/`hobj` after the early-return branch; signed-shift spelling on the other three indices.
+   reproduces `a r0` with no code change, `b`/`hobj` not yet. Known: real second definitions list `b`/`hobj` but move the srawi pair or the register;
+   an inline parameter on idx0 gives r12 but changes the shape. The 55 body is a local minimum.
 1. **`NGC/ngcZoid` — `Blits`/`Blits_First`** (17/19). The target's `mr r6,rX / add r6,rY,r6` inside
    the branchless BlitDraw arms is a phi-copy shape; CodeWarrior places phi copies at the
    definitions and never sinks them, every other integer copy is removed before codegen, and no
@@ -68,8 +68,9 @@ that is expected. `verify_link.py` is the real gate.
    the target size (20/219 and 76/234 words). Residual: the copies land lowest-free (r0/r10) where
    the target coalesces them into the argument registers r6/r7; five passes
    (`C:\rush2049-mat3-review\work\ngcZoid-rev2\NOTES.md`) rule out guard spellings, in-place adds, inline wrappers
-   and evaluation order. The original IR must hold one more front-end temporary per arm that dies
-   with the deleted branch.
+   and evaluation order; two more passes (`ngcZoid-rev3`) rule out the SDK ClampStick analogy (older
+   compiler), pointer locals, late-folding zeros and reassociation. Open fact: in the else arm the
+   copy cannot take r0 in the target; every construct reproducing that costs instructions.
 2. **Tooling:** run `tools/datacheck.py <unit>` (per-unit data-byte check incl. `.sdata2` literal
    order) before `mark.py` in the per-file workflow; the `skel.py` gaps below still stand.
 3. **Linker:** only GC 2.7 completes a full link, hence the 5-byte `.dtors` difference; pre-2.7
