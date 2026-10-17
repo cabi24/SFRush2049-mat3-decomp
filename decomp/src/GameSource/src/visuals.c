@@ -199,7 +199,6 @@ static char *gWheelNames[48] = {
     "RIM16", "RIM17", "RIM18", "RIM19", "RIM20", "RIM21", "RIM22", "RIM23", "RIM24"
 };
 anon_c_rgba_4 gShadowColor = { 0, 0, 0, 192 };
-unsigned char arrowinvsColor[7] = { 32, 48, 80, 128, 160, 192, 239 };
 
 
 /* 0x80053e54, size 0xd4 */
@@ -425,14 +424,6 @@ static const char *const Car12TextureExt[12] = {
 };
 static const char *const Car13TextureExt[12] = {
     "_BLU", "_RED", "_YEL", "_GRN", "_PUR", "_ORA", "_WHT", "_YER", "_PUR", "_PUR", "_PUR", "_PUR"
-};
-float wingOffsets[13][3] = {
-    4.0f, 1.0f, 0.0f, 4.8f, 1.0f, 0.0f, 4.0f, 1.0f, 0.0f, 4.8f, 1.0f, 0.0f, 4.6f, 1.0f, 0.0f, 4.6f,
-    1.0f, 0.0f, 4.5f, 1.0f, 0.0f, 4.5f, 1.0f, 0.0f, 4.5f, 1.0f, 0.0f, 5.5f, 1.0f, 0.0f, 5.0f, 3.0f,
-    0.0f, 4.9f, 1.0f, 0.0f, 4.8f, 1.0f, 0.0f
-};
-static anon_c_rgba_4 arrowColors[5] = {
-    0, 0, 224, 255, 224, 0, 0, 255, 224, 224, 0, 255, 0, 224, 0, 255, 224, 224, 224, 255
 };
 
 
@@ -1135,6 +1126,12 @@ static void AnimateFrame(tVisual *v, signed short op)
     }
 }
 }
+
+float wingOffsets[13][3] = {
+    4.0f, 1.0f, 0.0f, 4.8f, 1.0f, 0.0f, 4.0f, 1.0f, 0.0f, 4.8f, 1.0f, 0.0f, 4.6f, 1.0f, 0.0f, 4.6f,
+    1.0f, 0.0f, 4.5f, 1.0f, 0.0f, 4.5f, 1.0f, 0.0f, 4.5f, 1.0f, 0.0f, 5.5f, 1.0f, 0.0f, 5.0f, 3.0f,
+    0.0f, 4.9f, 1.0f, 0.0f, 4.8f, 1.0f, 0.0f
+};
 
 /* 0x80056f60, size 0x16c */
 static void StartWing(signed short slot, signed short side)
@@ -2051,6 +2048,11 @@ void ClearCarShadows(void)
 {
     numShadowObjToDraw = 0;
 }
+
+static anon_c_rgba_4 arrowColors[5] = {
+    0, 0, 224, 255, 224, 0, 0, 255, 224, 224, 0, 255, 0, 224, 0, 255, 224, 224, 224, 255
+};
+unsigned char arrowinvsColor[7] = { 32, 48, 80, 128, 160, 192, 239 };
 
 /* 0x80059fb4, size 0x174 */
 void UpdateArrowVis(void)
