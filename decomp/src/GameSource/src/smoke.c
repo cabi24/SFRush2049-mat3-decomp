@@ -94,7 +94,7 @@ void StartWater(signed short slot, unsigned int tire)
         else
             offset2 = 0.15f + 0.85f * (fmph / 90.0f);
         for (j = 0; j < 9; j++)
-            ((float *)smk->mat.uvs)[j] *= offset2;
+            (&smk->mat.uvs[0][0])[j] *= offset2;
     }
     smk->mat.mat3.pos[0] = car->dr_tirepos[tire][0];
     smk->mat.mat3.pos[1] = car->dr_tirepos[tire][1];
@@ -122,7 +122,7 @@ void StartWater(signed short slot, unsigned int tire)
     CopyUV(mat.uvs, smk->mat.uvs);
     if (mph2 < 90) {
         for (j = 0; j < 9; j++)
-            ((float *)smk->mat.uvs)[j] *= offset2;
+            (&smk->mat.uvs[0][0])[j] *= offset2;
     }
     smk->mat.mat3.pos[0] = car->dr_tirepos[tire][0];
     smk->mat.mat3.pos[1] = car->dr_tirepos[tire][1];
