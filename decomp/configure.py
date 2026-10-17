@@ -367,7 +367,7 @@ config.libs = [
             Object(Matching, "GameSource/src/stunt.c"),
             Object(Matching, "GameSource/src/tan.c"),
             Object(Matching, "GameSource/src/targetpaths.c"),
-            Object(NonMatching, "GameSource/src/targets.c"),
+            Object(Matching, "GameSource/src/targets.c"),
             Object(Matching, "GameSource/src/TB_text.c"),
             Object(Matching, "GameSource/src/TB_Vector.c"),
             Object(Matching, "GameSource/src/text.c"),

@@ -1,6 +1,6 @@
 /* targets.c - track target (interactive object) manager: targetInfo table, SetupTarget, per-type
-   start/animate callbacks, collision dispatch. Status: 32/33 matched, SetTargetDefs is a register-allocation
-   near miss (9/373 instructions), see HANDOFF.md.
+   start/animate callbacks, collision dispatch. Status: 33/33 matched (SetTargetDefs via the _NB inline
+   helper below TInfo), see HANDOFF.md.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\targets.c; assembly: build/2049LE/asm/GameSource/src/targets.s */
 #include "rush/rush_protos.h"
 #define MSL_NO_SQRTF
@@ -29,6 +29,9 @@ inline float sqrtf(float x)
 /* Not in DWARF (inlined): the original reads the type flags through a pointer temporary,
    which gives the base-in-r0 / index-product-in-r3 allocation of the targetInfo address. */
 static inline anon_name_mboxname_34_2 *TInfo(tTarget *t) { return &targetInfo[t->infoIdx]; }
+/* SetTargetDefs: the visibility/collision SetupTarget arguments come back through an inline; the
+   named vis/col copies are then propagated away and the inline temporaries are coloured first. */
+static inline int _NB(unsigned int f, int b) { return ((f >> b) & 1) ^ 1; }
 
 static void _InitBBoxModelStruct(tTarget *t);
 static void SetTargetDef(tTarget *t);
@@ -649,14 +652,17 @@ void SetTargetDefs(void)
                 unsigned int flags;
                 unsigned int fw;
                 tBasicTargetPath *p;
+                int vis, col;
                 p = &gTargetPaths.paths[i];
                 flags = p->flags;
                 fw = flags & 4;
                 if ((fw && (flags & 8)) || (gBackwards && (flags & 8)) || (!gBackwards && fw)) {
+                    vis = _NB(flags, 15);
+                    col = _NB(flags, 4);
                     for (j = 0; j < gTargetPaths.paths[i].numPts; j++) {
                         if (Restarting) gTargetPaths.paths[i].pts[j].flags &= ~0x1000;
                         if (gTargetPaths.paths[i].pts[j].flags & 1)
-                            SetupTarget(&gTargetPaths.paths[i], -1, pos, 0, i, ((flags >> 15) & 1) ^ 1, ((flags >> 4) & 1) ^ 1);
+                            SetupTarget(&gTargetPaths.paths[i], -1, pos, 0, i, vis, col);
                     }
                     if (Restarting && gTargetPaths.paths[i].collIdx > 0) ResetCollisionObject(gTargetPaths.paths[i].collIdx);
                 } else if (flags & 0x800) {
