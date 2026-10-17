@@ -23,3 +23,6 @@ block_relocations:
 - source: 0x80132EBC
 - source: 0x8014AECC
 - source: 0x8012269C
+# Bink LogoData video bytes at 0x80153C38 (0x80044820) that dtk mistook for a pointer into the
+# static CylinderInSurf, which forced it global and renamed it CylinderInSurf_80044738.
+- source: 0x80153C38
