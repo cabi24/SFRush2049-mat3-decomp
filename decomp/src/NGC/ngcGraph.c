@@ -10,7 +10,9 @@ float g_MTXWorldView[4][4];
 float g_MTXViewScreen[4][4];
 float g_MTXViewClip[4][4];
 float g_MTXWorldScreen[4][4];
-viewWindow g_VW;
+/* 32-byte aligned: the original link pads the preceding unit's .bss (ngcVu1pack, ends at
+ * 0x80229BE8) up to 0x80229C00 before g_VW; nothing else in this .bss is on such a boundary. */
+viewWindow g_VW __attribute__((aligned(32)));
 
 /* sets viewport and scissor from the same float rectangle (the scissor gets the float->u32 conversions) */
 inline void SetViewportScissor(int x, int y, unsigned int w, unsigned int h)

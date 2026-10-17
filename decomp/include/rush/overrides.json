@@ -45,6 +45,11 @@
   },
   "_comment_prototypes": "Declarations the original headers used where they differ from the definition recorded in DWARF (callers pass extra/differently-typed arguments). Inferred from call sites.",
   "prototypes": {
+    "AddPackToTexSortList": "void AddPackToTexSortList(float **mtx, anon_name_width_38 *tex, unsigned int *pack, int cull, int AddColor)",
+    "AddVu1ObjPacket_WithLight2": "anon_dmatag_Local_world_90 *AddVu1ObjPacket_WithLight2(unsigned int *obj, float (*rotMTX)[4], int unused, anon_name_width_38 *pTexDef, float scale)",
+    "SaveOBJMatrix": "float **SaveOBJMatrix(float (*mtx)[4], int cull)",
+    "FindPs2Texture": "anon_name_width_38 *FindPs2Texture(void *unused, char *name)",
+    "FindPs2Texture2": "anon_name_width_38 *FindPs2Texture2(void *unused, char *name)",
     "LoadGeoBinFile": "int LoadGeoBinFile(int wavenum, char *groupname, int waveNum)",
     "ngcMcCreateFileReader": "int ngcMcCreateFileReader(int Port, char *filename, int unused)",
     "ngcMcCreateFileWriter": "int ngcMcCreateFileWriter(int Port, char *Filename, int unused)",

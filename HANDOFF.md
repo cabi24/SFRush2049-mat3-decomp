@@ -1,17 +1,18 @@
 # Handoff — Rush 2049 (GameCube, MAT3) matching decomp
 
-Last session: 2026-10-16 (Claude Code). Read this first, then `writeup.md` (local-only, not in git).
+Last session: 2026-10-16 (Claude Code, ngcVu1pack). Read this first, then `writeup.md` (local-only, not in git).
 
 ## Where things stand
 
-- **Status:** 1,510 / 1,844 functions, 460,620 / 715,968 code bytes (64.34%), **121 / 148 files**
+- **Status:** 1,544 / 1,844 functions, 472,120 / 715,968 code bytes (65.94%), **122 / 148 files**
   linked from C. The GC/2.7 relink passes `decomp/tools/verify_link.py` (only the 5 recorded
   `.dtors` bytes differ) on every commit.
 - **Branch:** `ngcblit-match` on <https://github.com/cabi24/SFRush2049-mat3-decomp> (private),
-  three commits ahead of `main`, pushed, no PR opened yet:
+  commits ahead of `main`, pushed, no PR opened yet:
   - `24dc654` Match NGC/ngcBlit (16/16)
   - `3091952` Match NGC/ngcBeginMenu (38/38)
   - `2ea74ee` Add NGC/ngcZoid (16/19, left NonMatching)
+  - (next) Match NGC/ngcVu1pack (34/34, 122/148 units linked from C)
 - **Repo layout on this PC:** `C:\rush2049-mat3` *is* the git checkout (source-only). Originals
   (`Rush2049.iso`, `DATA.GDF`, `rush_d.elf`, `rush_d_*.csv`, `rush_d_dwarf.c`), compilers,
   `decomp/build`, `decomp/orig`, `work/`, `writeup.md` are local and git-ignored — never commit
@@ -49,9 +50,10 @@ that is expected. `verify_link.py` is the real gate.
    loop-2 walker address (`&ZoidWinInfo[..]`, r26) live across loop 1; the outer-`while (1)` /
    loop-splitting trick that fixed `MenuMCMount` has **not** been tried on it yet. When these
    three match: `python tools/mark.py Matching NGC/ngcZoid.c`, rebuild, verify, commit.
-2. **Next untouched files, smallest first:** `NGC/ngcVu1pack` (11.5 KB, 34 fn), `GameSource/src/zip`
-   (12.8 KB, 24), `highscorescr` (15.3 KB), `targets` (15.5 KB), `trackscr`, `recordscr`, then the big
-   screens `playerscr`, `visuals`, `carscr` (27–31 KB each).
+2. **Next untouched files, smallest first:** `GameSource/src/zip` (12.8 KB, 24 fn), `highscorescr`
+   (15.3 KB), `targets` (15.5 KB), `trackscr`, `recordscr`, then the big screens `playerscr`,
+   `visuals`, `carscr` (27–31 KB each). (`NGC/ngcVu1pack` done 2026-10-16: 34/34, ~2.5 h wall clock
+   with two agents; see writeup "ngcVu1pack matched".)
 3. **Old near misses** (all heavily tried, register-allocation residue): `enginetorque`,
    `appGetTime`, `ContinueCircuit`, `_DrawFileDel`, `ngcLoadEffectBank`, `AvoidAreas`,
    `LinkWithPS2Texture`, `frictioncircle`; lower-scoring and probably structural: `drawRect` 91.5%
@@ -62,8 +64,12 @@ that is expected. `verify_link.py` is the real gate.
 5. **Tooling gaps that bit three times today:** `tools/skel.py` emits non-compiling skeletons on
    (a) nested-block locals flattened into duplicate declarations, (b) DWARF definitions with fewer
    parameters than the header prototype (`DC_SendFillRect`), (c) a `static` function whose name is
-   a global array in the shared header (`Blits`). Fixing those in `skel.py` saves a round-trip per
-   file.
+   a global array in the shared header (`Blits`), (d) **function-local statics are omitted entirely**
+   (ngcVu1pack: five `camPt/at/up` triples and `DrawSortedTex`'s seven statics had to be added by
+   hand from the DWARF), (e) the DWARF signature is used even when `overrides.json` already has a
+   prototype for the function (`MySetAmbientColor`, `LoadGeoBinFile`), (f) `
+` in the original path
+   becomes a newline in the header comment. Fixing those in `skel.py` saves a round-trip per file.
 
 ## Workflow that worked today (per file, ~1–2 h wall clock)
 
@@ -107,6 +113,13 @@ that is expected. `verify_link.py` is the real gate.
 - Unprototyped originals (`SetFont` doubles, `PrintFont` 3/4 args, `BlitColors` 4 args):
   `#define X X_DWARF_decl` around the include, then `void X();`.
 - Objdiff/cwmatch "CANDIDATE" = bytes equal, only a relocation symbol name differs → a match.
+- **`b<cc>lr; blr` at the end of a void function = the condition was tested twice**
+  (`if (x >= K && x >= K) return;`); every single-test form folds the branch (ngcVu1pack).
+- **A `.bss` gap at the end of a unit's split can be the next unit's alignment**: fix it with
+  `__attribute__((aligned(32)))` on the next unit's first `.bss` object (`g_VW` in ngcGraph.c);
+  `align:N` in `symbols.txt` does nothing for C-linked units.
+- `work/ngcVu1pack/merge.py` merges whole function definitions from agent copies into the
+  canonical file (adapt the paths per unit).
 
 ## Files to know
 

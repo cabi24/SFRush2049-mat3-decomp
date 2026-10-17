@@ -433,7 +433,7 @@ config.libs = [
         "objects": [
             Object(Matching, "NGC/libgraph.c"),
             Object(Matching, "NGC/stdlib.c"),
-            Object(NonMatching, "NGC/ngcVu1pack.c"),
+            Object(Matching, "NGC/ngcVu1pack.c"),
             Object(Matching, "NGC/ngcDmalist.c"),
             Object(Matching, "NGC/ngcGraph.c"),
             Object(NonMatching, "NGC/ngcHelper.c"),
