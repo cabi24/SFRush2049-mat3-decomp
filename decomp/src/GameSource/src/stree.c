@@ -703,6 +703,147 @@ surftyp *CameraCollision(float *ipos, float *lookat)
 }
 
 
+static inline signed short shalf(signed short v) { return v >> 1; }
+surftyp *ShotToWorldCollision(float *old, float *new, float (*uvs)[3], float radius, int interp, int ignore)
+{
+#define SHOT_FLOOR(v) (((v < 0.0f && (int)v != v) != 0) ? v - 1.0f : v)
+    float tuvs[3][3];
+    unsigned int i;
+    signed short quad0, quad1;
+    int sli;
+    float radiussq, t;
+    float ipos[3], opos[3], epos[3];
+    unsigned short snum, path, spath, slnum[35];
+    signed short midh, midv;
+    int state;
+    unsigned char *slp;
+    streetyp *ltp0, *ltp1;
+    surftyp *sp, *savesp = 0;
+    float x, z;
+    ipos[0] = old[0]; ipos[1] = old[1]; ipos[2] = old[2];
+    z = floorpos(ipos[2]);
+    x = floorpos(ipos[0]);
+    ltp0 = updownleaf(stree, x, z, &quad0);
+    if (!ltp0) return 0;
+    z = floorpos(new[2]);
+    x = floorpos(new[0]);
+    ltp1 = updownleaf(stree, x, z, &quad1);
+    radiussq = radius * radius;
+    do {
+        signed short b[4];
+        float d[3];
+        midh = ltp0->minh + ltp0->maxh;
+        if (midh < 0) midh++;
+        midv = ltp0->minv + ltp0->maxv;
+        if (midv < 0) midv++;
+        midh = midh >> 1;
+        b[1] = midh;
+        midv = shalf(midv);
+        if (quad0 & 1) b[0] = midh; else b[0] = ltp0->minh;
+        if (quad0 & 1) b[1] = ltp0->maxh;
+        if (quad0 & 2) b[2] = ltp0->minv; else b[2] = midv;
+        if (quad0 & 2) b[3] = midv; else b[3] = ltp0->maxv;
+        sli = ltp0->child[quad0];
+        if (ltp0->flags & (16 << quad0)) sli |= 0x10000;
+        if (sli) {
+            slp = slist + sli;
+            snum = *slp++;
+            DecodeSlist(slp, snum, slnum, -1);
+            for (i = 0; i < snum; i++) {
+                sp = &surf[slnum[i]];
+                if ((sp->flags & 15) == 15 || (sp->flags & 15) == ignore) continue;
+                state = CylinderInSurf(sp, ipos, new, opos, epos, tuvs, radiussq, 0, &path);
+                if (state) {
+                    if (opos[0] < b[0] || opos[0] >= b[1] || opos[2] < b[2] || opos[2] >= b[3]) continue;
+                    new[0] = opos[0]; new[1] = opos[1]; new[2] = opos[2];
+                    CopyUV(tuvs, uvs);
+                    savesp = sp;
+                    spath = path;
+                }
+            }
+        }
+        if (savesp) {
+            if (interp) {
+                if (savesp->flags & 0x2000) fHalfPipeInterp(savesp, spath, new, epos, uvs, 250.0f);
+                else if (savesp->flags & 0x1000) {
+                    fPathInterp(savesp, spath, new, epos, uvs);
+                    NormalVector(uvs[0]); NormalVector(uvs[1]); NormalVector(uvs[2]);
+                }
+            }
+            return savesp;
+        }
+        if (ltp0 == ltp1 && quad0 == quad1) return 0;
+        d[0] = new[0] - ipos[0];
+        d[1] = new[1] - ipos[1];
+        d[2] = new[2] - ipos[2];
+        if (d[0] < 0.0f) {
+            opos[0] = b[0];
+            t = (opos[0] - ipos[0]) / d[0];
+            opos[2] = ipos[2] + t * d[2];
+            opos[1] = ipos[1] + t * d[1];
+            if (b[2] == opos[2] && d[2] < 0.0f) {
+                ltp0 = updownleaf(stree, b[0] - 1, b[2] - 1, &quad0);
+                goto next;
+            } else if (b[3] == opos[2] && d[2] < 0.0f) {
+                ltp0 = updownleaf(stree, b[0] - 1, b[3] - 1, &quad0);
+                goto next;
+            } else if (b[2] <= opos[2] && opos[2] <= b[3]) {
+                ltp0 = updownleaf(stree, b[0] - 1, SHOT_FLOOR(opos[2]), &quad0);
+                goto next;
+            }
+        } else if (d[0] > 0.0f) {
+            opos[0] = b[1];
+            t = (opos[0] - ipos[0]) / d[0];
+            opos[2] = ipos[2] + t * d[2];
+            opos[1] = ipos[1] + t * d[1];
+            if (b[2] == opos[2] && d[2] < 0.0f) {
+                ltp0 = updownleaf(stree, b[1], b[2] - 1, &quad0);
+                goto next;
+            } else if (b[3] == opos[2] && d[2] < 0.0f) {
+                ltp0 = updownleaf(stree, b[1], b[3] - 1, &quad0);
+                goto next;
+            } else if (b[2] <= opos[2] && opos[2] <= b[3]) {
+                ltp0 = updownleaf(stree, b[1], SHOT_FLOOR(opos[2]), &quad0);
+                goto next;
+            }
+        }
+        if (d[2] < 0.0f) {
+            opos[2] = b[2];
+            t = (opos[2] - ipos[2]) / d[2];
+            opos[1] = ipos[1] + t * d[1];
+            opos[0] = ipos[0] + t * d[0];
+            if (b[0] == opos[0] && d[0] < 0.0f) {
+                ltp0 = updownleaf(stree, b[0] - 1, b[2] - 1, &quad0);
+                goto next;
+            } else if (b[1] == opos[0] && d[0] < 0.0f) {
+                ltp0 = updownleaf(stree, b[1] - 1, b[2] - 1, &quad0);
+                goto next;
+            } else if (b[0] <= opos[0] && opos[0] <= b[1]) {
+                ltp0 = updownleaf(stree, SHOT_FLOOR(opos[0]), b[2] - 1, &quad0);
+                goto next;
+            }
+        } else if (d[2] > 0.0f) {
+            opos[2] = b[3];
+            t = (opos[2] - ipos[2]) / d[2];
+            opos[1] = ipos[1] + t * d[1];
+            opos[0] = ipos[0] + t * d[0];
+            if (b[0] == opos[0] && d[0] < 0.0f) {
+                ltp0 = updownleaf(stree, b[0] - 1, b[3], &quad0);
+                goto next;
+            } else if (b[1] == opos[0] && d[0] < 0.0f) {
+                ltp0 = updownleaf(stree, b[1] - 1, b[3], &quad0);
+                goto next;
+            } else if (b[0] <= opos[0] && opos[0] <= b[1]) {
+                ltp0 = updownleaf(stree, SHOT_FLOOR(opos[0]), b[3], &quad0);
+            }
+        }
+next:
+        ipos[0] = opos[0]; ipos[1] = opos[1]; ipos[2] = opos[2];
+    } while (ltp0);
+    return 0;
+#undef SHOT_FLOOR
+}
+
 /* 0x800469EC */
 void MoveCollisionObject(int num, float *trans)
 {
