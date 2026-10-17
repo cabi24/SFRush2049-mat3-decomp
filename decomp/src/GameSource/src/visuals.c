@@ -2182,8 +2182,8 @@ static void AnimateArrow(tVisual *v)
             voffset=0.75f*window->wvviewang;
             vscale=16.5f;
         } else {
-            voffset=1.1f*window->wvviewang;
             vscale=14.5f;
+            voffset=1.1f*window->wvviewang;
         }
         if(scale<0.48f*-window->whviewang && scale>-1.5707963705062866f) {
             widthTerm=0.6366197466850281f*window->whviewang;
