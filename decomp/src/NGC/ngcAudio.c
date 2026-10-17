@@ -241,9 +241,9 @@ int ngcLoadEffectBank(int nBankID, int nSubID, int bLoadingEffect)
     appFileRead(fd, bnk->pBuf, file_size);
     appFileClose(fd);
     fix_ShFile(bnk->pBuf, file_size);
-    p = bnk->pBuf;
-    bnk->nResCount = *(int *)(p + 8);
-    p += 12;
+    p = (char *)bnk->pBuf + 8;
+    bnk->nResCount = *(int *)p;
+    p += 4;
     if (bnk->nResCount > 0) {
         bnk->pResources = (_SND_RESOURCE_HEADER *)p;
         p += bnk->nResCount * sizeof(_SND_RESOURCE_HEADER);

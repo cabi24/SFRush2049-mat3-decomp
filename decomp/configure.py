@@ -448,7 +448,7 @@ config.libs = [
             Object(Matching, "NGC/ngcBlit.c"),
             Object(Matching, "NGC/ngcTexHelp.c"),
             Object(Matching, "NGC/ngcMtx.c"),
-            Object(NonMatching, "NGC/ngcAudio.c"),
+            Object(Matching, "NGC/ngcAudio.c"),
             Object(Matching, "NGC/FONT/defaultFont.cpp", extra_cflags=["-lang c++"]),
             Object(Matching, "NGC/ngcMovie.c"),
             Object(Matching, "NGC/ngcDvdCheck.c"),
