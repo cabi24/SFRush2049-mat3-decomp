@@ -77,7 +77,7 @@ void StartWater(signed short slot, unsigned int tire)
     }
     smk = GetStatLLE(&gSmokeList);
     if (!smk) return;
-    smk->swTime = 1.0f / 30.0f;
+    smk->swTime = 0.0333333f; /* the original literal: 0x3D088880, not 1/30 (0x3D088889) */
     smk->data = tire << 17;
     smk->slot = slot;
     smk->data |= 0x10u;
@@ -115,7 +115,7 @@ void StartWater(signed short slot, unsigned int tire)
 
     smk = GetStatLLE(&gSmokeList);
     if (!smk) return;
-    smk->swTime = 1.0f / 30.0f;
+    smk->swTime = 0.0333333f; /* the original literal: 0x3D088880, not 1/30 (0x3D088889) */
     smk->data = tire << 17;
     smk->data |= 0x10u;
     smk->slot = slot;

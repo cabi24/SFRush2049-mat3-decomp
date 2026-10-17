@@ -511,6 +511,19 @@ void WindowBorders(void)
     }
 }
 
+/* The original has 26 unreferenced static functions here (Clip, ClipTri0_1..ClipTri1_3,
+ * DrawObject; DWARF `// Erased`). CodeWarrior compiles them (the linker strips the code) and
+ * numbers their float literals before PS2DrawObjectWithEnvMap's, so the .sdata2 pool holds the
+ * doubles 1.0 and 0.5 and the unsigned int->float constant before 1/(2*pi) although live code
+ * first uses them in Polys and Traverse. This placeholder reproduces only those three literal
+ * references, in that order. */
+static void Clip(void)
+{
+    cos(1.0);
+    cos(0.5);
+    HAL_SetTextTranslucency((float)gFrames);
+}
+
 /* 0x800a7144, size 0x2a8 */
 void PS2DrawObjectWithEnvMap(unsigned int *dlist, int normals, int texgen, float (*mat)[3], float *cam, float *north, float ouls, float oult)
 {
