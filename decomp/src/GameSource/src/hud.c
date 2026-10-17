@@ -1,6 +1,7 @@
 /* hud.c - partial HUD lifecycle, updates and time formatting.
  * Functions omitted from this source remain unmatched. Keep NonMatching.
  */
+
 #include "rush/rush_protos.h"
 
 unsigned char *cStrCreditNames[14][11] = {
@@ -21,32 +22,56 @@ unsigned char *cStrCreditNames[14][11] = {
 };
 
 float gCheckPtTimeout[4];
+
 float gLapTime[4];
+
 float gElapsedTime[4];
-static unsigned char CheckpointStr[4][8];
-static signed short markers_valid;
+
+
 static int animBones(_tBlit *blt);
+
 int animCountdownTimer(void);
+
 static int animCreditText(_tBlit *blt);
+
 static int animDot(_tBlit *);
+
 static int animElapsedTimer(_tBlit *blt);
+
 static int animElapsedTimerText(void);
+
 static int animFlag(_tBlit *);
+
 int animGear(void);
+
 static int animLapCount(_tBlit *blt);
+
 static int animLapTime(_tBlit *blt);
+
 static int animLapTimeText(void);
+
 static int animOdometer(_tBlit *);
+
 static int animPlace(_tBlit *blt);
+
 static int animRadar(_tBlit *blt);
+
 static int animRadarBlip(_tBlit *);
+
 static int animResults(_tBlit *);
+
 int animSpeed(_tBlit_2 *blt);
+
 int animSpeedText(void);
+
 int animTach(_tBlit_2 *blt);
+
 static int animTrackMap(_tBlit *);
+
 static int animWrongWay(void);
+
 static int updateFrame(void);
+
 static const anon_texname_dulx_24 RaceMultiBlit[90] = {
     { "SPEEDBG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 255, (int (*)(_tBlit *))animSpeed, 16 },
     { "SPEEDBG2", 0, 0, -1, -1, -1, -1, -1, -1, 0, 255, (int (*)(_tBlit *))animSpeed, 32 },
@@ -163,48 +188,191 @@ static const anon_texname_dulx_24 ThreePlayerMultiBlit[1] = {
 static const anon_texname_dulx_24 OverlayMultiBlit[1] = {
     { (const char *)-1, 0, 0, -1, -1, -1, -1, -1, -1, 0, 0, (int (*)(_tBlit *))animCreditText, 0 },
 };
-float hudObjAngle;
+
+
 static anon_idx_mat_34 gPlayerCoin[4][2];
-static anon_used_perm_20 *resultPane[5];
-static _tBlit *multiPlayerBlit;
+
+
+
+
+static void CleanupOverlay(void);
+
+
+
+
+
+
+
+
+
+
+
+static int radarWidth = 16;
+
+static int radarHeight = 16;
+
+
+
+
+
+static void CheckResults(void);
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+#pragma push
+
+#pragma force_active on
+
+#pragma pop
+
+
+
+
+
+static inline tCarData *hudCar(int slot) { return &gGameCar[slot]; }
+
+
+/* prototypes: the functions are defined in their original order below */
+void ShowHUD();
+void RemoveHUD();
+void RemoveMultiplayerHUD();
+void UpdateHUDPostCamera();
+void UpdateHUDPostCamera2();
+void AddBattlePoint(signed char to, signed char from, signed char p);
+static int updateFrame();
+static void CheckResults();
+int animSpeed(_tBlit_2 *blt);
+int animSpeedText();
+int animTach(_tBlit_2 *blt);
+int animGear();
+static int animBones(_tBlit *blt);
+static int animResults(_tBlit *blt);
+static int animOdometer(_tBlit *blt);
+int animCountdownTimer();
+static int animElapsedTimer(_tBlit *blt);
+static int animElapsedTimerText();
+static int animPlace(_tBlit *blt);
+static int animLapCount(_tBlit *blt);
+int animCoins();
+int animCoinsText();
+static int animLapTime(_tBlit *blt);
+static int animLapTimeText();
+static int animWrongWay();
+static int animRadar(_tBlit *blt);
+static int animRadarBlip(_tBlit *blt);
+static int animTrackMap(_tBlit *blt);
+static int animDot(_tBlit *blt);
+static int animFlag(_tBlit *blt);
+void ShowCheckpointTime(int slot, float time);
+int Hidden(_tBlit_2 *blt, int hide);
+unsigned char cvt_time(float t, unsigned char *dest, char format);
+static void CleanupOverlay();
+static int animCreditText(_tBlit *blt);
+
+signed char gShowTrackMap;
+signed char gShowRadar;
+signed char gShowElapsed;
+signed char gShowRemaining;
+signed char gShowTach;
+signed char gShowSpeed;
+signed char gShowOdometer;
+signed char gShowPlace;
+signed char gShowShifter;
+signed char gShowWrongWay;
+signed char gShowPlayerArrows;
+signed char gShowCoins;
+signed char gShowMetric;
+int gShowCredits;
+static signed short markers_valid;
+static signed char dot_order_list[6];
 static _tBlit *HudBlit1;
 static _tBlit *HudBlit2;
+static _tBlit *multiPlayerBlit;
 static _tBlit *ResultBlit;
-static void CleanupOverlay(void);
-signed char gShowElapsed;
-static int bonesPos[4][4][2] = {
-    200, 4, 0, 0, 0, 0, 0, 0,
-    150, 4, 150, 116, 0, 0, 0, 0,
-    110, 4, 210, 4, 110, 116, 0, 0,
-    110, 4, 210, 4, 110, 116, 210, 116
-};
-static int elapsedTimerPos[4][2] = {
-    272, 144, 272, 144, 240, 200, 160, 136
-};
+static int gCredit, gCorner, gCreditWidth, gNumCreditNames;
 
-static int radarPos[4][4][2] = {
-    10, 60, 0, 0, 0, 0, 0, 0,
-    10, 42, 10, 154, 0, 0, 0, 0,
-    10, 42, 276, 42, 10, 154, 0, 0,
-    10, 42, 276, 42, 10, 154, 276, 154,
-};
+static int whichCam[4] = {1,2,4,8};
 static int speedPos[4][4][2] = {
     30, 4, 0, 0, 0, 0, 0, 0,
     30, 4, 30, 116, 0, 0, 0, 0,
     30, 4, 290, 4, 30, 116, 0, 0,
     30, 4, 290, 4, 30, 116, 290, 116,
 };
-static int lapCountPos[4][4][2] = {
-    280, 34, 0, 0, 0, 0, 0, 0,
-    210, 24, 210, 136, 0, 0, 0, 0,
-    132, 24, 188, 24, 132, 136, 0, 0,
-    132, 24, 188, 24, 132, 190, 188, 190,
-};
-static int gearPos[4][4][2] = {
-    96, 14, 0, 0, 0, 0, 0, 0,
-    92, 10, 92, 122, 0, 0, 0, 0,
-    82, 10, 264, 10, 82, 122, 0, 0,
-    82, 10, 264, 10, 82, 122, 264, 122,
+static int odometerPos[4][4][2] = {
+    30, 32, 0, 0, 0, 0, 0, 0,
+    30, 30, 30, 142, 0, 0, 0, 0,
+    30, 30, 290, 30, 30, 142, 0, 0,
+    30, 30, 290, 30, 30, 142, 290, 142,
 };
 static int tachPos[4][4][2] = {
     90, 4, 0, 0, 0, 0, 0, 0,
@@ -212,25 +380,61 @@ static int tachPos[4][4][2] = {
     70, 6, 240, 6, 70, 118, 0, 0,
     70, 6, 240, 6, 70, 118, 240, 118,
 };
+static int gearPos[4][4][2] = {
+    96, 14, 0, 0, 0, 0, 0, 0,
+    92, 10, 92, 122, 0, 0, 0, 0,
+    82, 10, 264, 10, 82, 122, 0, 0,
+    82, 10, 264, 10, 82, 122, 264, 122,
+};
+static int countdownTimerPos[4][2] = {160, 4, 272, 56, 240, 112, 160, 72};
+static int elapsedTimerPos[4][2] = {
+    272, 144, 272, 144, 240, 200, 160, 136
+};
 static int placePos[4][4][2] = {
     280, 4, 0, 0, 0, 0, 0, 0,
     210, 4, 210, 116, 0, 0, 0, 0,
     136, 4, 184, 4, 136, 116, 0, 0,
     136, 4, 184, 4, 136, 200, 184, 200,
 };
-static unsigned char playerColor[4][4] = { 64, 128, 224, 63, 224, 64, 64, 63, 224, 224, 64, 63, 64, 224, 64, 63 };
-static int radarWidth = 16;
-static int radarHeight = 16;
-
-
-static float wrongWayTime[4];
-static int gCredit, gCorner, gCreditWidth, gNumCreditNames;
+static int lapCountPos[4][4][2] = {
+    280, 34, 0, 0, 0, 0, 0, 0,
+    210, 24, 210, 136, 0, 0, 0, 0,
+    132, 24, 188, 24, 132, 136, 0, 0,
+    132, 24, 188, 24, 132, 190, 188, 190,
+};
+static int coinPos[4][4][2] = {
+    270, 54, 0, 0, 0, 0, 0, 0,
+    200, 40, 200, 152, 0, 0, 0, 0,
+    124, 40, 176, 40, 124, 152, 0, 0,
+    124, 40, 176, 40, 124, 174, 176, 174,
+};
 static int lapTimePos[4][4][2] = {
     160, 200, 0, 0, 0, 0, 0, 0,
     120, 88, 120, 200, 0, 0, 0, 0,
     80, 88, 240, 88, 80, 200, 0, 0,
     80, 88, 240, 88, 80, 200, 240, 200,
 };
+int wrongWayPos[4][4][2] = {
+    0xA0, 0x70, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+    0x78, 0x38, 0x78, 0xA8, 0x0, 0x0, 0x0, 0x0,
+    0x50, 0x38, 0xF0, 0x38, 0x50, 0xA8, 0x0, 0x0,
+    0x50, 0x38, 0xF0, 0x38, 0x50, 0xA8, 0xF0, 0xA8,
+};
+static int radarPos[4][4][2] = {
+    10, 60, 0, 0, 0, 0, 0, 0,
+    10, 42, 10, 154, 0, 0, 0, 0,
+    10, 42, 276, 42, 10, 154, 0, 0,
+    10, 42, 276, 42, 10, 154, 276, 154,
+};
+static int mapPos[4][2] = {280, 112, 280, 112, 240, 168, 160, 112};
+static int bonesPos[4][4][2] = {
+    200, 4, 0, 0, 0, 0, 0, 0,
+    150, 4, 150, 116, 0, 0, 0, 0,
+    110, 4, 210, 4, 110, 116, 0, 0,
+    110, 4, 210, 4, 110, 116, 210, 116
+};
+static unsigned char playerPaneColors[4][2][4] = {0,0,240,63,0,0,240,127,240,0,0,63,240,0,0,127,240,240,0,63,240,240,0,127,0,240,0,63,0,240,0,127};
+static unsigned char playerColor[4][4] = { 64, 128, 224, 63, 224, 64, 64, 63, 224, 224, 64, 63, 64, 224, 64, 63 };
 static unsigned char lapTimeBGColor[4][4] = { 0, 0, 0, 192, 0, 0, 0, 192, 0, 0, 0, 192, 0, 0, 0, 192 };
 
 void ShowHUD(void)
@@ -294,6 +498,9 @@ void ShowHUD(void)
         }
     }
 }
+
+static anon_used_perm_20 *resultPane[5];
+
 
 void RemoveHUD(void)
 {
@@ -365,11 +572,8 @@ void AddBattlePoint(signed char to, signed char from, signed char p)
 }
 
 static unsigned char TrackTimeStr[4][8];
-static signed char dot_order_list[6];
-static signed short markers_valid;
-static void CheckResults(void);
 
-#pragma push
+
 #pragma force_active on
 static int updateFrame(void)
 {
@@ -406,127 +610,101 @@ static int updateFrame(void)
     CheckResults();
     return 1;
 }
-#pragma pop
 
-#pragma push
 #pragma force_active on
-static int animBones(_tBlit *blt)
+static void CheckResults(void)
 {
-    if (!gDeathMode || gNumWindows <= blt->animID ||
-        gGameCar[model[blt->animID].slot].place_locked == 1)
-        return Hidden((_tBlit_2 *)blt, 1);
-    blt->x = bonesPos[gNumWindows - 1][blt->animID][0] - (blt->width / 2) / 2;
-    blt->y = bonesPos[gNumWindows - 1][blt->animID][1];
-    UpdateBlit(blt);
-    return 1;
-}
-
-static int animElapsedTimer(_tBlit *blt)
-{
-    int win;
-    int digitW;
-    int colonW;
-    signed char fixedWidth;
-
-    win = blt->animID;
-    if (Hidden((_tBlit_2 *)blt,
-               (win == 1 && gNumWindows > 1) || (win == 2 && gNumWindows < 2))) {
-        blt->animFunc = 0;
-        return 1;
+    int playerIdx, x, y;
+    int gNumPlayersFinished = 0;
+    int gAPlayerFinished = 0;
+    for (playerIdx = 0; playerIdx < gNumWindows; playerIdx++) {
+        if (gNumLaps == model[playerIdx].laps)
+            gAPlayerFinished = 1;
+        if (gGameCar[model[playerIdx].slot].place_locked == 1)
+            gNumPlayersFinished++;
     }
-    if (Hidden((_tBlit_2 *)blt, (gGameState & 8) || !(gGameState & 0x400000) || !gShowElapsed))
-        return 1;
-    if (gNumWindows == 1)
-        HAL_SetFont(1);
-    else
-        HAL_SetFont(2);
-    digitW = HAL_GetCharWidth('8') + 1;
-    fixedWidth = HAL_SetFontFixedWidth(0);
-    colonW = HAL_GetCharWidth(':') + 1;
-    HAL_SetFontFixedWidth(fixedWidth);
-    blt->x = elapsedTimerPos[gNumWindows - 1][0] - (7 * digitW + 2 * colonW) / 2;
-    blt->y = elapsedTimerPos[gNumWindows - 1][1] - 1;
-    blt->alpha = 128;
-    UpdateBlit(blt);
-    return 1;
-}
-#pragma pop
-
-int Hidden(_tBlit_2 *blt, int hide)
-{
-    if (hide != blt->hide) {
-        blt->hide = hide;
-        UpdateBlit((_tBlit *)blt);
+    if (gNumPlayersFinished && (!gDeathMode || gAPlayerFinished)) {
+        for (playerIdx = 0; playerIdx <= 4; playerIdx++) {
+            if (!resultPane[playerIdx]) {
+                resultPane[playerIdx] = InitPane(-20, 0, -10, 10, 192, 0, 0, 1);
+                if (playerIdx < 4)
+                    ChangePaneColor(resultPane[playerIdx], playerPaneColors[playerIdx][0], playerPaneColors[playerIdx][1]);
+            }
+        }
+        if (!ResultBlit)
+            ResultBlit = NewMultiBlit(0, 0, ResultsMultiBlit, 1);
     }
-    return blt->hide;
-}
-
-unsigned char cvt_time(float t, unsigned char *dest, char format)
-{
-    unsigned int hun;
-    unsigned int sec;
-    unsigned int min;
-
-    if (t < 0.0f)
-        t = 0.0f;
-    switch (format) {
-    case 'c':
-        sec = (unsigned int)t;
-        if (sec > 999)
-            sec = 999;
-        dest[0] = (sec / 100) % 10;
-        dest[1] = (sec / 10) % 10;
-        dest[2] = sec % 10;
-        dest[3] = 0;
-        return 3;
-    case 'f':
-        sec = (unsigned int)t;
-        min = sec / 60;
-        sec %= 60;
-        hun = (unsigned int)(100.0f * t) % 100;
-        dest[0] = (min / 10) % 10;
-        dest[1] = min % 10;
-        dest[2] = sec / 10;
-        dest[3] = sec % 10;
-        dest[4] = hun / 10;
-        dest[5] = hun % 10;
-        dest[6] = 0;
-        return 6;
+    HAL_SetFont(10);
+    if (gNumWindows > 1 && gNumPlayersFinished == gNumWindows && (!gDeathMode || (gDeathMode && gAPlayerFinished))) {
+        if (resultPane[4]) {
+            unsigned char str[64] = "";
+            int h = TB_GetFontLineHeight();
+            int w;
+            if (model[model[gRankedPlayer[0]].slot].drone_type == 1)
+                TB_Sprintf(str, gText.single[211]);
+            else if (ties)
+                TB_Sprintf(str, gText.single[212], ties + 1);
+            else
+                TB_Sprintf(str, gText.single[210], (*gPlayers[gRankedPlayer[0]].save)->name);
+            w = HAL_GetTextWidth(str, -1) < 20 ? 20 : HAL_GetTextWidth(str, -1);
+            x = 160; y = 112;
+            ChangePaneSize(resultPane[4], x - w / 2 - 8, y - h / 2 - 4, x + w / 2 + 8, y + h / 2 + 4);
+        }
     }
-    return 0;
-}
-
-#pragma push
-#pragma force_active on
-static void CleanupOverlay(void)
-{
-}
-#pragma pop
-
-#pragma push
-#pragma force_active on
-static int animRadar(_tBlit *blt)
-{
-    int slot = blt->animID;
-    if (slot >= gNumWindows || (gGameState & 8) || gNumCars < 2) {
-        blt->animFunc = 0;
-        return Hidden((_tBlit_2 *)blt, 1);
+    for (playerIdx = 0; playerIdx < gNumWindows; playerIdx++) {
+        if ((!gDeathMode || gNumLaps == model[playerIdx].laps) && gGameCar[model[playerIdx].slot].place_locked == 1 && resultPane[playerIdx]) {
+            unsigned char str1[32] = "", str2[32] = "";
+            int w, h = TB_GetFontLineHeight();
+            x = wrongWayPos[gNumWindows - 1][playerIdx][0];
+            y = wrongWayPos[gNumWindows - 1][playerIdx][1];
+            if (gNumWindows == 4 && playerIdx >= 2)
+                y += 12;
+            if (gRace == kStunt) {
+                TB_Sprintf(str1, "%d %s", gStuntPlayer[playerIdx].totalPoints, gText.single[140]);
+            } else if (gRace == kObstacle) {
+                if (gLap[playerIdx] != 1)
+                    TB_Sprintf(str1, "%s", gText.single[225]);
+                else {
+                    unsigned int min;
+                    unsigned int sec = (unsigned int)gGameCar[gPlayers[playerIdx].slot].score;
+                    unsigned int thou;
+                    min = sec / 60;
+                    min %= 100;
+                    sec %= 60;
+                    thou = (unsigned int)(1000.0f * gGameCar[gPlayers[playerIdx].slot].score);
+                    thou %= 1000;
+                    TB_Sprintf(str1, "%s %d:%02d.%03d", gText.single[219], min, sec, thou);
+                }
+            } else if (gRace == kBattle) {
+                TB_Sprintf(str1, "%d %s", gGameCar[playerIdx].battle.Points, gText.single[140]);
+            } else {
+                int place = gGameCar[gPlayers[playerIdx].slot].place;
+                TB_Sprintf(str1, gText.single[209], place + 1, gText.taba[gText.tab[57] + place]);
+                if (gNumLaps != model[gPlayers[playerIdx].slot].laps)
+                    TB_Sprintf(str2, gText.single[218], model[gPlayers[playerIdx].slot].laps, gNumLaps);
+                else {
+                    unsigned int min;
+                    unsigned int sec = (unsigned int)gGameCar[gPlayers[playerIdx].slot].score;
+                    unsigned int thou;
+                    min = sec / 60;
+                    min %= 100;
+                    sec %= 60;
+                    thou = (unsigned int)(1000.0f * gGameCar[gPlayers[playerIdx].slot].score);
+                    thou %= 1000;
+                    TB_Sprintf(str2, "%s %d:%02d.%03d", gText.single[219], min, sec, thou);
+                }
+            }
+            w = HAL_GetTextWidth((*gPlayers[playerIdx].save)->name, -1) < 20 ? 20 : HAL_GetTextWidth((*gPlayers[playerIdx].save)->name, -1);
+            w = w > HAL_GetTextWidth(str1, -1) ? w : HAL_GetTextWidth(str1, -1);
+            w = w > HAL_GetTextWidth(str2, -1) ? w : HAL_GetTextWidth(str2, -1);
+            if (TB_Strlen(str1))
+                h += TB_GetFontLineHeight();
+            if (TB_Strlen(str2))
+                h += TB_GetFontLineHeight();
+            ChangePaneSize(resultPane[playerIdx], x - w / 2 - 8, y - h / 2 - 4, x + w / 2 + 8, y + h / 2 + 4);
+        }
     }
-    if (Hidden((_tBlit_2 *)blt, !gShowRadar || !(gGameState & 0x400000) ||
-               gGameCar[slot].place_locked == 1))
-        return 1;
-    blt->x = radarPos[gNumWindows - 1][slot][0];
-    blt->y = radarPos[gNumWindows - 1][slot][1];
-    if (gNumWindows > 1) {
-        RenameBlit(blt, "RADAR_MD", 0);
-        blt->alpha = 96;
-    }
-    UpdateBlit(blt);
-    radarWidth = blt->width / 2;
-    radarHeight = blt->height / 2.0f;
-    return 1;
 }
-#pragma pop
 
 int animSpeed(_tBlit_2 *blt)
 {
@@ -549,117 +727,6 @@ int animSpeed(_tBlit_2 *blt)
     blt->x = speedPos[gNumWindows - 1][win][0] - 2 * digitW + (gNumWindows == 1);
     blt->y = speedPos[gNumWindows - 1][win][1] + (gNumWindows == 1);
     blt->alpha = 128;
-    UpdateBlit((_tBlit *)blt);
-    return 1;
-}
-
-#pragma push
-#pragma force_active on
-static int animLapCount(_tBlit *blt)
-{
-    int x, y, slot;
-    if ((gGameState & 8) || !(gGameState & 0x400000) ||
-        gRace == kPractice || gRace == kObstacle || !gShowPlace)
-        return 1;
-    HAL_SetTextDepth(0.0f);
-    TB_SetJust(1, 3);
-    if (gNumWindows == 1)
-        HAL_SetFont(11);
-    else
-        HAL_SetFont(12);
-    for (slot = 0; slot < gNumWindows; slot++) {
-        if (model[slot].laps == gNumLaps || gGameCar[slot].place_locked == 1)
-            continue;
-        x = lapCountPos[gNumWindows - 1][slot][0];
-        y = lapCountPos[gNumWindows - 1][slot][1];
-        TB_SetTextColor(0);
-        TB_Printf(x + 1, y + 1, gText.single[217], model[slot].laps + 1, gNumLaps);
-        TB_SetTextColor(1);
-        TB_Printf(x, y, gText.single[217], model[slot].laps + 1, gNumLaps);
-    }
-    TB_SetJust(0, 3);
-    HAL_SetTextDepth(-1.0f);
-    return 1;
-}
-#pragma pop
-
-int animGear(void)
-{
-    unsigned char str[2];
-    int slot;
-    signed short x, y;
-    signed char gear;
-    if (!gShowShifter || !(gGameState & 0x400000))
-        return 1;
-    HAL_SetTextDepth(0.0f);
-    if (gNumWindows == 1)
-        HAL_SetFont(10);
-    else if (gNumWindows == 2)
-        HAL_SetFont(11);
-    else
-        HAL_SetFont(12);
-    for (slot = 0; slot < gNumWindows; slot++) {
-        gear = model[slot].mainin.gear;
-        if (slot >= gNumWindows || model[slot].autotrans ||
-            gGameCar[model[slot].slot].place_locked == 1)
-            continue;
-        x = gearPos[gNumWindows - 1][slot][0] - 4;
-        y = gearPos[gNumWindows - 1][slot][1];
-        TB_SetTextColor(0);
-        TB_DrawText(TB_RightText(gText.single[215], x + 1), y + 1, gText.single[215]);
-        TB_SetTextColor(1);
-        TB_DrawText(TB_RightText(gText.single[215], x), y, gText.single[215]);
-        x = gearPos[gNumWindows - 1][slot][0] + 4;
-        y = gearPos[gNumWindows - 1][slot][1];
-        if (gear == -1)
-            str[0] = 'R';
-        else if (gear == 0)
-            str[0] = 'N';
-        else
-            str[0] = gear + '0';
-        str[1] = 0;
-        TB_SetTextColor(0);
-        TB_DrawText(x + 1, y + 1, str);
-        TB_SetTextColor(14);
-        TB_DrawText(x, y, str);
-    }
-    HAL_SetTextDepth(-1.0f);
-    return 1;
-}
-
-int animTach(_tBlit_2 *blt)
-{
-    int slot = (blt->animID >> 4) & 15;
-    int type = blt->animID & 15;
-    float tach;
-    if (slot >= gNumWindows) {
-        if (slot >= gNumPlayers)
-            blt->animFunc = 0;
-        Hidden(blt, 1);
-        return 1;
-    }
-    if (Hidden(blt, !gShowTach || !(gGameState & 0x400000) ||
-               model[slot].autotrans || gGameCar[model[slot].slot].place_locked == 1))
-        return 1;
-    if (gNumWindows == 2)
-        RenameBlit((_tBlit *)blt, "TACHOMETER_MD", 0);
-    else if (gNumWindows > 2)
-        RenameBlit((_tBlit *)blt, "TACHOMETER_SM", 0);
-    blt->x = tachPos[gNumWindows - 1][slot][0] - (blt->width / 2) / 2;
-    blt->y = tachPos[gNumWindows - 1][slot][1];
-    if (type == 0)
-        blt->bot = blt->height / 2 - 1;
-    else if (type == 1) {
-        tach = 0.0001f * (1.35f * model[slot].rpm);
-        if (tach < 0.0f)
-            tach = -tach;
-        if (tach > 1.0f)
-            tach = 1.0f;
-        blt->right = (blt->width - 1) * tach;
-        blt->top = blt->height / 2;
-        blt->bot = blt->height - 1;
-    }
-    blt->alpha = 254;
     UpdateBlit((_tBlit *)blt);
     return 1;
 }
@@ -730,292 +797,244 @@ int animSpeedText(void)
     return 1;
 }
 
-#pragma push
-#pragma force_active on
-static int animPlace(_tBlit *blt)
+int animTach(_tBlit_2 *blt)
 {
-    unsigned char digits[3];
+    int slot = (blt->animID >> 4) & 15;
+    int type = blt->animID & 15;
+    float tach;
+    if (slot >= gNumWindows) {
+        if (slot >= gNumPlayers)
+            blt->animFunc = 0;
+        Hidden(blt, 1);
+        return 1;
+    }
+    if (Hidden(blt, !gShowTach || !(gGameState & 0x400000) ||
+               model[slot].autotrans || gGameCar[model[slot].slot].place_locked == 1))
+        return 1;
+    if (gNumWindows == 2)
+        RenameBlit((_tBlit *)blt, "TACHOMETER_MD", 0);
+    else if (gNumWindows > 2)
+        RenameBlit((_tBlit *)blt, "TACHOMETER_SM", 0);
+    blt->x = tachPos[gNumWindows - 1][slot][0] - (blt->width / 2) / 2;
+    blt->y = tachPos[gNumWindows - 1][slot][1];
+    if (type == 0)
+        blt->bot = blt->height / 2 - 1;
+    else if (type == 1) {
+        tach = 0.0001f * (1.35f * model[slot].rpm);
+        if (tach < 0.0f)
+            tach = -tach;
+        if (tach > 1.0f)
+            tach = 1.0f;
+        blt->right = (blt->width - 1) * tach;
+        blt->top = blt->height / 2;
+        blt->bot = blt->height - 1;
+    }
+    blt->alpha = 254;
+    UpdateBlit((_tBlit *)blt);
+    return 1;
+}
+
+int animGear(void)
+{
     unsigned char str[2];
-    int digitW, x, y, digitIdx, slot;
-    if ((gGameState & 8) || !(gGameState & 0x400000) || gNumCars < 2 ||
-        gRace == kPractice || !gShowPlace)
+    int slot;
+    signed short x, y;
+    signed char gear;
+    if (!gShowShifter || !(gGameState & 0x400000))
         return 1;
     HAL_SetTextDepth(0.0f);
-    TB_SetJust(1, 3);
     if (gNumWindows == 1)
-        HAL_SetFont(8);
+        HAL_SetFont(10);
+    else if (gNumWindows == 2)
+        HAL_SetFont(11);
     else
-        HAL_SetFont(5);
-    digitW = HAL_GetCharWidth('8');
-    digits[1] = '/';
-    digits[2] = gNumCars + '0';
+        HAL_SetFont(12);
     for (slot = 0; slot < gNumWindows; slot++) {
-        if (!AreWeSolid(slot) || gGameCar[slot].place_locked == 1)
+        gear = model[slot].mainin.gear;
+        if (slot >= gNumWindows || model[slot].autotrans ||
+            gGameCar[model[slot].slot].place_locked == 1)
             continue;
-        x = placePos[gNumWindows - 1][slot][0];
-        y = placePos[gNumWindows - 1][slot][1];
-        digits[0] = gGameCar[slot].place + '1';
-        x -= digitW;
-        for (digitIdx = 0; digitIdx < 3; digitIdx++) {
-            str[0] = digits[digitIdx];
-            str[1] = 0;
-            if (digitIdx < 2) {
-                if (gNumWindows == 1)
-                    HAL_SetFont(8);
-                else
-                    HAL_SetFont(5);
-            } else {
-                if (gNumWindows == 1)
-                    HAL_SetFont(5);
-                else
-                    HAL_SetFont(6);
-            }
-            TB_SetTextColor(0);
-            TB_DrawText(x + 1, y + 1, str);
-            if (digitIdx == 0)
-                HAL_SetTextColor(playerColor[slot][0], playerColor[slot][1], playerColor[slot][2], 255);
-            else
-                TB_SetTextColor(1);
-            TB_DrawText(x, y, str);
-            x += digitW;
-        }
+        x = gearPos[gNumWindows - 1][slot][0] - 4;
+        y = gearPos[gNumWindows - 1][slot][1];
+        TB_SetTextColor(0);
+        TB_DrawText(TB_RightText(gText.single[215], x + 1), y + 1, gText.single[215]);
+        TB_SetTextColor(1);
+        TB_DrawText(TB_RightText(gText.single[215], x), y, gText.single[215]);
+        x = gearPos[gNumWindows - 1][slot][0] + 4;
+        y = gearPos[gNumWindows - 1][slot][1];
+        if (gear == -1)
+            str[0] = 'R';
+        else if (gear == 0)
+            str[0] = 'N';
+        else
+            str[0] = gear + '0';
+        str[1] = 0;
+        TB_SetTextColor(0);
+        TB_DrawText(x + 1, y + 1, str);
+        TB_SetTextColor(14);
+        TB_DrawText(x, y, str);
     }
-    TB_SetJust(0, 3);
     HAL_SetTextDepth(-1.0f);
     return 1;
 }
-#pragma pop
 
-#pragma push
 #pragma force_active on
-static int animCreditText(_tBlit *blt)
+static int animBones(_tBlit *blt)
 {
-    int x, y, i;
-    if (Hidden((_tBlit_2 *)blt, !(gGameState & 8) || !gShowCredits))
-        return 1;
-    switch (gCorner) {
-    case 0: x = 30; y = 30; break;
-    case 1: x = 290 - gCreditWidth; y = 30; break;
-    case 2: x = 30; y = 159 - 10 * gNumCreditNames; break;
-    default: x = 290 - gCreditWidth; y = 159 - 10 * gNumCreditNames; break;
-    }
-    HAL_SetFont(11);
-    TB_SetTextColor(14);
-    TB_DrawText(x, y, gText.taba[gText.tab[0] + gCredit]);
-    TB_SetTextColor(1);
-    y += 15;
-    for (i = 0; i < gNumCreditNames; i++, y += 10) {
-        TB_DrawText(x, y, cStrCreditNames[gCredit][i]);
-    }
-    return 1;
-}
-
-static int animLapTime(_tBlit *blt)
-{
-    int w, digitW, colonW;
-    int win = blt->animID & 15;
-    int show = (blt->animID >> 4) & 15;
-    signed char fixedWidth;
-    if (Hidden((_tBlit_2 *)blt, (show == 1 && gNumWindows > 1) ||
-               (show == 2 && gNumWindows < 2) || win >= gNumWindows)) {
-        blt->animFunc = 0;
-        return 1;
-    }
-    if (Hidden((_tBlit_2 *)blt, (gGameState & 8) || !gShowElapsed ||
-               gCheckPtTimeout[win] <= 0.0f || gGameCar[win].place_locked == 1))
-        return 1;
-    if (gNumWindows == 1)
-        HAL_SetFont(1);
-    else
-        HAL_SetFont(2);
-    digitW = HAL_GetCharWidth('8') + 1;
-    fixedWidth = HAL_SetFontFixedWidth(0);
-    colonW = HAL_GetCharWidth(':') + 1;
-    HAL_SetFontFixedWidth(fixedWidth);
-    w = 7 * digitW + 2 * colonW;
-    if (gCheckPtTimeout[win] < 3.0f)
-        lapTimeBGColor[win][3] = 192.0f * gCheckPtTimeout[win] / 3.0f;
-    else
-        lapTimeBGColor[win][3] = 192;
-    blt->x = lapTimePos[gNumWindows - 1][win][0] - w / 2;
-    blt->y = lapTimePos[gNumWindows - 1][win][1];
-    blt->alpha = lapTimeBGColor[win][3];
+    if (!gDeathMode || gNumWindows <= blt->animID ||
+        gGameCar[model[blt->animID].slot].place_locked == 1)
+        return Hidden((_tBlit_2 *)blt, 1);
+    blt->x = bonesPos[gNumWindows - 1][blt->animID][0] - (blt->width / 2) / 2;
+    blt->y = bonesPos[gNumWindows - 1][blt->animID][1];
     UpdateBlit(blt);
     return 1;
 }
-#pragma pop
 
-#pragma push
 #pragma force_active on
-static int animWrongWay(void)
+static int animResults(_tBlit *blt)
 {
-    int x, y, slot;
-    static signed char wasStrayed[4];
-    if (gRace == kObstacle)
-        return 1;
+    int playerIdx, x, y;
+    unsigned char str[128];
+    int gNumPlayersFinished = 0;
+    int gAPlayerFinished = 0;
+    for (playerIdx = 0; playerIdx < gNumWindows; playerIdx++) {
+        if (gNumLaps == model[playerIdx].laps)
+            gAPlayerFinished = 1;
+        if (gGameCar[model[playerIdx].slot].place_locked == 1)
+            gNumPlayersFinished++;
+    }
     HAL_SetTextDepth(0.0f);
     TB_SetJust(1, 1);
-    for (slot = 0; slot < gNumWindows; slot++) {
-        if ((-1.5707964f <= gGameCar[slot].strayAngle &&
-             gGameCar[slot].strayAngle <= 1.5707964f) ||
-            !(gGameState & 0x400000) || gGameCar[slot].place_locked == 1 ||
-            !gShowWrongWay || gRace == kPractice) {
-            wrongWayTime[slot] = gSeconds;
-            wasStrayed[slot] = 0;
-            continue;
-        }
-        wasStrayed[slot] = 1;
-        if (gSeconds - wrongWayTime[slot] < 2.0f)
-            continue;
-        if (gNumWindows == 1)
-            HAL_SetFont(10);
+    HAL_SetFont(10);
+    if (gNumWindows > 1 && gNumPlayersFinished == gNumWindows && (!gDeathMode || (gDeathMode && gAPlayerFinished))) {
+        TB_SetTextColor(22);
+        if (model[model[gRankedPlayer[0]].slot].drone_type == 1)
+            TB_Sprintf(str, gText.single[211]);
+        else if (ties)
+            TB_Sprintf(str, gText.single[212], ties + 1);
         else
-            HAL_SetFont(11);
-        HAL_SetTextTranslucency(255.0f * TB_GetFlashTextCycle());
-        x = wrongWayPos[gNumWindows - 1][slot][0];
-        y = wrongWayPos[gNumWindows - 1][slot][1];
-        TB_SetTextColor(0);
-        TB_DrawText(x + 1, y + 1, gText.single[26]);
-        TB_SetTextColor(14);
-        TB_DrawText(x, y, gText.single[26]);
+            TB_Sprintf(str, gText.single[210], (*gPlayers[gRankedPlayer[0]].save)->name);
+        TB_DrawTextScrollBox(160, 112, 160, 112, -1, 0, str);
     }
-    TB_SetJust(0, 3);
-    HAL_SetTextTranslucency(-1.0f);
-    HAL_SetTextDepth(-1.0f);
-    return 1;
-}
-#pragma pop
+    TB_SetTextColor(1);
+    for (playerIdx = 0; playerIdx < gNumWindows; playerIdx++) {
+        if ((!gDeathMode || gNumLaps == model[playerIdx].laps) && gGameCar[model[playerIdx].slot].place_locked == 1) {
+            x = wrongWayPos[gNumWindows - 1][playerIdx][0];
+            y = wrongWayPos[gNumWindows - 1][playerIdx][1];
+            if (gNumWindows == 4 && playerIdx >= 2)
+                y += 12;
+            if (gRace == kStunt) {
+                TB_Sprintf(str, "%s\n%d %s", (*gPlayers[playerIdx].save)->name, gStuntPlayer[playerIdx].totalPoints, gText.single[140]);
+            } else if (gRace == kObstacle) {
+                if (gLap[playerIdx] != 1)
+                    TB_Sprintf(str, "%s\n%s", (*gPlayers[playerIdx].save)->name, gText.single[225]);
+                else {
+                    unsigned int min;
 
-#pragma push
-#pragma force_active on
-static int animLapTimeText(void)
-{
-    int t;
-    float remaining;
-    unsigned char digits[9];
-    unsigned char str[2];
-    int digitW, colonW, x, y, digitIdx, slot;
-    signed char fixedWidth;
-    if ((gGameState & 8) || !gShowElapsed)
-        return 1;
-    HAL_SetTextDepth(0.0f);
-    TB_SetJust(1, 3);
-    if (gNumWindows == 1)
-        HAL_SetFont(1);
-    else
-        HAL_SetFont(2);
-    digitW = HAL_GetCharWidth('8') + 1;
-    fixedWidth = HAL_SetFontFixedWidth(0);
-    colonW = HAL_GetCharWidth(':') + 1;
-    HAL_SetFontFixedWidth(fixedWidth);
-    for (slot = 0; slot < gNumWindows; slot++) {
-        if (gPauseState == 0)
-            gCheckPtTimeout[slot] -= gFrameSeconds;
-        remaining = gCheckPtTimeout[slot];
-        if (remaining <= 0.0f || gGameCar[slot].place_locked == 1) {
-            gCheckPtTimeout[slot] = 0.0f;
-            continue;
-        }
-        t = 1000.0f * gLapTime[slot];
-        if (t < 0)
-            t = 0;
-        digits[0] = t / 600000 + '0';
-        digits[1] = (t / 60000) % 10 + '0';
-        digits[2] = ':';
-        digits[3] = (t / 10000) % 6 + '0';
-        digits[4] = (t / 1000) % 10 + '0';
-        digits[5] = '.';
-        digits[6] = (t / 100) % 10 + '0';
-        digits[7] = (t / 10) % 10 + '0';
-        digits[8] = t % 10 + '0';
-        y = lapTimePos[gNumWindows - 1][slot][1];
-        str[1] = 0;
-        if (remaining < 3.0f)
-            HAL_SetTextTranslucency((int)(255.0f * remaining / 3.0f));
-        x = lapTimePos[gNumWindows - 1][slot][0] - (6 * digitW + 2 * colonW) / 2;
-        for (digitIdx = 0; digitIdx < 9; digitIdx++) {
-            str[0] = digits[digitIdx];
-            if (digits[digitIdx] != ':' && digits[digitIdx] != '.') {
-                str[0] = '8';
-                TB_SetTextColor(0);
-                TB_DrawText(x, y, str);
-                str[0] = digits[digitIdx];
+                    unsigned int sec = (unsigned int)gGameCar[gPlayers[playerIdx].slot].score;
+
+                    unsigned int thou;
+
+                    min = sec / 60;
+
+                    min %= 100;
+
+                    sec %= 60;
+
+                    thou = (unsigned int)(1000.0f * gGameCar[gPlayers[playerIdx].slot].score);
+                    thou %= 1000;
+                    TB_Sprintf(str, "%s\n%s %d:%02d.%03d", (*gPlayers[playerIdx].save)->name, gText.single[219], min, sec, thou);
+                }
+            } else if (gRace == kBattle) {
+                TB_Sprintf(str, "%s\n%d %s", (*gPlayers[playerIdx].save)->name, gGameCar[playerIdx].battle.Points, gText.single[140]);
+            } else {
+                unsigned char str1[32], str2[32];
+                int place = gGameCar[gPlayers[playerIdx].slot].place;
+                TB_Sprintf(str1, gText.single[209], place + 1, gText.taba[gText.tab[57] + place]);
+                if (gNumLaps != model[gPlayers[playerIdx].slot].laps)
+                    TB_Sprintf(str2, gText.single[218], model[gPlayers[playerIdx].slot].laps, gNumLaps);
+                else {
+                    unsigned int min;
+
+                    unsigned int sec = (unsigned int)gGameCar[gPlayers[playerIdx].slot].score;
+
+                    unsigned int thou;
+
+                    min = sec / 60;
+
+                    min %= 100;
+
+                    sec %= 60;
+
+                    thou = (unsigned int)(1000.0f * gGameCar[gPlayers[playerIdx].slot].score);
+                    thou %= 1000;
+                    TB_Sprintf(str2, "%s %d:%02d.%03d", gText.single[219], min, sec, thou);
+                }
+                TB_Sprintf(str, "%s\n%s\n%s", (*gPlayers[playerIdx].save)->name, str1, str2);
             }
-            TB_SetTextColor(22);
-            TB_DrawText(x, y, str);
-            if (digitIdx == 1 || digitIdx == 2 || digitIdx == 4 || digitIdx == 5)
-                x += (digitW + colonW) / 2;
-            else
-                x += digitW;
+            TB_DrawTextScrollBox(x, y, 160, 112, -1, 0, str);
         }
-        HAL_SetTextTranslucency(-1.0f);
     }
-    TB_SetJust(0, 3);
     HAL_SetTextDepth(-1.0f);
+    TB_SetJust(0, 3);
     return 1;
 }
-#pragma pop
 
-#pragma push
-#pragma force_active on
-static int animElapsedTimerText(void)
+static int animOdometer(_tBlit *blt)
 {
-    int t;
-    unsigned char digits[9];
-    unsigned char str[2];
-    int digitW, colonW;
-    signed char fixedWidth;
-    int x, y, digitIdx;
-    if ((gGameState & 8) || !(gGameState & 0x400000) || !gShowElapsed)
+    int p = (blt->animID >> 4) & 15;
+    int d = blt->animID & 15;
+    float carMileage = hudCar(p)->mileage;
+    float flipAmount = 0.0f;
+    if (gOptions[9])
+        carMileage /= 0.6f;
+    if (p >= gNumWindows || gRace == kObstacle) {
+        blt->animFunc = 0;
+        Hidden((_tBlit_2 *)blt, 1);
         return 1;
-    t = 1000.0f * gModelTime;
-    if (t < 0)
-        t = 0;
-    digits[0] = (t / 600000) % 6 + '0';
-    digits[1] = (t / 60000) % 10 + '0';
-    digits[2] = ':';
-    digits[3] = (t / 10000) % 6 + '0';
-    digits[4] = (t / 1000) % 10 + '0';
-    digits[5] = '.';
-    digits[6] = (t / 100) % 10 + '0';
-    digits[7] = (t / 10) % 10 + '0';
-    digits[8] = t % 10 + '0';
-    HAL_SetTextDepth(0.0f);
-    TB_SetJust(1, 3);
-    if (gNumWindows == 1)
-        HAL_SetFont(1);
-    else
-        HAL_SetFont(2);
-    digitW = HAL_GetCharWidth('8') + 1;
-    fixedWidth = HAL_SetFontFixedWidth(0);
-    colonW = HAL_GetCharWidth(':') + 1;
-    HAL_SetFontFixedWidth(fixedWidth);
-    y = elapsedTimerPos[gNumWindows - 1][1];
-    str[1] = 0;
-    x = elapsedTimerPos[gNumWindows - 1][0] - (5 * digitW + 2 * colonW) / 2;
-    for (digitIdx = 0; digitIdx < 8; digitIdx++) {
-        str[0] = digits[digitIdx];
-        if (digits[digitIdx] != ':' && digits[digitIdx] != '.') {
-            str[0] = '8';
-            TB_SetTextColor(0);
-            TB_DrawText(x, y, str);
-            str[0] = digits[digitIdx];
-        }
-        TB_SetTextColor(1);
-        TB_DrawText(x, y, str);
-        if (digitIdx == 1 || digitIdx == 2 || digitIdx == 4 || digitIdx == 5)
-            x += (digitW + colonW) / 2;
-        else
-            x += digitW;
     }
-    TB_SetJust(0, 3);
-    HAL_SetTextDepth(-1.0f);
+    if (Hidden((_tBlit_2 *)blt, !gShowOdometer || !(gGameState & 0x400000) || gGameCar[model[p].slot].place_locked == 1))
+        return 1;
+    if ((int)(carMileage / 528.0f) % 10 == 9)
+        flipAmount = carMileage / 528.0f - (int)(carMileage / 528.0f);
+    switch (d) {
+    case 0:
+        blt->x = odometerPos[gNumWindows - 1][p][0] - (blt->width / 2 * 2) / 2;
+        blt->y = odometerPos[gNumWindows - 1][p][1];
+        blt->left = 0;
+        blt->top = ((int)(carMileage / 528000.0f) % 10) * (blt->width / 2);
+        if ((int)(carMileage / 52800.0f) % 10 == 9 && (int)(carMileage / 5280.0f) % 10 == 9 && (int)(carMileage / 528.0f) % 10 == 9)
+            blt->top += flipAmount * (blt->width / 2);
+        break;
+    case 1:
+        blt->x = odometerPos[gNumWindows - 1][p][0] - (blt->width / 2) / 2;
+        blt->y = odometerPos[gNumWindows - 1][p][1];
+        blt->left = 0;
+        blt->top = ((int)(carMileage / 52800.0f) % 10) * (blt->width / 2);
+        if ((int)(carMileage / 5280.0f) % 10 == 9 && (int)(carMileage / 528.0f) % 10 == 9)
+            blt->top += flipAmount * (blt->width / 2);
+        break;
+    case 2:
+        blt->x = odometerPos[gNumWindows - 1][p][0];
+        blt->y = odometerPos[gNumWindows - 1][p][1];
+        blt->left = 0;
+        blt->top = ((int)(carMileage / 5280.0f) % 10) * (blt->width / 2);
+        if ((int)(carMileage / 528.0f) % 10 == 9)
+            blt->top += flipAmount * (blt->width / 2);
+        break;
+    case 3:
+        blt->x = odometerPos[gNumWindows - 1][p][0] + (blt->width / 2) / 2;
+        blt->y = odometerPos[gNumWindows - 1][p][1];
+        blt->left = blt->width / 2;
+        flipAmount = (int)(carMileage / 528.0f) % 10 + carMileage / 528.0f - (int)(carMileage / 528.0f);
+        blt->top = flipAmount * (blt->width / 2);
+        break;
+    }
+    blt->right = blt->left + blt->width / 2 - 1;
+    blt->bot = blt->top + blt->width / 2 - 1;
+    UpdateBlit(blt);
     return 1;
 }
-#pragma pop
-
-static int countdownTimerPos[4][2] = {160, 4, 272, 56, 240, 112, 160, 72};
-static int mapPos[4][2] = {280, 112, 280, 112, 240, 168, 160, 112};
 
 int animCountdownTimer(void)
 {
@@ -1088,42 +1107,141 @@ int animCountdownTimer(void)
     return 1;
 }
 
-static int coinPos[4][4][2] = {
-    270, 54, 0, 0, 0, 0, 0, 0,
-    200, 40, 200, 152, 0, 0, 0, 0,
-    124, 40, 176, 40, 124, 152, 0, 0,
-    124, 40, 176, 40, 124, 174, 176, 174,
-};
 
-int animCoinsText(void)
+#pragma force_active on
+static int animElapsedTimer(_tBlit *blt)
 {
-    signed short player;
-    signed short coin;
-    unsigned char str[4];
-    signed short x, y;
-    HAL_SetTextDepth(0.0f);
+    int win;
+    int digitW;
+    int colonW;
+    signed char fixedWidth;
+
+    win = blt->animID;
+    if (Hidden((_tBlit_2 *)blt,
+               (win == 1 && gNumWindows > 1) || (win == 2 && gNumWindows < 2))) {
+        blt->animFunc = 0;
+        return 1;
+    }
+    if (Hidden((_tBlit_2 *)blt, (gGameState & 8) || !(gGameState & 0x400000) || !gShowElapsed))
+        return 1;
     if (gNumWindows == 1)
-        HAL_SetFont(10);
+        HAL_SetFont(1);
     else
-        HAL_SetFont(12);
-    TB_SetJust(0, 1);
-    for (player = 0; player < gNumWindows; player++) {
-        for (coin = 0; coin < 2; coin++) {
-            if (!gOptions[11] || !(gGameState & 0x400000) ||
-                gGameCar[player].place_locked == 1)
-                continue;
-            if (gRace == kStunt) {
-                x = coinStuntPos[gNumWindows - 1][player][0] + (gNumWindows == 1 ? 12 : 8);
-                y = coinStuntPos[gNumWindows - 1][player][1] + coin * (gNumWindows == 1 ? 15 : gNumWindows == 2 ? 12 : 8);
+        HAL_SetFont(2);
+    digitW = HAL_GetCharWidth('8') + 1;
+    fixedWidth = HAL_SetFontFixedWidth(0);
+    colonW = HAL_GetCharWidth(':') + 1;
+    HAL_SetFontFixedWidth(fixedWidth);
+    blt->x = elapsedTimerPos[gNumWindows - 1][0] - (7 * digitW + 2 * colonW) / 2;
+    blt->y = elapsedTimerPos[gNumWindows - 1][1] - 1;
+    blt->alpha = 128;
+    UpdateBlit(blt);
+    return 1;
+}
+
+#pragma force_active on
+static int animElapsedTimerText(void)
+{
+    int t;
+    unsigned char digits[9];
+    unsigned char str[2];
+    int digitW, colonW;
+    signed char fixedWidth;
+    int x, y, digitIdx;
+    if ((gGameState & 8) || !(gGameState & 0x400000) || !gShowElapsed)
+        return 1;
+    t = 1000.0f * gModelTime;
+    if (t < 0)
+        t = 0;
+    digits[0] = (t / 600000) % 6 + '0';
+    digits[1] = (t / 60000) % 10 + '0';
+    digits[2] = ':';
+    digits[3] = (t / 10000) % 6 + '0';
+    digits[4] = (t / 1000) % 10 + '0';
+    digits[5] = '.';
+    digits[6] = (t / 100) % 10 + '0';
+    digits[7] = (t / 10) % 10 + '0';
+    digits[8] = t % 10 + '0';
+    HAL_SetTextDepth(0.0f);
+    TB_SetJust(1, 3);
+    if (gNumWindows == 1)
+        HAL_SetFont(1);
+    else
+        HAL_SetFont(2);
+    digitW = HAL_GetCharWidth('8') + 1;
+    fixedWidth = HAL_SetFontFixedWidth(0);
+    colonW = HAL_GetCharWidth(':') + 1;
+    HAL_SetFontFixedWidth(fixedWidth);
+    y = elapsedTimerPos[gNumWindows - 1][1];
+    str[1] = 0;
+    x = elapsedTimerPos[gNumWindows - 1][0] - (5 * digitW + 2 * colonW) / 2;
+    for (digitIdx = 0; digitIdx < 8; digitIdx++) {
+        str[0] = digits[digitIdx];
+        if (digits[digitIdx] != ':' && digits[digitIdx] != '.') {
+            str[0] = '8';
+            TB_SetTextColor(0);
+            TB_DrawText(x, y, str);
+            str[0] = digits[digitIdx];
+        }
+        TB_SetTextColor(1);
+        TB_DrawText(x, y, str);
+        if (digitIdx == 1 || digitIdx == 2 || digitIdx == 4 || digitIdx == 5)
+            x += (digitW + colonW) / 2;
+        else
+            x += digitW;
+    }
+    TB_SetJust(0, 3);
+    HAL_SetTextDepth(-1.0f);
+    return 1;
+}
+
+#pragma force_active on
+static int animPlace(_tBlit *blt)
+{
+    unsigned char digits[3];
+    unsigned char str[2];
+    int digitW, x, y, digitIdx, slot;
+    if ((gGameState & 8) || !(gGameState & 0x400000) || gNumCars < 2 ||
+        gRace == kPractice || !gShowPlace)
+        return 1;
+    HAL_SetTextDepth(0.0f);
+    TB_SetJust(1, 3);
+    if (gNumWindows == 1)
+        HAL_SetFont(8);
+    else
+        HAL_SetFont(5);
+    digitW = HAL_GetCharWidth('8');
+    digits[1] = '/';
+    digits[2] = gNumCars + '0';
+    for (slot = 0; slot < gNumWindows; slot++) {
+        if (!AreWeSolid(slot) || gGameCar[slot].place_locked == 1)
+            continue;
+        x = placePos[gNumWindows - 1][slot][0];
+        y = placePos[gNumWindows - 1][slot][1];
+        digits[0] = gGameCar[slot].place + '1';
+        x -= digitW;
+        for (digitIdx = 0; digitIdx < 3; digitIdx++) {
+            str[0] = digits[digitIdx];
+            str[1] = 0;
+            if (digitIdx < 2) {
+                if (gNumWindows == 1)
+                    HAL_SetFont(8);
+                else
+                    HAL_SetFont(5);
             } else {
-                x = coinPos[gNumWindows - 1][player][0] + (gNumWindows == 1 ? 12 : 8);
-                y = coinPos[gNumWindows - 1][player][1] + coin * (gNumWindows == 1 ? 15 : gNumWindows == 2 ? 12 : 8);
+                if (gNumWindows == 1)
+                    HAL_SetFont(5);
+                else
+                    HAL_SetFont(6);
             }
-            TB_Sprintf(str, "%d/8", NumCoinsFound(player, coin + 1));
             TB_SetTextColor(0);
             TB_DrawText(x + 1, y + 1, str);
-            TB_SetTextColor(1);
+            if (digitIdx == 0)
+                HAL_SetTextColor(playerColor[slot][0], playerColor[slot][1], playerColor[slot][2], 255);
+            else
+                TB_SetTextColor(1);
             TB_DrawText(x, y, str);
+            x += digitW;
         }
     }
     TB_SetJust(0, 3);
@@ -1131,301 +1249,32 @@ int animCoinsText(void)
     return 1;
 }
 
-
-void ShowCheckpointTime(int slot, float time)
+#pragma force_active on
+static int animLapCount(_tBlit *blt)
 {
-    gCheckPtTimeout[slot] = 6.0f;
-    gLapTime[slot] = time - gElapsedTime[slot];
-    gElapsedTime[slot] = time;
-    cvt_time(time, CheckpointStr[slot], 'f');
-}
-
-static int odometerPos[4][4][2] = {
-    30, 32, 0, 0, 0, 0, 0, 0,
-    30, 30, 30, 142, 0, 0, 0, 0,
-    30, 30, 290, 30, 30, 142, 0, 0,
-    30, 30, 290, 30, 30, 142, 290, 142,
-};
-
-static inline tCarData *hudCar(int slot) { return &gGameCar[slot]; }
-
-static int animOdometer(_tBlit *blt)
-{
-    int p = (blt->animID >> 4) & 15;
-    int d = blt->animID & 15;
-    float carMileage = hudCar(p)->mileage;
-    float flipAmount = 0.0f;
-    if (gOptions[9])
-        carMileage /= 0.6f;
-    if (p >= gNumWindows || gRace == kObstacle) {
-        blt->animFunc = 0;
-        Hidden((_tBlit_2 *)blt, 1);
+    int x, y, slot;
+    if ((gGameState & 8) || !(gGameState & 0x400000) ||
+        gRace == kPractice || gRace == kObstacle || !gShowPlace)
         return 1;
-    }
-    if (Hidden((_tBlit_2 *)blt, !gShowOdometer || !(gGameState & 0x400000) || gGameCar[model[p].slot].place_locked == 1))
-        return 1;
-    if ((int)(carMileage / 528.0f) % 10 == 9)
-        flipAmount = carMileage / 528.0f - (int)(carMileage / 528.0f);
-    switch (d) {
-    case 0:
-        blt->x = odometerPos[gNumWindows - 1][p][0] - (blt->width / 2 * 2) / 2;
-        blt->y = odometerPos[gNumWindows - 1][p][1];
-        blt->left = 0;
-        blt->top = ((int)(carMileage / 528000.0f) % 10) * (blt->width / 2);
-        if ((int)(carMileage / 52800.0f) % 10 == 9 && (int)(carMileage / 5280.0f) % 10 == 9 && (int)(carMileage / 528.0f) % 10 == 9)
-            blt->top += flipAmount * (blt->width / 2);
-        break;
-    case 1:
-        blt->x = odometerPos[gNumWindows - 1][p][0] - (blt->width / 2) / 2;
-        blt->y = odometerPos[gNumWindows - 1][p][1];
-        blt->left = 0;
-        blt->top = ((int)(carMileage / 52800.0f) % 10) * (blt->width / 2);
-        if ((int)(carMileage / 5280.0f) % 10 == 9 && (int)(carMileage / 528.0f) % 10 == 9)
-            blt->top += flipAmount * (blt->width / 2);
-        break;
-    case 2:
-        blt->x = odometerPos[gNumWindows - 1][p][0];
-        blt->y = odometerPos[gNumWindows - 1][p][1];
-        blt->left = 0;
-        blt->top = ((int)(carMileage / 5280.0f) % 10) * (blt->width / 2);
-        if ((int)(carMileage / 528.0f) % 10 == 9)
-            blt->top += flipAmount * (blt->width / 2);
-        break;
-    case 3:
-        blt->x = odometerPos[gNumWindows - 1][p][0] + (blt->width / 2) / 2;
-        blt->y = odometerPos[gNumWindows - 1][p][1];
-        blt->left = blt->width / 2;
-        flipAmount = (int)(carMileage / 528.0f) % 10 + carMileage / 528.0f - (int)(carMileage / 528.0f);
-        blt->top = flipAmount * (blt->width / 2);
-        break;
-    }
-    blt->right = blt->left + blt->width / 2 - 1;
-    blt->bot = blt->top + blt->width / 2 - 1;
-    UpdateBlit(blt);
-    return 1;
-}
-
-static void *dataMap;
-static void *dataObj;
-static int whichCam[4] = {1,2,4,8};
-
-static int animDot(_tBlit *blt)
-{
-    int gDotSize;
-    short flash;
-    short slot = dot_order_list[blt->animID & 15];
-    tModelData *m;
-    tCarData *c;
-    int width, height, w, h, yOffset;
-    if (Hidden((_tBlit_2 *)blt, gNumWindows > 4 || slot == -1 || !(gGameState & 0x400000) || !gShowTrackMap))
-        return 1;
-    gDotSize = blt->height;
-    m = &model[slot];
-    c = &gGameCar[slot];
-    width = gPathMax[0] - gPathMin[0];
-    height = gPathMax[2] - gPathMin[2];
-    if (width > height) {
-        w = kMapSize - 8;
-        h = height * (kMapSize - 8) / width;
-    } else {
-        w = kMapSize - 8;
-        h = kMapSize - 8;
-    }
-    yOffset = (kMapSize - 8 - h) / 2 + 4;
-    blt->x = mapPos[gNumWindows - 1][0] + ((kMapSize - 8 - w) / 2 + 4 - (gDotSize + kMapSize) / 2) / 2;
-    blt->y = mapPos[gNumWindows - 1][1] + (yOffset - (gDotSize + kMapSize) / 2) / 2.0f;
-    if (gMirrorWaves)
-        blt->x += w * (c->dr_pos[0] - gPathMin[0]) / width / 2.0f;
+    HAL_SetTextDepth(0.0f);
+    TB_SetJust(1, 3);
+    if (gNumWindows == 1)
+        HAL_SetFont(11);
     else
-        blt->x += (w - 1 - w * (c->dr_pos[0] - gPathMin[0]) / width) / 2.0f;
-    blt->y += h * (c->dr_pos[2] - gPathMin[2]) / height / 2.0f;
-    flash = c->crash_state || m->crashflag || !m->solid || m->hide_car || m->resurrect.moving_state != -1;
-    if (c->dead > 0)
-        flash = 0;
-    if (slot < gNumCars) {
-        blt->alpha = (sc.frameCount & 8) && flash ? 64 : 255;
-        if (m->drone_type == 2)
-            SelectBlit(blt, slot, gDotSize, gDotSize);
-        else if (m->drone_type == 1)
-            SelectBlit(blt, 7, gDotSize, gDotSize);
-    } else {
-        return Hidden((_tBlit_2 *)blt, 1);
+        HAL_SetFont(12);
+    for (slot = 0; slot < gNumWindows; slot++) {
+        if (model[slot].laps == gNumLaps || gGameCar[slot].place_locked == 1)
+            continue;
+        x = lapCountPos[gNumWindows - 1][slot][0];
+        y = lapCountPos[gNumWindows - 1][slot][1];
+        TB_SetTextColor(0);
+        TB_Printf(x + 1, y + 1, gText.single[217], model[slot].laps + 1, gNumLaps);
+        TB_SetTextColor(1);
+        TB_Printf(x, y, gText.single[217], model[slot].laps + 1, gNumLaps);
     }
-    UpdateBlit(blt);
+    TB_SetJust(0, 3);
+    HAL_SetTextDepth(-1.0f);
     return 1;
-}
-
-static int animFlag(_tBlit *blt)
-{
-    int x, y, width, height, w, h;
-    if (Hidden((_tBlit_2 *)blt, gNumWindows > 4 || !(gGameState & 0x400000) || gNumLapsLeft > 1 || gRace == 6 || gRace == 4 || gRace == 5 || !gShowTrackMap))
-        return 1;
-    width = gPathMax[0] - gPathMin[0];
-    height = gPathMax[2] - gPathMin[2];
-    if (width > height) {
-        w = kMapSize - 8;
-        h = height * (kMapSize - 8) / width;
-    } else {
-        h = kMapSize - 8;
-        w = width * (kMapSize - 8) / height;
-    }
-    x = mapPos[gNumWindows - 1][0] + ((kMapSize - 8 - w) / 2 + 4 - kMapSize / 2) / 2;
-    y = mapPos[gNumWindows - 1][1] + ((kMapSize - 8 - h) / 2 + 4 - kMapSize / 2) / 2.0f;
-    if (gMirrorWaves)
-        x += w * (gCheckpoints.points[gCheckpoints.finishPt].pos[0] - gPathMin[0]) / width / 2.0f;
-    else
-        x += (w - 1 - w * (gCheckpoints.points[gCheckpoints.finishPt].pos[0] - gPathMin[0]) / width) / 2.0f;
-    y += h * (gCheckpoints.points[gCheckpoints.finishPt].pos[2] - gPathMin[2]) / height / 2.0f;
-    blt->x = x - (blt->width / 2) / 2;
-    blt->y = y - (blt->width / 2) / 2.0f;
-    if (Hidden((_tBlit_2 *)blt, gRace == 1 || gNumLapsLeft > 1 || (gGameState & 8))) {
-        if (gRace != 1 && !(gGameState & 8)) {
-            if (gNumWindows < 4)
-                HAL_SetFont(6);
-            else
-                HAL_SetFont(7);
-            HAL_SetTextDepth(0.0f);
-            TB_SetJust(1, 1);
-            TB_SetTextColor(0);
-            TB_Printf(x + 1, y + 1, "%d", gNumLapsLeft);
-            TB_SetTextColor(11);
-            TB_Printf(x, y, "%d", gNumLapsLeft);
-            TB_SetJust(0, 3);
-            HAL_SetTextDepth(-1.0f);
-        }
-        return 1;
-    }
-    if (gMirrorWaves)
-        blt->flip = 1;
-    blt->alpha = 128;
-    if (!gPauseState)
-        blt->animDTA -= 1000.0f * gFrameSeconds;
-    if (blt->animDTA <= 0) {
-        blt->animDTA = 100;
-        blt->animID = (blt->animID + 1) % 5;
-    }
-    SelectBlit(blt, blt->animID, blt->width, blt->width);
-    return 1;
-}
-
-static int animRadarBlip(_tBlit *blt)
-{
-    float scale = 1.0f / 480.0f;
-    int window = (blt->animID >> 8) & 15;
-    short slot;
-    float rpos[3], lpos[3];
-    tCarData *gc;
-    tModelData *m;
-    int blipWidth = blt->width / 8.0f / 2.0f;
-    int blipHeight = blt->height / 2.0f;
-    if (window >= gNumWindows || (gGameState & 8) || gNumCars < 2) {
-        blt->animFunc = 0;
-        return Hidden((_tBlit_2 *)blt, 1);
-    }
-    slot = blt->animID & 15;
-    m = &model[slot];
-    gc = &gGameCar[slot];
-    if (Hidden((_tBlit_2 *)blt, !gShowRadar || !(gGameState & 0x400000) || gGameCar[window].place_locked == 1))
-        return 1;
-    if (!m->in_game) {
-        blt->animFunc = 0;
-        return Hidden((_tBlit_2 *)blt, 1);
-    }
-    if (Hidden((_tBlit_2 *)blt, slot != window && !AreWeSolid(slot)))
-        return 1;
-    lpos[0] = gc->dr_pos[0] - gGameCar[window].dr_pos[0];
-    lpos[1] = gc->dr_pos[1] - gGameCar[window].dr_pos[1];
-    lpos[2] = gc->dr_pos[2] - gGameCar[window].dr_pos[2];
-    BodyVector(lpos, rpos, gGameCar[window].dr_uvs);
-    blt->x = radarWidth / 2.0f;
-    blt->y = 16;
-    if (gMirrorWaves)
-        blt->x += radarWidth * (-rpos[0] * scale);
-    else
-        blt->x += radarWidth * (rpos[0] * scale);
-    blt->y += radarHeight * (rpos[2] * -scale);
-    if (Hidden((_tBlit_2 *)blt, blt->x < blipWidth || blt->x > radarWidth - blipWidth || blt->y < blipHeight || blt->y > radarHeight - blipHeight))
-        return 1;
-    blt->x += radarPos[gNumWindows - 1][window][0];
-    blt->y += radarPos[gNumWindows - 1][window][1];
-    if (m->drone_type == 2)
-        SelectBlit(blt, m->slot, blt->width / 8.0f, blt->height);
-    else if (m->drone_type == 1)
-        SelectBlit(blt, 5, blt->width / 8.0f, blt->height);
-    blt->x -= blipWidth / 2;
-    blt->y -= blipHeight / 2;
-    UpdateBlit(blt);
-    return 1;
-}
-
-static int animTrackMap(_tBlit *blt)
-{
-    int width, height, w, h, xOffset, yOffset;
-    int x, y, x1, y1, x2, p, i;
-    anon_name_width_38 *ps2tex;
-    unsigned char *data;
-    _GXTexObj *pTexObj;
-    if (Hidden((_tBlit_2 *)blt, gNumWindows > 4 || !(gGameState & 0x400000) || !gShowTrackMap))
-        return 1;
-    if (!(blt->animID & 16))
-        return 1;
-    if (gNumWindows == 4)
-        RenameBlit(blt, "MAP_MD", 0);
-    kMapSize = blt->width;
-    if (blt->animID & 16) {
-        blt->animID &= 15;
-        blt->x = mapPos[gNumWindows - 1][0] - (kMapSize / 2) / 2;
-        blt->y = mapPos[gNumWindows - 1][1] - (kMapSize / 2) / 2.0f;
-        UpdateBlit(blt);
-    }
-    width = gPathMax[0] - gPathMin[0];
-    height = gPathMax[2] - gPathMin[2];
-    if (width > height) {
-        w = kMapSize - 8;
-        h = height * (kMapSize - 8) / width;
-    } else {
-        w = kMapSize - 8;
-        h = kMapSize - 8;
-    }
-    xOffset = (kMapSize - 8 - w) / 2 + 4;
-    yOffset = (kMapSize - 8 - h) / 2 + 4;
-    ps2tex = (anon_name_width_38 *)blt->texture->strip;
-    if (ps2tex) {
-        if (dataMap) {
-            DeallocateMemory(dataMap);
-            DeallocateMemory(dataObj);
-        }
-        pTexObj = ngcCreateTextureMapRGBA8(kMapSize * 4, kMapSize * 4, &data);
-        ps2tex->texBase = (char *)pTexObj;
-        dataObj = pTexObj;
-        dataMap = data;
-        for (y = 0; y < kMapSize; y++) {
-        }
-        for (p = 0; p < gResPath.numPts; p++) {
-            if (p >= gResPath.numPts) {
-                for (i = 0; i < gResPath.numAlt; i++) {
-                    if (gResPathPtList + p >= gResPath.alt[i].pts && gResPathPtList + p < gResPath.alt[i].pts + gResPath.alt[i].numPts)
-                        break;
-                }
-                if (!gResPath.alt[i].resurrect) {
-                    p += gResPath.alt[i].numPts - 1;
-                    continue;
-                }
-            }
-            x = xOffset + w * (gResPath.pts[p][0] - gPathMin[0]) / width;
-            y = yOffset + h * (gResPath.pts[p][2] - gPathMin[2]) / height;
-            for (y1 = y - 3; y1 <= y + 3; y1++) {
-                for (x1 = x - 3; x1 <= x + 3; x1++) {
-                    if (x1 >= 0 && x1 < kMapSize && y1 >= 0 && y1 < kMapSize) {
-                        x2 = gMirrorWaves ? x1 : kMapSize - 1 - x1;
-                        ngcWriteTexelRGBA8(data, kMapSize * 4, kMapSize * 4, x2 * 4, y1 * 4, 255, 255, 255, 255);
-                    }
-                }
-            }
-        }
-        ngcFlushTexObjDataRGBA8(pTexObj, data, kMapSize * 4, kMapSize * 4);
-        return 1;
-    }
 }
 
 int animCoins(void)
@@ -1627,3 +1476,521 @@ int animCoins(void)
     HAL_SetTextDepth(-1.0f);
     return 1;
 }
+
+int animCoinsText(void)
+{
+    signed short player;
+    signed short coin;
+    unsigned char str[4];
+    signed short x, y;
+    HAL_SetTextDepth(0.0f);
+    if (gNumWindows == 1)
+        HAL_SetFont(10);
+    else
+        HAL_SetFont(12);
+    TB_SetJust(0, 1);
+    for (player = 0; player < gNumWindows; player++) {
+        for (coin = 0; coin < 2; coin++) {
+            if (!gOptions[11] || !(gGameState & 0x400000) ||
+                gGameCar[player].place_locked == 1)
+                continue;
+            if (gRace == kStunt) {
+                x = coinStuntPos[gNumWindows - 1][player][0] + (gNumWindows == 1 ? 12 : 8);
+                y = coinStuntPos[gNumWindows - 1][player][1] + coin * (gNumWindows == 1 ? 15 : gNumWindows == 2 ? 12 : 8);
+            } else {
+                x = coinPos[gNumWindows - 1][player][0] + (gNumWindows == 1 ? 12 : 8);
+                y = coinPos[gNumWindows - 1][player][1] + coin * (gNumWindows == 1 ? 15 : gNumWindows == 2 ? 12 : 8);
+            }
+            TB_Sprintf(str, "%d/8", NumCoinsFound(player, coin + 1));
+            TB_SetTextColor(0);
+            TB_DrawText(x + 1, y + 1, str);
+            TB_SetTextColor(1);
+            TB_DrawText(x, y, str);
+        }
+    }
+    TB_SetJust(0, 3);
+    HAL_SetTextDepth(-1.0f);
+    return 1;
+}
+
+static int animLapTime(_tBlit *blt)
+{
+    int w, digitW, colonW;
+    int win = blt->animID & 15;
+    int show = (blt->animID >> 4) & 15;
+    signed char fixedWidth;
+    if (Hidden((_tBlit_2 *)blt, (show == 1 && gNumWindows > 1) ||
+               (show == 2 && gNumWindows < 2) || win >= gNumWindows)) {
+        blt->animFunc = 0;
+        return 1;
+    }
+    if (Hidden((_tBlit_2 *)blt, (gGameState & 8) || !gShowElapsed ||
+               gCheckPtTimeout[win] <= 0.0f || gGameCar[win].place_locked == 1))
+        return 1;
+    if (gNumWindows == 1)
+        HAL_SetFont(1);
+    else
+        HAL_SetFont(2);
+    digitW = HAL_GetCharWidth('8') + 1;
+    fixedWidth = HAL_SetFontFixedWidth(0);
+    colonW = HAL_GetCharWidth(':') + 1;
+    HAL_SetFontFixedWidth(fixedWidth);
+    w = 7 * digitW + 2 * colonW;
+    if (gCheckPtTimeout[win] < 3.0f)
+        lapTimeBGColor[win][3] = 192.0f * gCheckPtTimeout[win] / 3.0f;
+    else
+        lapTimeBGColor[win][3] = 192;
+    blt->x = lapTimePos[gNumWindows - 1][win][0] - w / 2;
+    blt->y = lapTimePos[gNumWindows - 1][win][1];
+    blt->alpha = lapTimeBGColor[win][3];
+    UpdateBlit(blt);
+    return 1;
+}
+
+#pragma force_active on
+static int animLapTimeText(void)
+{
+    int t;
+    float remaining;
+    unsigned char digits[9];
+    unsigned char str[2];
+    int digitW, colonW, x, y, digitIdx, slot;
+    signed char fixedWidth;
+    if ((gGameState & 8) || !gShowElapsed)
+        return 1;
+    HAL_SetTextDepth(0.0f);
+    TB_SetJust(1, 3);
+    if (gNumWindows == 1)
+        HAL_SetFont(1);
+    else
+        HAL_SetFont(2);
+    digitW = HAL_GetCharWidth('8') + 1;
+    fixedWidth = HAL_SetFontFixedWidth(0);
+    colonW = HAL_GetCharWidth(':') + 1;
+    HAL_SetFontFixedWidth(fixedWidth);
+    for (slot = 0; slot < gNumWindows; slot++) {
+        if (gPauseState == 0)
+            gCheckPtTimeout[slot] -= gFrameSeconds;
+        remaining = gCheckPtTimeout[slot];
+        if (remaining <= 0.0f || gGameCar[slot].place_locked == 1) {
+            gCheckPtTimeout[slot] = 0.0f;
+            continue;
+        }
+        t = 1000.0f * gLapTime[slot];
+        if (t < 0)
+            t = 0;
+        digits[0] = t / 600000 + '0';
+        digits[1] = (t / 60000) % 10 + '0';
+        digits[2] = ':';
+        digits[3] = (t / 10000) % 6 + '0';
+        digits[4] = (t / 1000) % 10 + '0';
+        digits[5] = '.';
+        digits[6] = (t / 100) % 10 + '0';
+        digits[7] = (t / 10) % 10 + '0';
+        digits[8] = t % 10 + '0';
+        y = lapTimePos[gNumWindows - 1][slot][1];
+        str[1] = 0;
+        if (remaining < 3.0f)
+            HAL_SetTextTranslucency((int)(255.0f * remaining / 3.0f));
+        x = lapTimePos[gNumWindows - 1][slot][0] - (6 * digitW + 2 * colonW) / 2;
+        for (digitIdx = 0; digitIdx < 9; digitIdx++) {
+            str[0] = digits[digitIdx];
+            if (digits[digitIdx] != ':' && digits[digitIdx] != '.') {
+                str[0] = '8';
+                TB_SetTextColor(0);
+                TB_DrawText(x, y, str);
+                str[0] = digits[digitIdx];
+            }
+            TB_SetTextColor(22);
+            TB_DrawText(x, y, str);
+            if (digitIdx == 1 || digitIdx == 2 || digitIdx == 4 || digitIdx == 5)
+                x += (digitW + colonW) / 2;
+            else
+                x += digitW;
+        }
+        HAL_SetTextTranslucency(-1.0f);
+    }
+    TB_SetJust(0, 3);
+    HAL_SetTextDepth(-1.0f);
+    return 1;
+}
+
+static float wrongWayTime[4];
+
+#pragma force_active on
+static int animWrongWay(void)
+{
+    int x, y, slot;
+    static signed char wasStrayed[4];
+    if (gRace == kObstacle)
+        return 1;
+    HAL_SetTextDepth(0.0f);
+    TB_SetJust(1, 1);
+    for (slot = 0; slot < gNumWindows; slot++) {
+        if ((-1.5707964f <= gGameCar[slot].strayAngle &&
+             gGameCar[slot].strayAngle <= 1.5707964f) ||
+            !(gGameState & 0x400000) || gGameCar[slot].place_locked == 1 ||
+            !gShowWrongWay || gRace == kPractice) {
+            wrongWayTime[slot] = gSeconds;
+            wasStrayed[slot] = 0;
+            continue;
+        }
+        wasStrayed[slot] = 1;
+        if (gSeconds - wrongWayTime[slot] < 2.0f)
+            continue;
+        if (gNumWindows == 1)
+            HAL_SetFont(10);
+        else
+            HAL_SetFont(11);
+        HAL_SetTextTranslucency(255.0f * TB_GetFlashTextCycle());
+        x = wrongWayPos[gNumWindows - 1][slot][0];
+        y = wrongWayPos[gNumWindows - 1][slot][1];
+        TB_SetTextColor(0);
+        TB_DrawText(x + 1, y + 1, gText.single[26]);
+        TB_SetTextColor(14);
+        TB_DrawText(x, y, gText.single[26]);
+    }
+    TB_SetJust(0, 3);
+    HAL_SetTextTranslucency(-1.0f);
+    HAL_SetTextDepth(-1.0f);
+    return 1;
+}
+
+#pragma force_active on
+static int animRadar(_tBlit *blt)
+{
+    int slot = blt->animID;
+    if (slot >= gNumWindows || (gGameState & 8) || gNumCars < 2) {
+        blt->animFunc = 0;
+        return Hidden((_tBlit_2 *)blt, 1);
+    }
+    if (Hidden((_tBlit_2 *)blt, !gShowRadar || !(gGameState & 0x400000) ||
+               gGameCar[slot].place_locked == 1))
+        return 1;
+    blt->x = radarPos[gNumWindows - 1][slot][0];
+    blt->y = radarPos[gNumWindows - 1][slot][1];
+    if (gNumWindows > 1) {
+        RenameBlit(blt, "RADAR_MD", 0);
+        blt->alpha = 96;
+    }
+    UpdateBlit(blt);
+    radarWidth = blt->width / 2;
+    radarHeight = blt->height / 2.0f;
+    return 1;
+}
+
+static void *dataObj;
+static void *dataMap;
+
+static int kMapSize = 64; /* .sdata: unreferenced by live code, kept by the compiler */
+
+static int animRadarBlip(_tBlit *blt)
+{
+    float scale = 1.0f / 480.0f;
+    int window = (blt->animID >> 8) & 15;
+    short slot;
+    float rpos[3], lpos[3];
+    tCarData *gc;
+    tModelData *m;
+    int blipWidth = blt->width / 8.0f / 2.0f;
+    int blipHeight = blt->height / 2.0f;
+    if (window >= gNumWindows || (gGameState & 8) || gNumCars < 2) {
+        blt->animFunc = 0;
+        return Hidden((_tBlit_2 *)blt, 1);
+    }
+    slot = blt->animID & 15;
+    m = &model[slot];
+    gc = &gGameCar[slot];
+    if (Hidden((_tBlit_2 *)blt, !gShowRadar || !(gGameState & 0x400000) || gGameCar[window].place_locked == 1))
+        return 1;
+    if (!m->in_game) {
+        blt->animFunc = 0;
+        return Hidden((_tBlit_2 *)blt, 1);
+    }
+    if (Hidden((_tBlit_2 *)blt, slot != window && !AreWeSolid(slot)))
+        return 1;
+    lpos[0] = gc->dr_pos[0] - gGameCar[window].dr_pos[0];
+    lpos[1] = gc->dr_pos[1] - gGameCar[window].dr_pos[1];
+    lpos[2] = gc->dr_pos[2] - gGameCar[window].dr_pos[2];
+    BodyVector(lpos, rpos, gGameCar[window].dr_uvs);
+    blt->x = radarWidth / 2.0f;
+    blt->y = 16;
+    if (gMirrorWaves)
+        blt->x += radarWidth * (-rpos[0] * scale);
+    else
+        blt->x += radarWidth * (rpos[0] * scale);
+    blt->y += radarHeight * (rpos[2] * -scale);
+    if (Hidden((_tBlit_2 *)blt, blt->x < blipWidth || blt->x > radarWidth - blipWidth || blt->y < blipHeight || blt->y > radarHeight - blipHeight))
+        return 1;
+    blt->x += radarPos[gNumWindows - 1][window][0];
+    blt->y += radarPos[gNumWindows - 1][window][1];
+    if (m->drone_type == 2)
+        SelectBlit(blt, m->slot, blt->width / 8.0f, blt->height);
+    else if (m->drone_type == 1)
+        SelectBlit(blt, 5, blt->width / 8.0f, blt->height);
+    blt->x -= blipWidth / 2;
+    blt->y -= blipHeight / 2;
+    UpdateBlit(blt);
+    return 1;
+}
+
+
+
+static int animTrackMap(_tBlit *blt)
+{
+    int width, height, w, h, xOffset, yOffset;
+    int x, y, x1, y1, x2, p, i;
+    anon_name_width_38 *ps2tex;
+    unsigned char *data;
+    _GXTexObj *pTexObj;
+    if (Hidden((_tBlit_2 *)blt, gNumWindows > 4 || !(gGameState & 0x400000) || !gShowTrackMap))
+        return 1;
+    if (!(blt->animID & 16))
+        return 1;
+    if (gNumWindows == 4)
+        RenameBlit(blt, "MAP_MD", 0);
+    kMapSize = blt->width;
+    if (blt->animID & 16) {
+        blt->animID &= 15;
+        blt->x = mapPos[gNumWindows - 1][0] - (kMapSize / 2) / 2;
+        blt->y = mapPos[gNumWindows - 1][1] - (kMapSize / 2) / 2.0f;
+        UpdateBlit(blt);
+    }
+    width = gPathMax[0] - gPathMin[0];
+    height = gPathMax[2] - gPathMin[2];
+    if (width > height) {
+        w = kMapSize - 8;
+        h = height * (kMapSize - 8) / width;
+    } else {
+        w = kMapSize - 8;
+        h = kMapSize - 8;
+    }
+    xOffset = (kMapSize - 8 - w) / 2 + 4;
+    yOffset = (kMapSize - 8 - h) / 2 + 4;
+    ps2tex = (anon_name_width_38 *)blt->texture->strip;
+    if (ps2tex) {
+        if (dataMap) {
+            DeallocateMemory(dataMap);
+            DeallocateMemory(dataObj);
+        }
+        pTexObj = ngcCreateTextureMapRGBA8(kMapSize * 4, kMapSize * 4, &data);
+        ps2tex->texBase = (char *)pTexObj;
+        dataObj = pTexObj;
+        dataMap = data;
+        for (y = 0; y < kMapSize; y++) {
+        }
+        for (p = 0; p < gResPath.numPts; p++) {
+            if (p >= gResPath.numPts) {
+                for (i = 0; i < gResPath.numAlt; i++) {
+                    if (gResPathPtList + p >= gResPath.alt[i].pts && gResPathPtList + p < gResPath.alt[i].pts + gResPath.alt[i].numPts)
+                        break;
+                }
+                if (!gResPath.alt[i].resurrect) {
+                    p += gResPath.alt[i].numPts - 1;
+                    continue;
+                }
+            }
+            x = xOffset + w * (gResPath.pts[p][0] - gPathMin[0]) / width;
+            y = yOffset + h * (gResPath.pts[p][2] - gPathMin[2]) / height;
+            for (y1 = y - 3; y1 <= y + 3; y1++) {
+                for (x1 = x - 3; x1 <= x + 3; x1++) {
+                    if (x1 >= 0 && x1 < kMapSize && y1 >= 0 && y1 < kMapSize) {
+                        x2 = gMirrorWaves ? x1 : kMapSize - 1 - x1;
+                        ngcWriteTexelRGBA8(data, kMapSize * 4, kMapSize * 4, x2 * 4, y1 * 4, 255, 255, 255, 255);
+                    }
+                }
+            }
+        }
+        ngcFlushTexObjDataRGBA8(pTexObj, data, kMapSize * 4, kMapSize * 4);
+        return 1;
+    }
+}
+
+static int animDot(_tBlit *blt)
+{
+    int gDotSize;
+    short flash;
+    short slot = dot_order_list[blt->animID & 15];
+    tModelData *m;
+    tCarData *c;
+    int width, height, w, h, yOffset;
+    if (Hidden((_tBlit_2 *)blt, gNumWindows > 4 || slot == -1 || !(gGameState & 0x400000) || !gShowTrackMap))
+        return 1;
+    gDotSize = blt->height;
+    m = &model[slot];
+    c = &gGameCar[slot];
+    width = gPathMax[0] - gPathMin[0];
+    height = gPathMax[2] - gPathMin[2];
+    if (width > height) {
+        w = kMapSize - 8;
+        h = height * (kMapSize - 8) / width;
+    } else {
+        w = kMapSize - 8;
+        h = kMapSize - 8;
+    }
+    yOffset = (kMapSize - 8 - h) / 2 + 4;
+    blt->x = mapPos[gNumWindows - 1][0] + ((kMapSize - 8 - w) / 2 + 4 - (gDotSize + kMapSize) / 2) / 2;
+    blt->y = mapPos[gNumWindows - 1][1] + (yOffset - (gDotSize + kMapSize) / 2) / 2.0f;
+    if (gMirrorWaves)
+        blt->x += w * (c->dr_pos[0] - gPathMin[0]) / width / 2.0f;
+    else
+        blt->x += (w - 1 - w * (c->dr_pos[0] - gPathMin[0]) / width) / 2.0f;
+    blt->y += h * (c->dr_pos[2] - gPathMin[2]) / height / 2.0f;
+    flash = c->crash_state || m->crashflag || !m->solid || m->hide_car || m->resurrect.moving_state != -1;
+    if (c->dead > 0)
+        flash = 0;
+    if (slot < gNumCars) {
+        blt->alpha = (sc.frameCount & 8) && flash ? 64 : 255;
+        if (m->drone_type == 2)
+            SelectBlit(blt, slot, gDotSize, gDotSize);
+        else if (m->drone_type == 1)
+            SelectBlit(blt, 7, gDotSize, gDotSize);
+    } else {
+        return Hidden((_tBlit_2 *)blt, 1);
+    }
+    UpdateBlit(blt);
+    return 1;
+}
+
+static int animFlag(_tBlit *blt)
+{
+    int x, y, width, height, w, h;
+    if (Hidden((_tBlit_2 *)blt, gNumWindows > 4 || !(gGameState & 0x400000) || gNumLapsLeft > 1 || gRace == 6 || gRace == 4 || gRace == 5 || !gShowTrackMap))
+        return 1;
+    width = gPathMax[0] - gPathMin[0];
+    height = gPathMax[2] - gPathMin[2];
+    if (width > height) {
+        w = kMapSize - 8;
+        h = height * (kMapSize - 8) / width;
+    } else {
+        h = kMapSize - 8;
+        w = width * (kMapSize - 8) / height;
+    }
+    x = mapPos[gNumWindows - 1][0] + ((kMapSize - 8 - w) / 2 + 4 - kMapSize / 2) / 2;
+    y = mapPos[gNumWindows - 1][1] + ((kMapSize - 8 - h) / 2 + 4 - kMapSize / 2) / 2.0f;
+    if (gMirrorWaves)
+        x += w * (gCheckpoints.points[gCheckpoints.finishPt].pos[0] - gPathMin[0]) / width / 2.0f;
+    else
+        x += (w - 1 - w * (gCheckpoints.points[gCheckpoints.finishPt].pos[0] - gPathMin[0]) / width) / 2.0f;
+    y += h * (gCheckpoints.points[gCheckpoints.finishPt].pos[2] - gPathMin[2]) / height / 2.0f;
+    blt->x = x - (blt->width / 2) / 2;
+    blt->y = y - (blt->width / 2) / 2.0f;
+    if (Hidden((_tBlit_2 *)blt, gRace == 1 || gNumLapsLeft > 1 || (gGameState & 8))) {
+        if (gRace != 1 && !(gGameState & 8)) {
+            if (gNumWindows < 4)
+                HAL_SetFont(6);
+            else
+                HAL_SetFont(7);
+            HAL_SetTextDepth(0.0f);
+            TB_SetJust(1, 1);
+            TB_SetTextColor(0);
+            TB_Printf(x + 1, y + 1, "%d", gNumLapsLeft);
+            TB_SetTextColor(11);
+            TB_Printf(x, y, "%d", gNumLapsLeft);
+            TB_SetJust(0, 3);
+            HAL_SetTextDepth(-1.0f);
+        }
+        return 1;
+    }
+    if (gMirrorWaves)
+        blt->flip = 1;
+    blt->alpha = 128;
+    if (!gPauseState)
+        blt->animDTA -= 1000.0f * gFrameSeconds;
+    if (blt->animDTA <= 0) {
+        blt->animDTA = 100;
+        blt->animID = (blt->animID + 1) % 5;
+    }
+    SelectBlit(blt, blt->animID, blt->width, blt->width);
+    return 1;
+}
+
+static unsigned char CheckpointStr[4][8];
+
+void ShowCheckpointTime(int slot, float time)
+{
+    gCheckPtTimeout[slot] = 6.0f;
+    gLapTime[slot] = time - gElapsedTime[slot];
+    gElapsedTime[slot] = time;
+    cvt_time(time, CheckpointStr[slot], 'f');
+}
+
+int Hidden(_tBlit_2 *blt, int hide)
+{
+    if (hide != blt->hide) {
+        blt->hide = hide;
+        UpdateBlit((_tBlit *)blt);
+    }
+    return blt->hide;
+}
+
+unsigned char cvt_time(float t, unsigned char *dest, char format)
+{
+    unsigned int hun;
+    unsigned int sec;
+    unsigned int min;
+
+    if (t < 0.0f)
+        t = 0.0f;
+    switch (format) {
+    case 'c':
+        sec = (unsigned int)t;
+        if (sec > 999)
+            sec = 999;
+        dest[0] = (sec / 100) % 10;
+        dest[1] = (sec / 10) % 10;
+        dest[2] = sec % 10;
+        dest[3] = 0;
+        return 3;
+    case 'f':
+        sec = (unsigned int)t;
+        min = sec / 60;
+        sec %= 60;
+        hun = (unsigned int)(100.0f * t) % 100;
+        dest[0] = (min / 10) % 10;
+        dest[1] = min % 10;
+        dest[2] = sec / 10;
+        dest[3] = sec % 10;
+        dest[4] = hun / 10;
+        dest[5] = hun % 10;
+        dest[6] = 0;
+        return 6;
+    }
+    return 0;
+}
+
+#pragma force_active on
+static void CleanupOverlay(void)
+{
+}
+
+static float gCameraMatrix[4][4];
+static float marker_pos[6][3];
+
+#pragma force_active on
+static int animCreditText(_tBlit *blt)
+{
+    int x, y, i;
+    if (Hidden((_tBlit_2 *)blt, !(gGameState & 8) || !gShowCredits))
+        return 1;
+    switch (gCorner) {
+    case 0: x = 30; y = 30; break;
+    case 1: x = 290 - gCreditWidth; y = 30; break;
+    case 2: x = 30; y = 159 - 10 * gNumCreditNames; break;
+    default: x = 290 - gCreditWidth; y = 159 - 10 * gNumCreditNames; break;
+    }
+    HAL_SetFont(11);
+    TB_SetTextColor(14);
+    TB_DrawText(x, y, gText.taba[gText.tab[0] + gCredit]);
+    TB_SetTextColor(1);
+    y += 15;
+    for (i = 0; i < gNumCreditNames; i++, y += 10) {
+        TB_DrawText(x, y, cStrCreditNames[gCredit][i]);
+    }
+    return 1;
+}
+
+/* defined here (the shared header declares them extern); the deferred .sbss order is reverse declaration order */
+int g_iSilvCoin;
+int g_iGoldCoin;
+float hudObjAngle;

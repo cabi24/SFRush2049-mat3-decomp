@@ -330,7 +330,7 @@ config.libs = [
             Object(Matching, "GameSource/src/HAL_text.c"),
             Object(Matching, "GameSource/src/HAL_time.c"),
             Object(Matching, "GameSource/src/headlights.c"),
-            Object(NonMatching, "GameSource/src/hud.c"),
+            Object(Matching, "GameSource/src/hud.c"),
             Object(Matching, "GameSource/src/hudextra.c"),
             Object(Matching, "GameSource/src/Init.c"),
             Object(Matching, "GameSource/src/initiali.c"),
