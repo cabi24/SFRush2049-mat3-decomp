@@ -16,7 +16,7 @@ Last session: 2026-10-16 (Claude Code, targets). Read this first, then `writeup.
   - `0556df2` Match NGC/ngcVu1pack (34/34, 122/148 units linked from C)
   - `f7416d3` Match GameSource/src/zip (24/24, 123/148 units linked from C)
   - `83506b0` Match GameSource/src/highscorescr (21/21, 124/148 units linked from C)
-  - (this commit) Add GameSource/src/targets (32/33, left NonMatching: `SetTargetDefs` regalloc)
+  - `60a2ea6` Add GameSource/src/targets (32/33, left NonMatching: `SetTargetDefs` regalloc)
 - **Repo layout on this PC:** `C:\rush2049-mat3` *is* the git checkout (source-only). Originals
   (`Rush2049.iso`, `DATA.GDF`, `rush_d.elf`, `rush_d_*.csv`, `rush_d_dwarf.c`), compilers,
   `decomp/build`, `decomp/orig`, `work/`, `writeup.md` are local and git-ignored — never commit
