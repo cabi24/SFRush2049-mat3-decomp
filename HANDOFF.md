@@ -1,27 +1,32 @@
 # Handoff — Rush 2049 (GameCube, MAT3) matching decomp
 
-Last session: 2026-10-16 (Claude Code, targets). Read this first, then `writeup.md` (local-only, not in git).
+Last session: 2026-10-17 (Claude Code, sprint review + continuation). Read this first, then `writeup.md` (local-only, not in git).
 
 ## Where things stand
 
-- **Status:** 1,621 / 1,844 functions, 514,184 / 715,968 code bytes (71.82%), **124 / 148 files**
-  linked from C. The GC/2.7 relink passes `decomp/tools/verify_link.py` (only the 5 recorded
-  `.dtors` bytes differ) on every commit. (`GameSource/src/targets` is 32/33 with one
-  register-allocation near miss and stays NonMatching; see open work.)
-- **Branch:** `ngcblit-match` on <https://github.com/cabi24/SFRush2049-mat3-decomp> (private),
-  commits ahead of `main`, pushed, no PR opened yet:
-  - `24dc654` Match NGC/ngcBlit (16/16)
-  - `3091952` Match NGC/ngcBeginMenu (38/38)
-  - `2ea74ee` Add NGC/ngcZoid (16/19, left NonMatching)
-  - `0556df2` Match NGC/ngcVu1pack (34/34, 122/148 units linked from C)
-  - `f7416d3` Match GameSource/src/zip (24/24, 123/148 units linked from C)
-  - `83506b0` Match GameSource/src/highscorescr (21/21, 124/148 units linked from C)
-  - `60a2ea6` Add GameSource/src/targets (32/33, left NonMatching: `SetTargetDefs` regalloc)
+- **Status (2026-10-17):** 1,840 / 1,844 functions, 710,652 / 715,968 code bytes (99.26%),
+  **145 / 148 files** linked from C. The GC/2.7 relink passes `decomp/tools/verify_link.py`
+  (only the 5 recorded `.dtors`/copy-table bytes differ; built DOL SHA-256
+  `eae81eee681311baaa8c2dfe1c262d2d8b8a6c44d471ef8d6929a67818485fd5`) on every commit.
+- **Branch:** `main` == `ngcblit-match` on <https://github.com/cabi24/SFRush2049-mat3-decomp>
+  (private), pushed 2026-10-17. The 2026-10-17 review/continuation commits (`8e42d11..1a625c0`,
+  22 commits) promoted playerscr, carscr, controlscr, pakscr, drivetra, ngcTexture, ngcHelper,
+  recordscr, maxpath, game, ngcAudio, resurrect, gameoverscr, mdrive, drones, trackscr, videoscr,
+  smoke, hud, targets and stree, and added one `block_relocations` entry to
+  `config/2049LE/config.yml` (commit `9957440`: a Bink LogoData word that dtk read as a pointer
+  into `CylinderInSurf`, which had forced the static global and renamed it).
+- **Not matched (4 functions, 3 NonMatching units):** `GetCarsIRColor` (visuals, 55/179 words),
+  `ContinueCircuit` (circuit, 114/697), `Blits` and `Blits_First` (ngcZoid, 16 bytes short each).
+  All register-allocation / codegen-shape residue; see "Open work".
 - **Repo layout on this PC:** `C:\rush2049-mat3` *is* the git checkout (source-only). Originals
   (`Rush2049.iso`, `DATA.GDF`, `rush_d.elf`, `rush_d_*.csv`, `rush_d_dwarf.c`), compilers,
   `decomp/build`, `decomp/orig`, `work/`, `writeup.md` are local and git-ignored — never commit
-  them. Codex pushes its own waves to GitHub, so **`git fetch` first**; GitHub may be ahead of disk.
-  Repo-local git identity is set (`cabi24 <cabi24@gmail.com>`).
+  them. The review worktree `C:\rush2049-mat3-review` (branch `review-sprint-20261017`, junctions
+  for `build/compilers` and `build/tools`) holds `review/` (local-only: REVIEW-REPORT.md,
+  LESSONS.md, agent notes, patches) and `work/<unit>-rev*/`. Never run `configure.py` without the
+  tool-path flags below: it re-downloads dtk/objdiff into `build/tools`. Codex pushes its own waves
+  to GitHub, so **`git fetch` first**; GitHub may be ahead of disk. Repo-local git identity is set
+  (`cabi24 <cabi24@gmail.com>`).
 
 ## Resume checklist
 
@@ -46,54 +51,38 @@ that is expected. `verify_link.py` is the real gate.
 
 ## Open work, in suggested order
 
-0. **`GameSource/src/targets` — 1 near miss, everything else done** (`decomp/src/GameSource/src/targets.c`,
-   32/33, data 100%, layout exact, the link dry run with it marked Matching differed from the DOL only inside
-   `SetTargetDefs`). `SetTargetDefs` 99.9% (9/373 instructions, registers only): the hoisted `vis`/`col`
-   `SetupTarget` arguments and the inner `j*0x44` strength-reduction temp are coloured r16/r15/r14 instead of
-   r14/r15/r16. Agent D's `#pragma opt_strength_reduction off` probe shows the target created the induction
-   *after* the two hoisted invariants; ours creates it before. Tried-lists: `work/targets/agent{A,D}/NOTES.md`
-   (well over a thousand variants: argument spellings, named locals in every scope, dead references, loop
-   wrappers, index/pointer forms, inline helpers). When it matches: `python tools/mark.py Matching
-   GameSource/src/targets.c`, configure, ninja, verify, commit (125/148).
-1. **`NGC/ngcZoid` — 3 near misses, everything else done** (`decomp/src/NGC/ngcZoid.c`).
-   `Blits_First` 97.3% and `Blits` 96.3% share one cause: the original emits
-   `mr r6,r30; add r6,r28,r6` for `BlitDraw(..., x + w, y + h, ...)` (copy loop-carried operand
-   into the arg register, add in place) — a pattern that occurs **nowhere else in the DOL**; ~150
-   source variants tried (`work/ngcZoid/agent{B,C}/NOTES.md`). `ZOID_EndFrame` 99.2% keeps the
-   loop-2 walker address (`&ZoidWinInfo[..]`, r26) live across loop 1; the outer-`while (1)` /
-   loop-splitting trick that fixed `MenuMCMount` has **not** been tried on it yet. When these
-   three match: `python tools/mark.py Matching NGC/ngcZoid.c`, rebuild, verify, commit.
-2. **Next untouched files, smallest first:** `trackscr`, `recordscr`, then the
-   big screens `playerscr`, `visuals`, `carscr` (27–31 KB each). (`GameSource/src/targets` done
-   2026-10-16 except `SetTargetDefs`: 32/33 in ~2 h with two agents, a third on the three
-   `_TargetColl*` FP near misses (matched in 5 min) and a fourth on `SetTargetDefs`; see writeup
-   "targets". `GameSource/src/highscorescr` done 2026-10-16: 21/21 in ~2.5 h with two agents plus a
-   third on the one near miss; see writeup "highscorescr matched".)
-   (`NGC/ngcVu1pack` done 2026-10-16: 34/34, ~2.5 h wall clock with two agents; `GameSource/src/zip`
-   done 2026-10-16: 24/24 in ~1 h, it is zlib 1.0.4-era deflate and matched almost verbatim; see
-   writeup "ngcVu1pack matched" / "zip matched".)
-3. **Old near misses** (all heavily tried, register-allocation residue): `enginetorque`,
-   `appGetTime`, `ContinueCircuit`, `_DrawFileDel`, `ngcLoadEffectBank`, `AvoidAreas`,
-   `LinkWithPS2Texture`, `frictioncircle`; lower-scoring and probably structural: `drawRect` 91.5%
-   (`gameoverscr`), `calcMenuRect` 93.4% (`videoscr`). Codex's wave25/26 lanes (`hud`, `mdrive`,
-   `resurrect`, `maxpath`, `stree`) have 16 partial bodies — see `research/README.md`.
+0. **`GameSource/src/visuals` — `GetCarsIRColor` 55/179 words** (61/62, data exact, layout full).
+   Pure register allocation: target (base, base+1, base+2, idx0..3) = (r5, r31, r28, r12, r11, r30,
+   r29), ours (r5, r31, r12, r28, r11, r30, r29). Three sessions, ~16,000 variants (notes in
+   `C:\rush2049-mat3-review\work\visuals-rev{,3}\NOTES.md`). Best lead: the original DWARF lists
+   `a // r0`, `b // r6`, `hobj // r11` as surviving locals; `a = gTrackNum;` used across blocks
+   reproduces `a r0` with no code change, `b`/`hobj` not yet. Untried: a dead second assignment to
+   `b`/`hobj` after the early-return branch; signed-shift spelling on the other three indices.
+1. **`GameSource/src/circuit` — `ContinueCircuit` 114/697** (5/6). Whole-loop `static inline`
+   helpers (`_swap`, `_track`) plus `numCircuitTracks` declared before `circuit` put `&gCircuitCars`
+   in r30 as in the target; the helper-owned loop counters then colour r23/r27/r24 instead of r21
+   and the section bases sit one register high. ~2,400 variants
+   (`C:\rush2049-mat3-review\work\circuit-rev\NOTES.md`).
+2. **`NGC/ngcZoid` — `Blits`/`Blits_First`** (17/19). The target's `mr r6,rX / add r6,rY,r6` inside
+   the branchless BlitDraw arms is a phi-copy shape; CodeWarrior places phi copies at the
+   definitions and never sinks them, every other integer copy is removed before codegen, and no
+   compiler 1.0–2.7 produces it. Exhausted at the C level (~450 variants,
+   `C:\rush2049-mat3-review\work\ngcZoid-rev\NOTES.md`); next step is below-C (dump CodeWarrior
+   IR) or a completely different reading of the BlitDraw argument expressions.
+3. **Tooling:** run `tools/datacheck.py <unit>` (per-unit data-byte check incl. `.sdata2` literal
+   order) before `mark.py` in the per-file workflow; the `skel.py` gaps below still stand.
 4. **Linker:** only GC 2.7 completes a full link, hence the 5-byte `.dtors` difference; pre-2.7
    linkers hang (writeup "Status" section). Research-grade.
-5. **Tooling gaps that bit three times today:** `tools/skel.py` emits non-compiling skeletons on
-   (a) nested-block locals flattened into duplicate declarations, (b) DWARF definitions with fewer
-   parameters than the header prototype (`DC_SendFillRect`), (c) a `static` function whose name is
-   a global array in the shared header (`Blits`), (d) **function-local statics are omitted entirely**
-   (ngcVu1pack: five `camPt/at/up` triples and `DrawSortedTex`'s seven statics had to be added by
-   hand from the DWARF), (e) the DWARF signature is used even when `overrides.json` already has a
-   prototype for the function (`MySetAmbientColor`, `LoadGeoBinFile`), (f) a backslash-n in the original path
-   becomes a newline in the header comment, (g) a mid-file file-scope static (`memcard` in highscorescr: the
-   DWARF lists it right before a function like a local static, but the target symbol has no `$NNN` suffix) is
-   hoisted to the top with the other data (targets: three of them, `gMineRingColors`, `ammoCnts`, `flag_pals`;
-   a DWARF line *with an address* right before a function is a definition, a reference inside the function has
-   none), (h) a function-local static whose address is in `.rodata` must be `static const` (`gravity$1511`),
-   (i) a function-pointer table initialiser is left as `/* TODO initializer */` (needs casts when the
-   functions' arities differ), (j) a `const` global (`gMineRingColors`) is not `const` in the header until
-   added to `overrides.json` `const_variables`. Fixing those in `skel.py` saves a round-trip per file.
+5. **`skel.py` gaps** (each cost a round-trip): (a) nested-block locals flattened into duplicate
+   declarations, (b) DWARF definitions with fewer parameters than the header prototype
+   (`DC_SendFillRect`), (c) a `static` function whose name is a global array in the shared header
+   (`Blits`), (d) function-local statics omitted entirely, (e) the DWARF signature used even when
+   `overrides.json` has a prototype, (f) a backslash-n in the original path becomes a newline in the
+   header comment, (g) a mid-file file-scope static hoisted to the top (a DWARF line *with an
+   address* right before a function is a definition), (h) a function-local static whose address is
+   in `.rodata` must be `static const`, (i) function-pointer table initialisers left as `/* TODO */`,
+   (j) a `const` global is not `const` in the header until added to `overrides.json`
+   `const_variables`.
 
 ## Workflow that worked today (per file, ~1–2 h wall clock)
 
@@ -190,5 +179,9 @@ that is expected. `verify_link.py` is the real gate.
   is the fastest per-function diff (GC 2.6 compile + dtk disassembly against the target `.s`).
 - `decomp/docs/verification-baseline.md`, `docs/REVIEW.md`, `research/README.md`: Codex's
   verification rules and remaining-work notes (in git).
-- `decomp/tools/`: `skel.py`, `check.py`, `cwmatch.py`, `candidate.py`, `fvar.py`, `fdiff.py`,
-  `fields.py`, `dolbytes.py`, `doldiff.py`, `mark.py`, `verify_link.py`, `status.py`.
+- `decomp/tools/`: `skel.py`, `check.py`, `cwmatch.py`, `cwmatch_addr.py` (address-selected cwmatch
+  over the ledger, rejects same-named statics), `datacheck.py` (target ELF vs built object data bytes,
+  relocations masked: catches `.sdata2` literal order and data order that objdiff misses), `reorder.py`
+  (restore original function order, prototypes, attach data per DWARF), `litorder.py` / `sbssorder.py`
+  (print a TU's `.sdata2` pool / `.sbss`-`.bss`-`.data` symbol order in seconds), `candidate.py`,
+  `fvar.py`, `fdiff.py`, `fields.py`, `dolbytes.py`, `doldiff.py`, `mark.py`, `verify_link.py`, `status.py`.
