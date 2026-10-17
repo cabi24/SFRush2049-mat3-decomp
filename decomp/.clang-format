@@ -1,0 +1,17 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 110
+BreakBeforeBraces: Linux
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+SortIncludes: false
+ReflowComments: false
+AlignTrailingComments: false
+SpaceAfterCStyleCast: false
+PointerAlignment: Right
+MaxEmptyLinesToKeep: 1
+IndentCaseLabels: true
