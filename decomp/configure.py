@@ -397,7 +397,7 @@ config.libs = [
             Object(Matching, "GameSource/src/cheatscr.c"),
             Object(Matching, "GameSource/src/circuitscr.c"),
             Object(Matching, "GameSource/src/controlscr.c"),
-            Object(NonMatching, "GameSource/src/gameoverscr.c"),
+            Object(Matching, "GameSource/src/gameoverscr.c"),
             Object(Matching, "GameSource/src/highscorescr.c"),
             Object(Matching, "GameSource/src/licensescr.c"),
             Object(Matching, "GameSource/src/modescr.c"),

@@ -794,6 +794,9 @@ static int animText(void)
 
 static void drawRect(int x, int y, int w, int h, unsigned char *color)
 {
-    DC_SendFillRect(65400.0f, x * 2, (int)(2.0f * y), (x + w) * 2, (int)(2.0f * (y + h)),
-                    color[0], color[1], color[2], color[3]);
+    int bottom = y + h;
+    w = (x + w) * 2;
+    y = (int)(2.0f * y);
+    bottom = (int)(2.0f * bottom);
+    DC_SendFillRect(65400.0f, x * 2, y, w, bottom, color[0], color[1], color[2], color[3]);
 }
