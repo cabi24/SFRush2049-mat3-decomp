@@ -1016,25 +1016,24 @@ void ZOID_EndFrame(void)
         gLastMirrorWaves = gMirrorWaves;
     }
     PS2CameraStart();
-    win = ZoidWinInfo;
-    for (winidx = 0; winidx < gNumWindows; winidx++) {
-        PS2SetRenderTarget(&win[winidx]);
+    for (winidx = 0, win = (anon_vp_s_48 *)(int)ZoidWinInfo; winidx < gNumWindows; winidx++, win++) {
+        PS2SetRenderTarget(win);
         MySetCameraPos(gCamera[winidx].mat.uvs);
-        PS2UpdateCameraMatrix(&win[winidx]);
-        ps2_screen_center_x = win[winidx].whcenter;
-        ps2_screen_center_y = win[winidx].wvcenter;
+        PS2UpdateCameraMatrix(win);
+        ps2_screen_center_x = win->whcenter;
+        ps2_screen_center_y = win->wvcenter;
         WorldCullObjects(winidx, gCamera[winidx].mat.uvs[3], 0);
-        OC[0] = 0.5f * win[winidx].wwidth / win[winidx].whvangtan;
-        OC[1] = win[winidx].whcenter;
-        OC[2] = win[winidx].wvcenter;
-        OC[3] = win[winidx].frontclip;
-        OC[4] = 1.0 / win[winidx].frontclip;
+        OC[0] = 0.5f * win->wwidth / win->whvangtan;
+        OC[1] = win->whcenter;
+        OC[2] = win->wvcenter;
+        OC[3] = win->frontclip;
+        OC[4] = 1.0 / win->frontclip;
         OC[5] = OC[4] * OC[0];
-        OC[8] = win[winidx].backclip > 2000.0f ? win[winidx].backclip : 2000.0f;
-        OC[9] = 1.0 / (float)cos(0.5f * win[winidx].whviewang);
-        OC[10] = 1.0 / (float)cos(0.5f * win[winidx].wvviewang);
-        OC[11] = win[winidx].whvangtan;
-        OC[12] = win[winidx].wvvangtan;
+        OC[8] = win->backclip > 2000.0f ? win->backclip : 2000.0f;
+        OC[9] = 1.0 / (float)cos(0.5f * win->whviewang);
+        OC[10] = 1.0 / (float)cos(0.5f * win->wvviewang);
+        OC[11] = win->whvangtan;
+        OC[12] = win->wvvangtan;
         CopyUV(gCamera[winidx].mat.uvs, gCameraFacing);
         gFrontFacing[2][0] = gCamera[winidx].mat.uvs[2][0];
         gFrontFacing[2][1] = gCamera[winidx].mat.uvs[2][1];
@@ -1083,7 +1082,7 @@ void ZOID_EndFrame(void)
         numwin = gNumWindows;
         if (gNumWindows == 3)
             numwin = 4;
-        for (winidx = 0; winidx < numwin; winidx++, win++) {
+        for (winidx = 0, win = (anon_vp_s_48 *)(int)ZoidWinInfo; winidx < numwin; winidx++, win++) {
             PS2SetRenderTarget(win);
             ps2_screen_center_x = win->whcenter;
             ps2_screen_center_y = win->wvcenter;
