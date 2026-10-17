@@ -177,7 +177,7 @@ void DrawAlphaList();
 void DrawAlphaList2();
 void DrawAnimation();
 void DrawBlits();
-int *DrawFace(anon_name_width_30 *tex, anon_x_y_28 *v, int nverts);
+int *DrawFace(anon_name_width_30 *tex, int *pdw, anon_x_y_28 *v, int nverts, int *face);
 float DrawFont(int x, int y, char ch, unsigned long uColor);
 void DrawMenu();
 void DrawMenuBar();
@@ -401,7 +401,7 @@ void MyDrawObjectWithEnvmap(unsigned int *dlist, anon_name_width_30 *tex, int cu
 anon_c_rgba_4 MyGetAmbientColor();
 unsigned int MyGetTime();
 void MyMtxMulVec4(float (*mtx)[3], float *in, float *out);
-void MySetAmbientColor(anon_c_rgba_4 *c);
+void MySetAmbientColor(anon_c_rgba_4 c);
 void MySetCameraPos(float (*mtx)[3]);
 void MySetObjectPosition(float z);
 void NGCDC_SendBlit(void * tex, int nNumVertex, void * Vertices, unsigned int color);

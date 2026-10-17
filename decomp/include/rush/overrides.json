@@ -78,6 +78,8 @@
     "setFBCollisionForce": "void setFBCollisionForce(tModelData *m, tModelData *m1, tModelData *m2, float *dir, float *pos, float top)",
     "setMiniFBCollisionForce": "void setMiniFBCollisionForce(tModelData *m, tModelData *m1, tMiniModelData *m2, float *dir, float *pos)",
     "NGCDC_SendBlit_MENU_RGBA": "void NGCDC_SendBlit_MENU_RGBA(void *tex, void *tex_a, int nNumVertex, void *Vertices, unsigned int color_1, unsigned int color_2, unsigned int color_3, unsigned int color_4)",
-    "XBX_DrawSelectBar": "void XBX_DrawSelectBar(int choice, int unused)"
+    "XBX_DrawSelectBar": "void XBX_DrawSelectBar(int choice, int unused)",
+    "DrawFace": "int *DrawFace(anon_name_width_30 *tex, int *pdw, anon_x_y_28 *v, int nverts, int *face)",
+    "MySetAmbientColor": "void MySetAmbientColor(anon_c_rgba_4 c)"
   }
 }
