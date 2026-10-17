@@ -1,10 +1,10 @@
 # Handoff — Rush 2049 (GameCube, MAT3) matching decomp
 
-Last session: 2026-10-16 (Claude Code, ngcVu1pack). Read this first, then `writeup.md` (local-only, not in git).
+Last session: 2026-10-16 (Claude Code, zip). Read this first, then `writeup.md` (local-only, not in git).
 
 ## Where things stand
 
-- **Status:** 1,544 / 1,844 functions, 472,120 / 715,968 code bytes (65.94%), **122 / 148 files**
+- **Status:** 1,568 / 1,844 functions, 484,916 / 715,968 code bytes (67.73%), **123 / 148 files**
   linked from C. The GC/2.7 relink passes `decomp/tools/verify_link.py` (only the 5 recorded
   `.dtors` bytes differ) on every commit.
 - **Branch:** `ngcblit-match` on <https://github.com/cabi24/SFRush2049-mat3-decomp> (private),
@@ -13,6 +13,7 @@ Last session: 2026-10-16 (Claude Code, ngcVu1pack). Read this first, then `write
   - `3091952` Match NGC/ngcBeginMenu (38/38)
   - `2ea74ee` Add NGC/ngcZoid (16/19, left NonMatching)
   - `0556df2` Match NGC/ngcVu1pack (34/34, 122/148 units linked from C)
+  - (this commit) Match GameSource/src/zip (24/24, 123/148 units linked from C)
 - **Repo layout on this PC:** `C:\rush2049-mat3` *is* the git checkout (source-only). Originals
   (`Rush2049.iso`, `DATA.GDF`, `rush_d.elf`, `rush_d_*.csv`, `rush_d_dwarf.c`), compilers,
   `decomp/build`, `decomp/orig`, `work/`, `writeup.md` are local and git-ignored — never commit
@@ -50,10 +51,11 @@ that is expected. `verify_link.py` is the real gate.
    loop-2 walker address (`&ZoidWinInfo[..]`, r26) live across loop 1; the outer-`while (1)` /
    loop-splitting trick that fixed `MenuMCMount` has **not** been tried on it yet. When these
    three match: `python tools/mark.py Matching NGC/ngcZoid.c`, rebuild, verify, commit.
-2. **Next untouched files, smallest first:** `GameSource/src/zip` (12.8 KB, 24 fn), `highscorescr`
-   (15.3 KB), `targets` (15.5 KB), `trackscr`, `recordscr`, then the big screens `playerscr`,
-   `visuals`, `carscr` (27–31 KB each). (`NGC/ngcVu1pack` done 2026-10-16: 34/34, ~2.5 h wall clock
-   with two agents; see writeup "ngcVu1pack matched".)
+2. **Next untouched files, smallest first:** `highscorescr` (15.3 KB), `targets` (15.5 KB),
+   `trackscr`, `recordscr`, then the big screens `playerscr`, `visuals`, `carscr` (27–31 KB each).
+   (`NGC/ngcVu1pack` done 2026-10-16: 34/34, ~2.5 h wall clock with two agents; `GameSource/src/zip`
+   done 2026-10-16: 24/24 in ~1 h, it is zlib 1.0.4-era deflate and matched almost verbatim; see
+   writeup "ngcVu1pack matched" / "zip matched".)
 3. **Old near misses** (all heavily tried, register-allocation residue): `enginetorque`,
    `appGetTime`, `ContinueCircuit`, `_DrawFileDel`, `ngcLoadEffectBank`, `AvoidAreas`,
    `LinkWithPS2Texture`, `frictioncircle`; lower-scoring and probably structural: `drawRect` 91.5%
@@ -119,14 +121,23 @@ that is expected. `verify_link.py` is the real gate.
   `__attribute__((aligned(32)))` on the next unit's first `.bss` object (`g_VW` in ngcGraph.c);
   `align:N` in `symbols.txt` does nothing for C-linked units.
 - `work/ngcVu1pack/merge.py` merges whole function definitions from agent copies into the
-  canonical file (adapt the paths per unit).
+  canonical file (adapt the paths per unit; `work/zip/merge.py` is the zip copy, it also accepts
+  `/* stripped by the linker (no data) */` placeholder headers).
+- **Literal types change CSE** (zip): `x >= 0L` vs `x >= 0` decides whether a struct field is
+  reloaded after a ternary. CW 2.6 never forwards a store to a later load of the same field through
+  a pointer, so verbatim library text (zlib) reproduces the target's reloads.
+- **Functions that address several `.bss` arrays from one hoisted base only match once the whole
+  TU fixes the `.bss` order** (zip's `compress_block` needs `tr_static_init`'s first-use order).
+- Third-party library units (zlib, etc.): start from the library's original text of the matching
+  era; it compiled byte-exact almost unchanged under CW 2.6 `-O4,p`.
 
 ## Files to know
 
 - `writeup.md` (repo root, local-only): the full knowledge base — compiler facts, per-file lessons,
   tool table, status/linker notes. Keep adding to it.
 - `work/<unit>/BRIEF.md`, `work/<unit>/agent*/NOTES.md`: today's agent briefs and findings
-  (local-only).
+  (local-only). `work/zip/BRIEF.md` is the latest template (adds the "facts read off the asm"
+  section and the fresh-shell `cd` note for agents).
 - `decomp/docs/verification-baseline.md`, `docs/REVIEW.md`, `research/README.md`: Codex's
   verification rules and remaining-work notes (in git).
 - `decomp/tools/`: `skel.py`, `check.py`, `cwmatch.py`, `candidate.py`, `fvar.py`, `fdiff.py`,

@@ -384,7 +384,7 @@ config.libs = [
             Object(Matching, "GameSource/src/weapons.c"),
             Object(Matching, "GameSource/src/world.c"),
             Object(Matching, "GameSource/src/worlddam.c"),
-            Object(NonMatching, "GameSource/src/zip.c"),
+            Object(Matching, "GameSource/src/zip.c"),
             Object(Matching, "GameSource/src/zoid.c"),
             Object(Matching, "GameSource/src/zoidblit.c"),
             Object(Matching, "GameSource/src/zoidlight.c"),
