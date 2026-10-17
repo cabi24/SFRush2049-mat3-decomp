@@ -45,6 +45,7 @@
   },
   "_comment_prototypes": "Declarations the original headers used where they differ from the definition recorded in DWARF (callers pass extra/differently-typed arguments). Inferred from call sites.",
   "prototypes": {
+    "SaveGhost": "int SaveGhost(int pak, void *unused, anon_ll_fileh_30 **saveGhosth, int limbo)",
     "AddPackToTexSortList": "void AddPackToTexSortList(float **mtx, anon_name_width_38 *tex, unsigned int *pack, int cull, int AddColor)",
     "AddVu1ObjPacket_WithLight2": "anon_dmatag_Local_world_90 *AddVu1ObjPacket_WithLight2(unsigned int *obj, float (*rotMTX)[4], int unused, anon_name_width_38 *pTexDef, float scale)",
     "SaveOBJMatrix": "float **SaveOBJMatrix(float (*mtx)[4], int cull)",

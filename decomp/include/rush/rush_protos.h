@@ -563,7 +563,7 @@ void RotateUV(float *pyr, float (*uvs)[3]);
 void Run(const char *executableName, ...);
 void Run_DVDCallback();
 void SaveFlush(int ignoreErrors);
-int SaveGhost(int pak, anon_ll_fileh_30 **saveGhosth, int limbo);
+int SaveGhost(int pak, void *unused, anon_ll_fileh_30 **saveGhosth, int limbo);
 void SaveGhostInLimbo(anon_headerChecksum_revision_54 *header, void * data);
 void SaveGlobals();
 void SaveInit();

@@ -1,10 +1,10 @@
 # Handoff — Rush 2049 (GameCube, MAT3) matching decomp
 
-Last session: 2026-10-16 (Claude Code, zip). Read this first, then `writeup.md` (local-only, not in git).
+Last session: 2026-10-16 (Claude Code, highscorescr). Read this first, then `writeup.md` (local-only, not in git).
 
 ## Where things stand
 
-- **Status:** 1,568 / 1,844 functions, 484,916 / 715,968 code bytes (67.73%), **123 / 148 files**
+- **Status:** 1,589 / 1,844 functions, 500,204 / 715,968 code bytes (69.86%), **124 / 148 files**
   linked from C. The GC/2.7 relink passes `decomp/tools/verify_link.py` (only the 5 recorded
   `.dtors` bytes differ) on every commit.
 - **Branch:** `ngcblit-match` on <https://github.com/cabi24/SFRush2049-mat3-decomp> (private),
@@ -14,6 +14,7 @@ Last session: 2026-10-16 (Claude Code, zip). Read this first, then `writeup.md` 
   - `2ea74ee` Add NGC/ngcZoid (16/19, left NonMatching)
   - `0556df2` Match NGC/ngcVu1pack (34/34, 122/148 units linked from C)
   - `f7416d3` Match GameSource/src/zip (24/24, 123/148 units linked from C)
+  - (this commit) Match GameSource/src/highscorescr (21/21, 124/148 units linked from C)
 - **Repo layout on this PC:** `C:\rush2049-mat3` *is* the git checkout (source-only). Originals
   (`Rush2049.iso`, `DATA.GDF`, `rush_d.elf`, `rush_d_*.csv`, `rush_d_dwarf.c`), compilers,
   `decomp/build`, `decomp/orig`, `work/`, `writeup.md` are local and git-ignored — never commit
@@ -51,8 +52,10 @@ that is expected. `verify_link.py` is the real gate.
    loop-2 walker address (`&ZoidWinInfo[..]`, r26) live across loop 1; the outer-`while (1)` /
    loop-splitting trick that fixed `MenuMCMount` has **not** been tried on it yet. When these
    three match: `python tools/mark.py Matching NGC/ngcZoid.c`, rebuild, verify, commit.
-2. **Next untouched files, smallest first:** `highscorescr` (15.3 KB), `targets` (15.5 KB),
-   `trackscr`, `recordscr`, then the big screens `playerscr`, `visuals`, `carscr` (27–31 KB each).
+2. **Next untouched files, smallest first:** `targets` (15.5 KB), `trackscr`, `recordscr`, then the
+   big screens `playerscr`, `visuals`, `carscr` (27–31 KB each). (`GameSource/src/highscorescr` done
+   2026-10-16: 21/21 in ~2.5 h with two agents plus a third on the one near miss; see writeup
+   "highscorescr matched".)
    (`NGC/ngcVu1pack` done 2026-10-16: 34/34, ~2.5 h wall clock with two agents; `GameSource/src/zip`
    done 2026-10-16: 24/24 in ~1 h, it is zlib 1.0.4-era deflate and matched almost verbatim; see
    writeup "ngcVu1pack matched" / "zip matched".)
@@ -70,7 +73,9 @@ that is expected. `verify_link.py` is the real gate.
    (ngcVu1pack: five `camPt/at/up` triples and `DrawSortedTex`'s seven statics had to be added by
    hand from the DWARF), (e) the DWARF signature is used even when `overrides.json` already has a
    prototype for the function (`MySetAmbientColor`, `LoadGeoBinFile`), (f) a backslash-n in the original path
-   becomes a newline in the header comment. Fixing those in `skel.py` saves a round-trip per file.
+   becomes a newline in the header comment, (g) a mid-file file-scope static (`memcard` in highscorescr: the
+   DWARF lists it right before a function like a local static, but the target symbol has no `$NNN` suffix) is
+   hoisted to the top with the other data. Fixing those in `skel.py` saves a round-trip per file.
 
 ## Workflow that worked today (per file, ~1–2 h wall clock)
 
@@ -129,14 +134,27 @@ that is expected. `verify_link.py` is the real gate.
   TU fixes the `.bss` order** (zip's `compress_block` needs `tr_static_init`'s first-use order).
 - Third-party library units (zlib, etc.): start from the library's original text of the matching
   era; it compiled byte-exact almost unchanged under CW 2.6 `-O4,p`.
+- **Run the link dry run right after the merge** (`mark.py Matching`, `ninja`, `verify_link.py --no-build`),
+  before chasing near misses: a stripped function's float literal missing from `.sdata2` (highscorescr's
+  `_HiScoreRank` 0.0f) shifts every later `.sdata2` pointer in the DOL, and `check.py`/objdiff still report
+  data 100% and layout OK. Give the stripped placeholder a body that emits the literal.
+- **Register priority follows first reference in the body, not declaration order** (highscorescr
+  `DrawGhost`): two locals with swapped callee-saved registers that resist every declaration order are fixed
+  by an early constant-propagated reference (`y = 10;` passed where the literal was) to the one that should
+  get the higher register number. Emits no code.
+- Enum names vs int literals in a ternary decide branch-free vs branching selects; `width /= 2` vs
+  `width / 2` inline, block-scoped loop counters, `n--; a[n] = 0;` vs `a[--n] = 0;` all change allocation
+  (details in writeup "highscorescr matched").
+- Agents' `cwmatch.py` workaround for static names that exist in several units (`ambiguous-orig`):
+  `work/highscorescr/agentA/fd.py`, `agentB/cm.py`. Worth folding into `cwmatch.py`.
 
 ## Files to know
 
 - `writeup.md` (repo root, local-only): the full knowledge base — compiler facts, per-file lessons,
   tool table, status/linker notes. Keep adding to it.
 - `work/<unit>/BRIEF.md`, `work/<unit>/agent*/NOTES.md`: today's agent briefs and findings
-  (local-only). `work/zip/BRIEF.md` is the latest template (adds the "facts read off the asm"
-  section and the fresh-shell `cd` note for agents).
+  (local-only). `work/highscorescr/BRIEF.md` is the latest template (screen-unit idioms, type offsets,
+  layout facts, the fresh-shell `cd` note); `work/highscorescr/merge.py` the latest merge script.
 - `decomp/docs/verification-baseline.md`, `docs/REVIEW.md`, `research/README.md`: Codex's
   verification rules and remaining-work notes (in git).
 - `decomp/tools/`: `skel.py`, `check.py`, `cwmatch.py`, `candidate.py`, `fvar.py`, `fdiff.py`,
