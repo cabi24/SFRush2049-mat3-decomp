@@ -309,7 +309,7 @@ config.libs = [
             Object(Matching, "GameSource/src/carload.c"),
             Object(Matching, "GameSource/src/cars.c"),
             Object(Matching, "GameSource/src/checkpoint.c"),
-            Object(NonMatching, "GameSource/src/circuit.c"),
+            Object(Matching, "GameSource/src/circuit.c"),
             Object(Matching, "GameSource/src/collision.c"),
             Object(Matching, "GameSource/src/controls.c"),
             Object(Matching, "GameSource/src/controlsys.c"),
