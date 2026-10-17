@@ -1525,7 +1525,7 @@ extern int gMaxMatrices;
 extern int gMaxObjects;
 extern int gMaxPolyInsts;
 extern signed char gMineCones;
-extern unsigned char gMineRingColors[4][3];
+extern const unsigned char gMineRingColors[4][3];
 extern unsigned short gMineTextures[5];
 extern signed char gMirrorControls;
 extern signed char gMirrorWaves;

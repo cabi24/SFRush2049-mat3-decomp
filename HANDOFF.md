@@ -1,12 +1,13 @@
 # Handoff — Rush 2049 (GameCube, MAT3) matching decomp
 
-Last session: 2026-10-16 (Claude Code, highscorescr). Read this first, then `writeup.md` (local-only, not in git).
+Last session: 2026-10-16 (Claude Code, targets). Read this first, then `writeup.md` (local-only, not in git).
 
 ## Where things stand
 
-- **Status:** 1,589 / 1,844 functions, 500,204 / 715,968 code bytes (69.86%), **124 / 148 files**
+- **Status:** 1,621 / 1,844 functions, 514,184 / 715,968 code bytes (71.82%), **124 / 148 files**
   linked from C. The GC/2.7 relink passes `decomp/tools/verify_link.py` (only the 5 recorded
-  `.dtors` bytes differ) on every commit.
+  `.dtors` bytes differ) on every commit. (`GameSource/src/targets` is 32/33 with one
+  register-allocation near miss and stays NonMatching; see open work.)
 - **Branch:** `ngcblit-match` on <https://github.com/cabi24/SFRush2049-mat3-decomp> (private),
   commits ahead of `main`, pushed, no PR opened yet:
   - `24dc654` Match NGC/ngcBlit (16/16)
@@ -15,6 +16,7 @@ Last session: 2026-10-16 (Claude Code, highscorescr). Read this first, then `wri
   - `0556df2` Match NGC/ngcVu1pack (34/34, 122/148 units linked from C)
   - `f7416d3` Match GameSource/src/zip (24/24, 123/148 units linked from C)
   - `83506b0` Match GameSource/src/highscorescr (21/21, 124/148 units linked from C)
+  - (this commit) Add GameSource/src/targets (32/33, left NonMatching: `SetTargetDefs` regalloc)
 - **Repo layout on this PC:** `C:\rush2049-mat3` *is* the git checkout (source-only). Originals
   (`Rush2049.iso`, `DATA.GDF`, `rush_d.elf`, `rush_d_*.csv`, `rush_d_dwarf.c`), compilers,
   `decomp/build`, `decomp/orig`, `work/`, `writeup.md` are local and git-ignored — never commit
@@ -44,6 +46,15 @@ that is expected. `verify_link.py` is the real gate.
 
 ## Open work, in suggested order
 
+0. **`GameSource/src/targets` — 1 near miss, everything else done** (`decomp/src/GameSource/src/targets.c`,
+   32/33, data 100%, layout exact, the link dry run with it marked Matching differed from the DOL only inside
+   `SetTargetDefs`). `SetTargetDefs` 99.9% (9/373 instructions, registers only): the hoisted `vis`/`col`
+   `SetupTarget` arguments and the inner `j*0x44` strength-reduction temp are coloured r16/r15/r14 instead of
+   r14/r15/r16. Agent D's `#pragma opt_strength_reduction off` probe shows the target created the induction
+   *after* the two hoisted invariants; ours creates it before. Tried-lists: `work/targets/agent{A,D}/NOTES.md`
+   (well over a thousand variants: argument spellings, named locals in every scope, dead references, loop
+   wrappers, index/pointer forms, inline helpers). When it matches: `python tools/mark.py Matching
+   GameSource/src/targets.c`, configure, ninja, verify, commit (125/148).
 1. **`NGC/ngcZoid` — 3 near misses, everything else done** (`decomp/src/NGC/ngcZoid.c`).
    `Blits_First` 97.3% and `Blits` 96.3% share one cause: the original emits
    `mr r6,r30; add r6,r28,r6` for `BlitDraw(..., x + w, y + h, ...)` (copy loop-carried operand
@@ -52,10 +63,12 @@ that is expected. `verify_link.py` is the real gate.
    loop-2 walker address (`&ZoidWinInfo[..]`, r26) live across loop 1; the outer-`while (1)` /
    loop-splitting trick that fixed `MenuMCMount` has **not** been tried on it yet. When these
    three match: `python tools/mark.py Matching NGC/ngcZoid.c`, rebuild, verify, commit.
-2. **Next untouched files, smallest first:** `targets` (15.5 KB), `trackscr`, `recordscr`, then the
-   big screens `playerscr`, `visuals`, `carscr` (27–31 KB each). (`GameSource/src/highscorescr` done
-   2026-10-16: 21/21 in ~2.5 h with two agents plus a third on the one near miss; see writeup
-   "highscorescr matched".)
+2. **Next untouched files, smallest first:** `trackscr`, `recordscr`, then the
+   big screens `playerscr`, `visuals`, `carscr` (27–31 KB each). (`GameSource/src/targets` done
+   2026-10-16 except `SetTargetDefs`: 32/33 in ~2 h with two agents, a third on the three
+   `_TargetColl*` FP near misses (matched in 5 min) and a fourth on `SetTargetDefs`; see writeup
+   "targets". `GameSource/src/highscorescr` done 2026-10-16: 21/21 in ~2.5 h with two agents plus a
+   third on the one near miss; see writeup "highscorescr matched".)
    (`NGC/ngcVu1pack` done 2026-10-16: 34/34, ~2.5 h wall clock with two agents; `GameSource/src/zip`
    done 2026-10-16: 24/24 in ~1 h, it is zlib 1.0.4-era deflate and matched almost verbatim; see
    writeup "ngcVu1pack matched" / "zip matched".)
@@ -75,7 +88,12 @@ that is expected. `verify_link.py` is the real gate.
    prototype for the function (`MySetAmbientColor`, `LoadGeoBinFile`), (f) a backslash-n in the original path
    becomes a newline in the header comment, (g) a mid-file file-scope static (`memcard` in highscorescr: the
    DWARF lists it right before a function like a local static, but the target symbol has no `$NNN` suffix) is
-   hoisted to the top with the other data. Fixing those in `skel.py` saves a round-trip per file.
+   hoisted to the top with the other data (targets: three of them, `gMineRingColors`, `ammoCnts`, `flag_pals`;
+   a DWARF line *with an address* right before a function is a definition, a reference inside the function has
+   none), (h) a function-local static whose address is in `.rodata` must be `static const` (`gravity$1511`),
+   (i) a function-pointer table initialiser is left as `/* TODO initializer */` (needs casts when the
+   functions' arities differ), (j) a `const` global (`gMineRingColors`) is not `const` in the header until
+   added to `overrides.json` `const_variables`. Fixing those in `skel.py` saves a round-trip per file.
 
 ## Workflow that worked today (per file, ~1–2 h wall clock)
 
@@ -147,14 +165,29 @@ that is expected. `verify_link.py` is the real gate.
   (details in writeup "highscorescr matched").
 - Agents' `cwmatch.py` workaround for static names that exist in several units (`ambiguous-orig`):
   `work/highscorescr/agentA/fd.py`, `agentB/cm.py`. Worth folding into `cwmatch.py`.
+- **A `.rodata` literal with no reference in the `.s` is not necessarily an orphan** (targets `@1507`): CW keeps
+  the section anchor (`@102`) in a register and addresses later literals as `addi rX, rAnchor, off`. Check the
+  offsets before inventing dead code.
+- **Two `sqrtf` inline variants:** anonymous `.sdata2` doubles (`@NNN` 0.5/3.0/0.0) mean the camera.c/tires.c
+  variant (`#define MSL_NO_SQRTF` + automatic `_half`/`_three`); `_half$localstatic3$sqrtf` symbols mean
+  `msl_math_inline.h`'s. Same code, different symbol names.
+- **In-place update position decides FP colouring** (targets `_TargetColl*`): `radius += 3.5f;` after the delta
+  computations, with the deltas as function-scope `float dx, dy, dz;` declared before the DWARF locals, even
+  though the scheduler emits the add in the same slot either way.
+- **Unrolled zeroing loop stored entirely through the `addi r3, base, 0` copy** = `while (i < 8) a[i++] = 0;`;
+  `for (i...) a[i] = 0;` stores the first element through the base register. `switch` case bodies are emitted in
+  source order, not jump-table order; CW never tail-merges identical blocks (duplicate the code, `goto` shared
+  exits). `work/targets/BRIEF.md` is the latest brief template; `work/targets/merge.py` takes agents A-D.
 
 ## Files to know
 
 - `writeup.md` (repo root, local-only): the full knowledge base — compiler facts, per-file lessons,
   tool table, status/linker notes. Keep adding to it.
 - `work/<unit>/BRIEF.md`, `work/<unit>/agent*/NOTES.md`: today's agent briefs and findings
-  (local-only). `work/highscorescr/BRIEF.md` is the latest template (screen-unit idioms, type offsets,
-  layout facts, the fresh-shell `cd` note); `work/highscorescr/merge.py` the latest merge script.
+  (local-only). `work/targets/BRIEF.md` is the latest template (per-function literal map from the `.s`,
+  type offsets, layout facts, the fresh-shell `cd` note); `work/targets/merge.py` the latest merge script;
+  `work/targets/litmap.py` maps every `@NNN` literal to the function that references it; `agentA/qd.py`
+  is the fastest per-function diff (GC 2.6 compile + dtk disassembly against the target `.s`).
 - `decomp/docs/verification-baseline.md`, `docs/REVIEW.md`, `research/README.md`: Codex's
   verification rules and remaining-work notes (in git).
 - `decomp/tools/`: `skel.py`, `check.py`, `cwmatch.py`, `candidate.py`, `fvar.py`, `fdiff.py`,

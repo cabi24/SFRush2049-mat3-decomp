@@ -10,7 +10,8 @@
   ],
   "_comment_const": "Global variables in .rodata: DWARF v1 does not record const either.",
   "const_variables": [
-    "gControlTable"
+    "gControlTable",
+    "gMineRingColors"
   ],
   "_comment_externs": "Correct shared declarations inferred from defining units and access patterns. checkpoint.c defines ghostRaceTimes as six floats (24 bytes); its finish_cam accesses require an unsized extern array to preserve original HA/LO addressing rather than inferred small-data addressing.",
   "extern_declarations": {

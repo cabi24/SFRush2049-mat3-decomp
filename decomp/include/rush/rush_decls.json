@@ -32030,7 +32030,7 @@
    {
     "name": "gMineRingColors",
     "static": false,
-    "decl": "unsigned char gMineRingColors[4][3]",
+    "decl": "const unsigned char gMineRingColors[4][3]",
     "addr": 2148580020,
     "size": 12
    },
