@@ -741,8 +741,9 @@ surftyp *ShotToWorldCollision(float *old, float *new, float (*uvs)[3], float rad
         midv = shalf(midv);
         if (quad0 & 1) b[0] = midh; else b[0] = ltp0->minh;
         if (quad0 & 1) b[1] = ltp0->maxh;
-        if (quad0 & 2) b[2] = ltp0->minv; else b[2] = midv;
-        if (quad0 & 2) b[3] = midv; else b[3] = ltp0->maxv;
+        state = (unsigned char)(quad0 & 2);
+        if (state) b[2] = ltp0->minv; else b[2] = midv;
+        if (state) b[3] = midv; else b[3] = ltp0->maxv;
         sli = ltp0->child[quad0];
         if (ltp0->flags & (16 << quad0)) sli |= 0x10000;
         if (sli) {

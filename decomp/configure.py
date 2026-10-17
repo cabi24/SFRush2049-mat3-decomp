@@ -363,7 +363,7 @@ config.libs = [
             Object(Matching, "GameSource/src/state.c"),
             Object(Matching, "GameSource/src/statll.c"),
             Object(Matching, "GameSource/src/streaks.c"),
-            Object(NonMatching, "GameSource/src/stree.c"),
+            Object(Matching, "GameSource/src/stree.c"),
             Object(Matching, "GameSource/src/stunt.c"),
             Object(Matching, "GameSource/src/tan.c"),
             Object(Matching, "GameSource/src/targetpaths.c"),
