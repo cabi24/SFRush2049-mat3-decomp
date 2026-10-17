@@ -966,7 +966,7 @@ anon_c_rgba_4 clr;
     column[2]=column[0]+2;
     column[1]=column[0]+1;
     rgb[0] = (unsigned int)(column[0][(a) * (int)sizeof(anon_c_rgba_4)] + column[0][(b) * (int)sizeof(anon_c_rgba_4)] + column[0][(hobj) * (int)sizeof(anon_c_rgba_4)] + column[0][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(anon_c_rgba_4)]) >> 2;
-    rgb[1] = (unsigned int)(column[1][(a) * (int)sizeof(anon_c_rgba_4)] + column[1][(b) * (int)sizeof(anon_c_rgba_4)] + column[1][(hobj) * (int)sizeof(anon_c_rgba_4)] + column[1][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(anon_c_rgba_4)]) >> 2;
+    rgb[1] = (unsigned int)(((column[1][(a) * (int)sizeof(anon_c_rgba_4)] + column[1][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(anon_c_rgba_4)]) + (column[1][(hobj) * (int)sizeof(anon_c_rgba_4)] + column[1][(b) * (int)sizeof(anon_c_rgba_4)]))) >> 2;
     rgb[2] = (unsigned int)(column[2][(a) * (int)sizeof(anon_c_rgba_4)] + column[2][(b) * (int)sizeof(anon_c_rgba_4)] + column[2][(hobj) * (int)sizeof(anon_c_rgba_4)] + column[2][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(anon_c_rgba_4)]) >> 2;
     if (m->airdist[2] >= 20.0f) {
         d1 = 0.025f * (m->airdist[2] - 20.0f);
@@ -1815,6 +1815,8 @@ static void StartShadow(signed short slot)
         shadow1[0]->strips->vertexs[i].color=(vert[i].r<<24)+(vert[i].g<<16)+(vert[i].b<<8)+vert[i].a;
     }
     for(i=0;i<4;i++) {
+        unsigned int cb;
+        cb=vert[i].b;
         shadow2->strips->vertexs[i].pos[0]=vert[i].x;
         shadow2->strips->vertexs[i].pos[1]=vert[i].y;
         shadow2->strips->vertexs[i].pos[2]=vert[i].z;
@@ -1823,7 +1825,7 @@ static void StartShadow(signed short slot)
         shadow2->strips->vertexs[i].nom[2]=vert[i].nz;
         shadow2->strips->vertexs[i].uv[0]=vert[i].u;
         shadow2->strips->vertexs[i].uv[1]=vert[i].v;
-        shadow2->strips->vertexs[i].color=(vert[i].r<<24)+(vert[i].g<<16)+(vert[i].b<<8)+vert[i].a;
+        shadow2->strips->vertexs[i].color=(vert[i].r<<24)+(vert[i].g<<16)+(cb<<8)+vert[i].a;
     }
     for(i=0;i<4;i++) {
         shadow3->strips->vertexs[i].pos[0]=vert[i].x;
