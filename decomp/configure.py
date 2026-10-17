@@ -351,7 +351,7 @@ config.libs = [
             Object(Matching, "GameSource/src/pathcommon.c"),
             Object(Matching, "GameSource/src/powerups.c"),
             Object(Matching, "GameSource/src/rekon.c"),
-            Object(NonMatching, "GameSource/src/resurrect.c"),
+            Object(Matching, "GameSource/src/resurrect.c"),
             Object(Matching, "GameSource/src/road.c"),
             Object(Matching, "GameSource/src/save.c"),
             Object(Matching, "GameSource/src/sched.c"),
