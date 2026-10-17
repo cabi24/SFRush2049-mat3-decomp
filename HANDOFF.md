@@ -69,8 +69,7 @@ that is expected. `verify_link.py` is the real gate.
    a global array in the shared header (`Blits`), (d) **function-local statics are omitted entirely**
    (ngcVu1pack: five `camPt/at/up` triples and `DrawSortedTex`'s seven statics had to be added by
    hand from the DWARF), (e) the DWARF signature is used even when `overrides.json` already has a
-   prototype for the function (`MySetAmbientColor`, `LoadGeoBinFile`), (f) `
-` in the original path
+   prototype for the function (`MySetAmbientColor`, `LoadGeoBinFile`), (f) a backslash-n in the original path
    becomes a newline in the header comment. Fixing those in `skel.py` saves a round-trip per file.
 
 ## Workflow that worked today (per file, ~1–2 h wall clock)
