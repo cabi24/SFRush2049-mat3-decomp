@@ -301,6 +301,7 @@ void LoadLights()
 }
 
 /* 0x800a6974, size 0x36c */
+
 static void Blits_First(void)
 {
     anon_palette_texture_20 *b; /* r26 */
@@ -315,19 +316,20 @@ static void Blits_First(void)
     int i; /* r24 */
 
 {
-    anon_palette_texture_20 *b; /* r26 */
-    tTexture *tex; /* r25 */
-    int h; /* r25 */
-    int w; /* r27 */
-    int x; /* r28 */
-    int y; /* r30 */
-    int vflip; /* r0 */
-    int i; /* r24 */
+    anon_palette_texture_20 *b;
+    tTexture *tex;
+    int h;
+    int w;
+    int x;
+    int y;
+    int vflip;
+    int i;
+    int ww, hh, d[2];
 
-    for (i = 0, b = gBlitInstanceList; i < gNumBlitInsts; i++, b++) {
+    for (i = 0, b = gBlitInstanceList; i < gNumBlitInsts; i++, b++)
+    {
         tex = b->texture;
-        if (tex && !(b->flags & 2))
-            continue;
+        if (tex && !(b->flags & 2)) continue;
         if (b->flags & 0x10)
             continue;
         if (b->flags & 0x100)
@@ -344,14 +346,13 @@ static void Blits_First(void)
             BlitSetAttribute(4);
         else
             BlitClearAttribute(4);
-        if (!b->width)
-            continue;
-        if (!b->height)
-            continue;
-        if (!tex) {
-            if (b->alpha == 0xff) {
+        if (!b->width || !b->height) continue;
+        if (!tex)
+        {
+            if (b->alpha == 0xff)
                 BlitClearAttribute(0x20);
-            } else {
+            else
+            {
                 BlitXLU(b->alpha);
                 BlitSetAttribute(0x20);
             }
@@ -363,41 +364,60 @@ static void Blits_First(void)
             BlitRect(x, y, w, h, (unsigned char *)b->palette);
             continue;
         }
+        ww = b->width;
+        hh = b->height;
         x = b->x * 2;
         y = b->y * 2.0f;
-        BlitScissor(x, y, x + b->width - 1, y + b->height - 1);
+        BlitScissor(x, y, x + ww - 1, y + hh - 1);
+        ww = b->right - b->left;
+        hh = b->bot - b->top;
         w = b->right - b->left;
         h = b->bot - b->top;
         if (b->alpha == 0xff)
             BlitClearAttribute(0x20);
         else
             BlitXLU(b->alpha);
-        if (b->palette) {
+        if (b->palette)
+        {
             BlitColors(b->palette->palBase, tex->format, tex->size, 0);
-        } else if (tex->palIndex >= 0) {
+        }
+        else if (tex->palIndex >= 0)
+        {
             BlitColors(gPalDefPtrs[b->texIndex >> 10].palDefs[tex->palIndex].palBase, tex->format, tex->size, 0);
-        } else {
+        }
+        else
+        {
             gWhite.c[3] = b->alpha;
             BlitColors(&gWhite, -1, -1, 0);
         }
         if (b->bot >= tex->height)
             b->bot = tex->height - 1;
-        if (b->flags & 8) {
+
+        if (b->flags & 8)
+        {
             BlitSetAttribute(8);
             vflip = 1;
-        } else {
+        }
+        else
+        {
             BlitClearAttribute(8);
             vflip = 0;
         }
+
         if (vflip)
-            BlitDraw(b->texture, x, y, x + w, y + h, b->left, tex->height - b->bot - 1);
+        {
+            d[1] = hh; d[0] = ww; if (!vflip) { d[0] = w; d[1] = h; } BlitDraw(b->texture, x, y, x + d[0], y + d[1], b->left, tex->height - b->bot - 1);
+        }
         else
-            BlitDraw(b->texture, x, y, x + w, y + h, b->left, b->top);
+        {
+            d[1] = hh; d[0] = ww; if (!vflip) { d[0] = w; d[1] = h; } BlitDraw(b->texture, x, y, x + d[0], y + d[1], b->left, b->top);
+        }
     }
 }
 }
 
 /* 0x800a6ce0, size 0x3a8 */
+
 static void Blits(void)
 {
     anon_palette_texture_20 *b; /* r25 */
@@ -412,26 +432,28 @@ static void Blits(void)
     int i; /* r24 */
 
 {
-    anon_palette_texture_20 *b; /* r25 */
-    tTexture *tex; /* r0 */
-    int h; /* r26 */
-    int w; /* r27 */
-    int x; /* r28 */
-    int y; /* r30 */
-    int vflip; /* r23 */
-    int i; /* r24 */
+    anon_palette_texture_20 *b;
+    tTexture *tex;
+    int h;
+    int w;
+    int x;
+    int y;
+    int vflip;
+    int i;
+    int ww, hh, d[2];
 
-    for (i = 0, b = gBlitInstanceList; i < gNumBlitInsts; i++, b++) {
+    for (i = 0, b = gBlitInstanceList; i < gNumBlitInsts; i++, b++)
+    {
         tex = b->texture;
-        if (!tex && !(b->flags & 0x10))
-            continue;
+        if (!tex && !(b->flags & 0x10)) continue; tex = b->texture;
         if (b->flags & 0x100)
             continue;
         if (b->flags & 2)
             continue;
         if (b->hide)
             continue;
-        if (b->flags & 0x80) {
+        if (b->flags & 0x80)
+        {
             if (tex)
                 ((void (*)(anon_name_start_18 *))tex)(b->palette);
             continue;
@@ -444,14 +466,13 @@ static void Blits(void)
             BlitSetAttribute(4);
         else
             BlitClearAttribute(4);
-        if (!b->width)
-            continue;
-        if (!b->height)
-            continue;
-        if (!tex) {
-            if (b->alpha == 0xff) {
+        if (!b->width || !b->height) continue;
+        if (!tex)
+        {
+            if (b->alpha == 0xff)
                 BlitClearAttribute(0x20);
-            } else {
+            else
+            {
                 BlitXLU(b->alpha);
                 BlitSetAttribute(0x20);
             }
@@ -463,38 +484,56 @@ static void Blits(void)
             BlitRect(x, y, w, h, (unsigned char *)b->palette);
             continue;
         }
+        ww = b->width;
+        hh = b->height;
         x = b->x * 2;
         y = b->y * 2.0f;
-        BlitScissor(x, y, x + b->width - 1, y + b->height - 1);
+        BlitScissor(x, y, x + ww - 1, y + hh - 1);
+        ww = b->right - b->left;
+        hh = b->bot - b->top;
         w = b->right - b->left;
         h = b->bot - b->top;
         if (b->alpha == 0xff)
             BlitClearAttribute(0x20);
         else
             BlitXLU(b->alpha);
-        if (b->palette) {
+        if (b->palette)
+        {
             BlitColors(b->palette->palBase, tex->format, tex->size, 0);
-        } else if (tex->palIndex >= 0) {
+        }
+        else if (tex->palIndex >= 0)
+        {
             BlitColors(gPalDefPtrs[b->texIndex >> 10].palDefs[tex->palIndex].palBase, tex->format, tex->size, 0);
-        } else {
+        }
+        else
+        {
             gWhite.c[3] = b->alpha;
             BlitColors(&gWhite, -1, -1, 0);
         }
         if (b->bot >= tex->height)
             b->bot = tex->height - 1;
-        if (b->flags & 8) {
+
+        if (b->flags & 8)
+        {
             BlitSetAttribute(8);
             vflip = 1;
-        } else {
+        }
+        else
+        {
             BlitClearAttribute(8);
             vflip = 0;
         }
         if (b->flags & 0x4000)
             BlitColors(&gYellow, -1, -1, 0);
+
         if (vflip)
-            BlitDraw(b->texture, x, y, x + w, y + h, b->left, tex->height - b->bot - 1);
+        {
+            d[1] = hh; d[0] = ww; if (!vflip) { d[0] = w; d[1] = h; } BlitDraw(b->texture, x, y, x + d[0], y + d[1], b->left, tex->height - b->bot - 1);
+        }
         else
-            BlitDraw(b->texture, x, y, x + w, y + h, b->left, b->top);
+        {
+            d[1] = hh; d[0] = ww; if (!vflip) { d[0] = w; d[1] = h; } BlitDraw(b->texture, x, y, x + d[0], y + d[1], b->left, b->top);
+        }
     }
 }
 }
