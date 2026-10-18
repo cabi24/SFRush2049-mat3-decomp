@@ -1,4 +1,4 @@
-/* startscr.c - TODO: describe. Status: in progress.
+/* startscr.c - start screen menu buttons. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\startscr.c; assembly: build/2049LE/asm/GameSource/src/startscr.s */
 #include "rush/rush_protos.h"
 #include "rush/libc.h"

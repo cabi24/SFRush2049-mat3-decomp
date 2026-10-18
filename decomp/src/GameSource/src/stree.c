@@ -1,4 +1,4 @@
-/* stree.c - spatial tree. Partial: functions not listed here are still unmatched. */
+/* stree.c - spatial tree. Status: Matching (ShotToWorldCollision matched last). */
 /* Local ABI correction: original call sites pass an unused surface in r3.
  * Keep the recovered shared header immutable. */
 #define fPathInterp fPathInterp_dwarf_declaration
@@ -532,6 +532,7 @@ void fHalfPipeInterp(surftyp *sp, unsigned short pathIndex, float *ipos, float *
     }
 }
 
+/* floor helper written as an inline function (no DWARF entry): it reproduces the original truncate-and-adjust code at each call */
 static inline float floorpos(float f)
 {
     if ((f < 0.0f && (int)f != f) != 0) f -= 1.0f;
@@ -703,6 +704,7 @@ surftyp *CameraCollision(float *ipos, float *lookat)
 }
 
 
+/* inline helper: routing this one shift through an inlined return value moves the block's volatile registers onto the target's */
 static inline signed short shalf(signed short v) { return v >> 1; }
 surftyp *ShotToWorldCollision(float *old, float *new, float (*uvs)[3], float radius, int interp, int ignore)
 {
@@ -730,17 +732,19 @@ surftyp *ShotToWorldCollision(float *old, float *new, float (*uvs)[3], float rad
     ltp1 = updownleaf(stree, x, z, &quad1);
     radiussq = radius * radius;
     do {
+        /* small arrays the compiler scalarises into registers; like propagated scalars they are left out of the DWARF, which is why the original lists no locals for them */
         signed short b[4];
         float d[3];
         midh = ltp0->minh + ltp0->maxh;
         if (midh < 0) midh++;
         midv = ltp0->minv + ltp0->maxv;
         if (midv < 0) midv++;
-        midh = midh >> 1;
+        midh = midh >> 1; /* `x = x >> 1`, not `x >>= 1`: for a short the compound form is pushed down into each use */
         b[1] = midh;
         midv = shalf(midv);
         if (quad0 & 1) b[0] = midh; else b[0] = ltp0->minh;
         if (quad0 & 1) b[1] = ltp0->maxh;
+        /* dead narrowing store (state is reassigned in the loop): the cast folds into the existing rlwinm., and an assigned temporary is coloured before shalf's return value, giving r3 to the test and r4 to midv */
         state = (unsigned char)(quad0 & 2);
         if (state) b[2] = ltp0->minv; else b[2] = midv;
         if (state) b[3] = midv; else b[3] = ltp0->maxv;

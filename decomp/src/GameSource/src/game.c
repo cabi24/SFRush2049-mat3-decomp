@@ -1,4 +1,4 @@
-/* game.c - Main game flow and controller warnings. Status: NonMatching.
+/* game.c - Main game flow and controller warnings. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\game.c; assembly: build/2049LE/asm/GameSource/src/game.s */
 #define gravityArray game_header_gravityArray
 #include "rush/rush_protos.h"
@@ -57,8 +57,8 @@ anon_track_car_a gLink[13];
 int GameLoop(void)
 {
     int renderFlag;
-    static signed char sInited = 0;
-    static signed char gPauseAllowed = 0;
+    static signed char sInited = 0; /* explicit `= 0`: emitted at this point, in the target .sbss order */
+    static signed char gPauseAllowed = 0; /* explicit `= 0`: emitted at this point, in the target .sbss order */
     renderFlag = 0;
     statsClock(6);
     if (!sInited) {
@@ -124,11 +124,13 @@ void OncePerFrame(void)
  * CodeWarrior parses them (numbering their float literals) but emits no code, data or strings
  * for them, so the .sdata2 pool starts with the literals they mention: 0.0f, -1.0f, the
  * int->float constant, 3.0f, 4.0f. These placeholders reproduce only that. */
+/* placeholder for a linker-stripped function (no literals); kept only in its original position */
 static int _animControllerDim(_tBlit *blt)
 {
     return 1;
 }
 
+/* placeholder for a linker-stripped function: exists only so its literals (0.0f, -1.0f and the int->float constant) get the first .sdata2 counters */
 static int _animControllerText(void)
 {
     unsigned char str[40];
@@ -138,6 +140,7 @@ static int _animControllerText(void)
     return 1;
 }
 
+/* placeholder for a linker-stripped function: exists only to number 3.0f and 4.0f before the live code */
 static void _ShowControllerWarning(void)
 {
     float time;
@@ -148,10 +151,12 @@ static void _ShowControllerWarning(void)
     HAL_SetTextTranslucency(time);
 }
 
+/* placeholder for a linker-stripped function (no literals); kept only in its original position */
 static void ResumeControllerWarning(void)
 {
 }
 
+/* placeholder for a linker-stripped function (no literals); kept only in its original position */
 static void ShowControllerWarning(void)
 {
 }
@@ -177,6 +182,7 @@ void HideControllerWarning(void)
     }
 }
 
+/* placeholder for a linker-stripped function (no literals); kept only in its original position */
 static void UpdateFrameForPad(void)
 {
 }
@@ -194,6 +200,7 @@ void UpdateFrame(void)
     OncePerFrame();
 }
 
+/* placeholder for a linker-stripped function (no literals); kept only in its original position */
 static void UpdateFrameForMC(void)
 {
 }
@@ -201,7 +208,7 @@ static void UpdateFrameForMC(void)
 /* 0x80014340, size 0x9e0 */
 static void _UpdateGame(void)
 {
-    static signed char startCountdown = 0;
+    static signed char startCountdown = 0; /* explicit `= 0`: emitted at this point, in the target .sbss order */
     int i;
     signed char allSolid;
     int p;
@@ -360,7 +367,7 @@ static void _UpdateGame(void)
 /* 0x80014d20, size 0x624 */
 int PrePlay(int useHud, int cancel)
 {
-    static signed char inited = 0;
+    static signed char inited = 0; /* explicit `= 0`: emitted at this point, in the target .sbss order */
     int i, slot, rrr;
     if (cancel) { inited = 0; return 0; }
     if (!inited) {
@@ -368,6 +375,7 @@ int PrePlay(int useHud, int cancel)
         SetOptions();
         EnableGameSounds(!(gGameState & 8) && !(gGameState & 0x2000000));
         if (gGameState & 0x2000000) {
+            /* volatile stores keep the three clears in the original order (header keeps the counts plain) */
             *(volatile short *)&num_our_drones = 0;
             *(volatile short *)&num_drones = 0;
             *(volatile short *)&num_humans = 0;
@@ -427,7 +435,7 @@ int PrePlay(int useHud, int cancel)
     g_bIfReload = 0;
     if (gRestartGame) { g_bIfReload = 1; ReloadTrack(); }
     else {
-        static int bPadInited = 0;
+        static int bPadInited = 0; /* explicit `= 0`: emitted at this point, in the target .sbss order */
         if (!bPadInited) { ChooseNewControl(0); bPadInited = 1; }
         leStartLoadingEffect();
         lePrepareLoading();
@@ -494,6 +502,7 @@ void PlayGame(void)
     UpdateSmoke();
     UpdateArrowVis();
     for (i = 0; i < gNumActiveCars; i++) {
+        /* volatile reads: the target loads restart here and again in the else-if below instead of reusing the first load */
         signed char restart = *(volatile signed char *)&gGameCar[i].restart;
         slot = model[i].slot;
         if (restart < 0) {
@@ -650,8 +659,8 @@ static int _animScrollText(void)
     static char *sContName1[4] = { "1", "2", "3", "4" };
     static char *sContName2[4] = { "1-A", "1-B", "1-C", "1-D" };
     static int x = 320;
-    static int i;
-    static unsigned long vsync = 0;
+    static int i; /* left uninitialised on purpose: deferred to the end of .sbss in reverse declaration order, after the explicitly zeroed vsync */
+    static unsigned long vsync = 0; /* explicit `= 0`: emitted at this point, before both deferred i statics */
     int numPlayers;
     numPlayers = gRace == kGhost ? 1 : gNumPlayers;
     for (i = 0; i < numPlayers; i++) if (!gControllerData[i].attached) break;
@@ -679,7 +688,7 @@ static void _DrawNoControllers(void)
         (const char *)-1, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0,
         (int (*)(_tBlit *))_animScrollText, 0
     };
-    static int i;
+    static int i; /* left uninitialised on purpose: as the later declaration it is emitted before _animScrollText's i */
     int numPlayers;
     numPlayers = gRace == kGhost ? 1 : gNumPlayers;
     for (i = 0; i < numPlayers; i++) if (!gControllerData[i].attached) break;

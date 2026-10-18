@@ -1,4 +1,4 @@
-/* recordscr.c - Record screen; partial reconstruction, 19 target-placed exact bodies.
+/* recordscr.c - Record screen. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\recordscr.c; assembly: build/2049LE/asm/GameSource/src/recordscr.s */
 #include "rush/rush_protos.h"
 inline double fabs(double x) { return __fabs(x); }
@@ -37,6 +37,7 @@ static char *buttonNames[14] = {
     "ARROW_FGG1", "BUTTON_S1G1", "BUTTON_S3G1", "BUTTON_S4G1", "BUTTON_S0G1", "BUTTON_S8G1",
     "BAR_BGG1", "BAR_FGG1"
 };
+/* declared after buttonNames on purpose: its 14 string literals occupy the first 144 .rodata bytes, before mblit */
 static const anon_texname_dulx_24 mblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
 static anon_buttonType_objIdx_40 buttonInfo[23] = {
     { 0, -1, 0.0f, { 0 }, 0 },

@@ -104,7 +104,7 @@ static const anon_texname_dulx_24 SelSureMultiBlit[1] = {
     (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animSelSureText, 0
 };
 static const anon_texname_dulx_24 RumbleMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animRumbleText, 0 };
-int g_CurrentControl_t[4] = { 0 };
+int g_CurrentControl_t[4] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 static anon_x_y_18 gPlayerRects[4][4] = {
     0, 0, 320, 110, 160, 55, 0, 0, 320, 220, 160, 110, 0, 0, 320, 220, 160, 110, 0, 0, 320, 220,
     160, 110, 0, 0, 320, 110, 160, 55, 0, 110, 320, 110, 160, 165, 0, 0, 320, 220, 160, 110, 0, 0,
@@ -113,7 +113,7 @@ static anon_x_y_18 gPlayerRects[4][4] = {
     110, 80, 165, 160, 110, 160, 110, 240, 165
 };
 static anon_x_y_4 titlePos = { 160, 10 };
-signed char ChooseYes[4] = { 0 };
+signed char ChooseYes[4] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 static int _mcAlpha = 255;
 int playerInPause;
 static enum_kPauseMenuSize pauseMenuSelect;

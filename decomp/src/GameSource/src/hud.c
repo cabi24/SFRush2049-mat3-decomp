@@ -1,5 +1,5 @@
-/* hud.c - partial HUD lifecycle, updates and time formatting.
- * Functions omitted from this source remain unmatched. Keep NonMatching.
+/* hud.c - HUD lifecycle, updates and time formatting.
+ * Status: Matching.
  */
 
 #include "rush/rush_protos.h"
@@ -299,6 +299,7 @@ static void CheckResults(void);
 
 
 
+/* inline returning the car address (no DWARF entry): reading through it gives the original base/index register order for the gGameCar access */
 static inline tCarData *hudCar(int slot) { return &gGameCar[slot]; }
 
 
@@ -339,6 +340,7 @@ unsigned char cvt_time(float t, unsigned char *dest, char format);
 static void CleanupOverlay();
 static int animCreditText(_tBlit *blt);
 
+/* uninitialised (deferred) objects are emitted in reverse declaration order, so this block is written in the reverse of the target .sbss/.bss order; the multi-declarator line emits gNumCreditNames first */
 signed char gShowTrackMap;
 signed char gShowRadar;
 signed char gShowElapsed;
@@ -598,6 +600,7 @@ static int updateFrame(void)
         }
         cars_in_order[i] = index;
     }
+    /* volatile read: the target reloads num_humans on every loop test (header keeps it plain) */
     for (j = 0; j < *(volatile signed short *)&num_humans; j++)
         dot_order_list[gNumActiveCars - j - 1] = gPlayers[j].slot;
     for (i = 0; i < gNumActiveCars; i++) {
@@ -681,7 +684,7 @@ static void CheckResults(void)
                 int place = gGameCar[gPlayers[playerIdx].slot].place;
                 TB_Sprintf(str1, gText.single[209], place + 1, gText.taba[gText.tab[57] + place]);
                 if (gNumLaps != model[gPlayers[playerIdx].slot].laps)
-                    TB_Sprintf(str2, gText.single[218], model[gPlayers[playerIdx].slot].laps, gNumLaps);
+                    TB_Sprintf(str2, gText.single[218], model[gPlayers[playerIdx].slot].laps, gNumLaps); /* the two extra varargs are the values the compare above already loaded: passing them pins them to r5/r6 at no instruction cost */
                 else {
                     unsigned int min;
                     unsigned int sec = (unsigned int)gGameCar[gPlayers[playerIdx].slot].score;
@@ -952,7 +955,7 @@ static int animResults(_tBlit *blt)
                 int place = gGameCar[gPlayers[playerIdx].slot].place;
                 TB_Sprintf(str1, gText.single[209], place + 1, gText.taba[gText.tab[57] + place]);
                 if (gNumLaps != model[gPlayers[playerIdx].slot].laps)
-                    TB_Sprintf(str2, gText.single[218], model[gPlayers[playerIdx].slot].laps, gNumLaps);
+                    TB_Sprintf(str2, gText.single[218], model[gPlayers[playerIdx].slot].laps, gNumLaps); /* extra varargs pin the compare operands to r5/r6, which fixes CheckResults' whole callee-saved permutation */
                 else {
                     unsigned int min;
 
@@ -1964,6 +1967,7 @@ static void CleanupOverlay(void)
 {
 }
 
+/* defined late in the file on purpose: deferred objects are emitted in reverse declaration order, so this position gives the target .bss order */
 static float gCameraMatrix[4][4];
 static float marker_pos[6][3];
 

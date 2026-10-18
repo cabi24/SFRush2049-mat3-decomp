@@ -1,5 +1,5 @@
-/* maxpath.c - partial reconstruction of maximum-path control and path lookup.
-   Unlisted functions remain unmatched; this translation unit is NonMatching. */
+/* maxpath.c - maximum-path control and path lookup.
+   Status: Matching. */
 #include "rush/rush_protos.h"
 #include "msl_math_inline.h"
 

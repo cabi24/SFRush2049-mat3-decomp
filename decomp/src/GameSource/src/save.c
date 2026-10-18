@@ -1,4 +1,4 @@
-/* save.c - player and ghost persistence. Status: complete private candidate; keep NonMatching pending review.
+/* save.c - player and ghost persistence. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\save.c; assembly: build/2049LE/asm/GameSource/src/save.s */
 #define SaveGhost SaveGhost_DWARF_decl
 #define PS_CreateFile PS_CreateFile_DWARF_decl
@@ -56,6 +56,7 @@ static anon_nameChecksum_id_814 *gJustPlayerData[4];
 anon_ll_fileh_4c *gJustPlayers[4];
 static anon_ll_fileh_4c gRealJustPlayers[4];
 
+/* inline narrowing to unsigned char (no DWARF entry): its return temporary reproduces the original code for the track argument of the race-setting calls */
 static inline unsigned char track_arg(int t) { return t; }
 
 /* 0x80037a18, size 0x1c0 */

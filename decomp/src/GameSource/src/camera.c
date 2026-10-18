@@ -1,10 +1,11 @@
 /* camera.c - complete camera reset, tracking and object-update recovery.
-   Twenty-four complete target-placed bodies verified; final link proof is separate.
+   Status: Matching (all twenty-four functions).
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\camera.c; assembly: build/2049LE/asm/GameSource/src/camera.s */
 #include "rush/rush_protos.h"
 #define MSL_NO_SQRTF
 #include "msl_math_inline.h"
 
+/* camera.c/tires.c sqrtf variant: automatic 0.5/3.0 constants, so the unit gets anonymous .sdata2 doubles instead of the header's _half/_three statics */
 inline float sqrtf(float x)
 {
     const double _half = .5;
@@ -30,6 +31,7 @@ extern double sin(double);
 static void _UpdateDroneObjects(void);
 static void _UpdateRearCamera(tCarData *car, float behind, float side, float *camoff);
 
+/* explicit `= { 0 }`: the target keeps these objects in initialised data (.data/.sdata), not .bss */
 float finish_cam_stime[6] = { 0 };
 static float lastSwitch[4] = { 0 };
 static float nextSwitch[4] = { 0 };
@@ -159,7 +161,7 @@ void CheckCameraView(void)
         slot = gCamera[0].slot;
         gGameCar[slot].camera = -1;
         do {
-            if (++slot >= (*(volatile signed short *)&gNumCars)) slot = 0;
+            if (++slot >= (*(volatile signed short *)&gNumCars)) slot = 0; /* volatile read: the target reloads gNumCars on every pass (header keeps it plain) */
         } while (!model[slot].in_game && gGameCar[slot].camera < 0);
         gGameCar[slot].camera = 0;
         gCamera[0].slot = slot;
@@ -235,6 +237,7 @@ float view1_suscomp_offset(tModelData *m)
 }
 
 
+/* vector helpers written as inline functions (no DWARF entries): like game_reckon_all's VecScale/VecAdd, their parameter temporaries give the original operand order and registers */
 static inline void camera_copy(float *src, float *dst)
 {
     dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -259,6 +262,7 @@ static inline void camera_cross(float *a, float *b, float *dst)
 }
 
 
+/* scale-first variants of the helpers above: the operand order of each multiply follows the parameter order */
 static inline void camera_lscale(float scale, float *src, float *dst)
 {
     dst[0] = scale * src[0]; dst[1] = scale * src[1]; dst[2] = scale * src[2];
@@ -754,6 +758,7 @@ void init_steady_move_cam(tCarData *car)
     steady_move_cam(0, car, pos, uvs);
 }
 
+/* steady_move_cam helpers (no DWARF entries): the parameter temporaries keep the original operand order of the sum and quotient and the register use of the delta */
 static inline float camera_steady_sum(float delta, float start)
 {
     return start + delta;

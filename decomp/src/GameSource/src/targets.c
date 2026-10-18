@@ -1,5 +1,5 @@
 /* targets.c - track target (interactive object) manager: targetInfo table, SetupTarget, per-type
-   start/animate callbacks, collision dispatch. Status: 33/33 matched (SetTargetDefs via the _NB inline
+   start/animate callbacks, collision dispatch. Status: Matching, 33/33 (SetTargetDefs via the _NB inline
    helper below TInfo), see HANDOFF.md.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\targets.c; assembly: build/2049LE/asm/GameSource/src/targets.s */
 #include "rush/rush_protos.h"
@@ -271,6 +271,7 @@ tTargetStructRot targetRotInfo[6] = {
     0.0f, 3.0f, 0.0f, -0.19198623f, 0.0f, 0.0f, -0.18762289f, 0.0f, 0.0f, 0.0f, 1.5f, 0.0f, 1.5f,
     0.0f, 0.0f, -1.5f, 0.0f, 0.0f
 };
+/* explicit `= { 0 }`: the target keeps these objects in initialised data (.data/.sdata), not .bss */
 tTargetStructVel targetVelInfo[1] = { 0 };
 tTargetStructVelRot targetVelRotInfo[1] = { 0 };
 static void * gTargetStructInfoPtrs[8] = {
@@ -337,7 +338,7 @@ void initTargetStructs(void)
     { signed char *p = gTargetStructCount; int i; for (i = 0; i < 8; i++) *p++ = 0; }
     if (!s_init) {
         int i = 0;
-        while (i < 8) gTargetStructPtrs[i++] = 0;
+        while (i < 8) gTargetStructPtrs[i++] = 0; /* a while with the increment in the store, not a for: all eight stores then go through the addi copy of the base, as in the target */
     }
     gBattleMineCnt = 0;
     {
@@ -383,7 +384,7 @@ int SetupTarget(void * obj, signed short Parent, float *pos, int fromWorld, sign
     float tmpf2; /* f31 */
     anon_mat3_mat4_30 *mat; /* r3 */
     tAlwaysCol *acol; /* r0 */
-    unsigned short flags;
+    unsigned short flags; /* not in the DWARF: a 16-bit copy of the type flags that the original code needs */
     name = obj;
     if (fromWorld) dlflags = ((anon_name_mat_68 *)obj)->dlflags;
     else dlflags = 0;
@@ -499,7 +500,7 @@ int SetupTarget(void * obj, signed short Parent, float *pos, int fromWorld, sign
                     t->mat.mat3.pos[2] -= mat->mat3.pos[2];
                 }
                 if (tInfo->structureID == 4 && MBOX_GetObjectRadius(t->mbIdx) < 50.0f) {
-                    i = ZOID_ObjectFlags(t->dlIdx);
+                    i = ZOID_ObjectFlags(t->dlIdx); /* i reused for the flags: gives mr r0,r3; ori r4,r0,K like the target, where a nested call gives ori r4,r3,K */
                     ZOID_SetObjectFlags(t->dlIdx, i | 0x20);
                 }
                 MBOX_GetPosition(t->pos, t->dlIdx);
@@ -885,12 +886,12 @@ static int _TargetCollTrigger(void * data1, void * data2)
 /* 0x8004d0a4, size 0xbc */
 static int _TargetCollCylinder(void * data1, void * data2, void * data3, void * data4)
 {
-    float dx, dy, dz;
+    float dx, dy, dz; /* not in the DWARF: function-scope deltas declared before the DWARF locals give radius its original FP registers */
     float gap; /* f2 */
     float radius; /* f5 */
     float *dist; /* r0 */
     tCarData *gc; /* r3 */
-    tModelData *m;
+    tModelData *m; /* not in the DWARF: fixes the integer colouring of the collidable test */
     m = &model[*(signed short *)data1];
     radius = *(float *)data3;
     dist = data4;
@@ -899,7 +900,7 @@ static int _TargetCollCylinder(void * data1, void * data2, void * data3, void * 
     dx = gc->dr_pos[0] - ((float *)data2)[0];
     dy = gc->dr_pos[1] - ((float *)data2)[1];
     dz = gc->dr_pos[2] - ((float *)data2)[2];
-    radius += 3.5f;
+    radius += 3.5f; /* after the deltas on purpose: this source position decides radius's FP colouring even though the add is scheduled in the same slot */
     gap = dx * dx + dz * dz - radius * radius;
     if (dist) *dist = gap;
     if (gap > 0.0f) return 0;
@@ -910,12 +911,12 @@ static int _TargetCollCylinder(void * data1, void * data2, void * data3, void * 
 /* 0x8004d160, size 0xbc */
 static int _TargetCollMineCylinder(void * data1, void * data2, void * data3, void * data4)
 {
-    float dx, dy, dz;
+    float dx, dy, dz; /* not in the DWARF: function-scope deltas declared before the DWARF locals give radius its original FP registers */
     float gap; /* f2 */
     float radius; /* f5 */
     float *dist; /* r0 */
     tCarData *gc; /* r3 */
-    tModelData *m;
+    tModelData *m; /* not in the DWARF: fixes the integer colouring of the collidable test */
     m = &model[*(signed short *)data1];
     radius = *(float *)data3;
     dist = data4;
@@ -924,7 +925,7 @@ static int _TargetCollMineCylinder(void * data1, void * data2, void * data3, voi
     dx = gc->dr_pos[0] - ((float *)data2)[0];
     dy = gc->dr_pos[1] - ((float *)data2)[1];
     dz = gc->dr_pos[2] - ((float *)data2)[2];
-    radius += 3.5f;
+    radius += 3.5f; /* after the deltas on purpose: this source position decides radius's FP colouring */
     gap = dx * dx + dz * dz - radius * radius;
     if (dist) *dist = gap;
     if (gap > 0.0f) return 0;
@@ -935,12 +936,12 @@ static int _TargetCollMineCylinder(void * data1, void * data2, void * data3, voi
 /* 0x8004d21c, size 0x9c */
 static int _TargetCollRadius(void * data1, void * data2, void * data3, void * data4)
 {
-    float dx, dy, dz;
+    float dx, dy, dz; /* not in the DWARF: function-scope deltas declared before the DWARF locals give radius its original FP registers */
     float gap; /* f1 */
     float radius; /* f6 */
     float *dist; /* r0 */
     tCarData *gc; /* r3 */
-    tModelData *m;
+    tModelData *m; /* not in the DWARF: fixes the integer colouring of the collidable test */
     m = &model[*(signed short *)data1];
     radius = *(float *)data3;
     dist = data4;
@@ -949,7 +950,7 @@ static int _TargetCollRadius(void * data1, void * data2, void * data3, void * da
     dx = gc->dr_pos[0] - ((float *)data2)[0];
     dy = gc->dr_pos[1] - ((float *)data2)[1];
     dz = gc->dr_pos[2] - ((float *)data2)[2];
-    radius += 3.5f;
+    radius += 3.5f; /* after the deltas on purpose: this source position decides radius's FP colouring */
     gap = dx * dx + dy * dy + dz * dz - radius * radius;
     if (dist) *dist = gap;
     return gap <= 0.0f;
@@ -961,7 +962,7 @@ static int _TargetColl3Piece(void)
     return 0;
 }
 
-/* stripped by the linker (no data) */
+/* stripped by the linker and leaves no data; an empty placeholder kept only at its DWARF position */
 static void _StartGuardrail(tTarget *t)
 {
     signed short parent; /* r0 */
@@ -972,7 +973,7 @@ static void _StartGuardrail(tTarget *t)
     /* stripped */
 }
 
-/* stripped by the linker (no data) */
+/* stripped by the linker and leaves no data; an empty placeholder kept only at its DWARF position */
 static void _AnimateGuardrail(tVisual *v, signed short op)
 {
     tTarget *t; /* r31 */
@@ -999,6 +1000,7 @@ static void _StartMine(tTarget *t)
     PlayTargetSound(targetInfo[t->infoIdx].startSnd, t->slot, t->mat.mat3.pos, 2);
 }
 
+/* mid-file definition at its DWARF position: the .rodata order (targetInfo strings, @688, gMineRingColors, ammoCnts) needs it here */
 const unsigned char gMineRingColors[4][3] = { 0, 132, 255, 255, 0, 0, 255, 255, 0, 0, 255, 0 };
 
 /* 0x8004d428, size 0x86c */
@@ -1107,7 +1109,7 @@ static void _AnimateMine(tVisual *v, signed short op)
         }
         if (m->glowTimes[i] >= 0.0333333f) {
             CopyUV(t->mat.mat3.uvs, m->mats[i].mat.mat3.uvs);
-            for (j = 0; j < 9; j++) (&m->mats[i].mat.mat3.uvs[0][0])[j] *= m->sc[i];
+            for (j = 0; j < 9; j++) (&m->mats[i].mat.mat3.uvs[0][0])[j] *= m->sc[i]; /* a loop over the matrix as a flat array: nine explicit statements allocate the first multiply differently */
             m->sc[i] += 0.25f;
             m->glowTimes[i] = 0.0f;
             m->glowCnts[i]++;
@@ -1163,6 +1165,7 @@ static void _AnimateMine(tVisual *v, signed short op)
     }
 }
 
+/* mid-file definition at its DWARF position, after gMineRingColors in .rodata */
 static const int ammoCnts[10] = { 20, 100, 20, 3, 3, 5, 20, 5, -1, 0 };
 
 /* 0x8004dc94, size 0x428 */
@@ -1264,7 +1267,7 @@ static void _StartWeaponIcon(tTarget *t)
             car->battle.weapon.type = type;
             car->battle.weapon.ammoCnt = ammo;
             if (type == 5) {
-                float z = 3.0f;
+                float z = 3.0f; /* a block local, not the literal: with a literal CodeWarrior always makes the constant operand A of the fadds */
                 sizep = &collsize[m->body_type];
                 m->bodyR[0][2] = m->bodyR[1][2] = sizep->colfront + z;
                 z = m->bodyR[0][2] > sizep->colrear ? m->bodyR[0][2] : sizep->colrear;
@@ -1340,6 +1343,7 @@ static void _AnimateWeaponIcon(tVisual *v, signed short op)
     }
 }
 
+/* mid-file definition at its DWARF position: in .data it follows the two switch jump tables of the functions above */
 static char *flag_pals[3] = { "REDFLAG", "GRNFLAG", "BLUFLAG" };
 
 /* 0x8004e2b0, size 0x144 */

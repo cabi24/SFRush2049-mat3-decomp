@@ -1,4 +1,4 @@
-/* paksysdc.c - memory-card file management. Status: NonMatching.
+/* paksysdc.c - memory-card file management. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\paksysdc.c; assembly: build/2049LE/asm/GameSource/src/paksysdc.s */
 #define PS_ReadPartialFile PS_ReadPartialFile_dwarf_decl
 #define PS2McCreateFileReader PS2McCreateFileReader_dwarf_decl

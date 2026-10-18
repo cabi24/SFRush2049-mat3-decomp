@@ -157,6 +157,7 @@ int appFileRead(int fd, void * buf, int size)
             sResult = DVDReadPrio((DVDFileInfo *)fd, temp_buf, READ_CHUNK, USERDATA(fd)->iOffset, 2);
             g_bLoadingNow = 0;
             if (sResult == -1) {
+/* #line reproduces the original's bare file name and line number, which are baked into the SetFatalData call */
 #line 267 "ngcFile.c"
                 SetFatalData(__FILE__, __LINE__, __FUNCTION__);
             }

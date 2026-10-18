@@ -1,4 +1,4 @@
-/* ngcZoid.c - GameCube ZOID renderer back end: scene-graph traversal, face/blit submission, frame end. Status: in progress.
+/* ngcZoid.c - GameCube ZOID renderer back end: scene-graph traversal, face/blit submission, frame end. Status: NonMatching, 17/19 (Blits and Blits_First are register-allocation near misses).
    Original: D:\rush_ngc\Rush_NGC\NGC\ngcZoid.c; assembly: build/2049LE/asm/NGC/ngcZoid.s */
 /* The shared header declares blit.c's array `Blits[200]`; this unit has a static function of that
  * name and never uses the array. BlitColors is defined with one parameter in blit_pc.c but called
@@ -46,6 +46,7 @@ static int *pdwCurrentPtr;
 static int ListType;
 int numLights;
 static signed char gLastMirrorWaves;
+/* explicit `= 0`, in this order: emitted at the declaration point, as the target .sbss needs */
 static int use_z_value = 0;
 int ms_idx = 0;
 float gCameraFacing[4][3];
@@ -555,7 +556,7 @@ void PS2DrawObjectWithEnvMap(unsigned int *dlist, int normals, int texgen, float
         NormalVector(vec);
         LookInDir(new, (anon_mat3_mat4_30 *)texgenuvs);
         {
-            float zero = 0.0f;
+            float zero = 0.0f; /* a local zero: `0.0f - x*k` folds to a negate, the target's fnmsub needs a freshly loaded 0.0f */
             texs = zero - fatan2(vec[0], vec[2]) * 0.15915493866300567;
             text = zero - fasin(vec[1]) * 0.31830987732601135;
         }
@@ -663,7 +664,7 @@ void Polys(int winidx, int delay)
         stripsDrawn++;
         trisDrawn += poly->nverts - 2;
         vertsDrawn += poly->nverts;
-        use_z_value = 0;
+        use_z_value = 0; /* written here, after the counters, though stored first: Polys only matches with this placement */
         needclip = 0;
         for (j = 0; j < poly->nverts; j++) {
             if (!(poly->flags & 0x10)) {
@@ -979,7 +980,7 @@ void Traverse(anon_flags_culling_60 *parent, anon_flags_culling_60 *hier, int wi
             }
             if (ptr->lod[lod].flags & 0x10) {
                 PS2DrawObjectWithEnvMap(ptr->lod[lod].displayList, ptr->lod[lod].flags & 0x10, hier->flags & 0x80000,
-                                        parent->mat->uvs, gCamera[winidx].mat.uvs[3], hier->look, uls, ult);
+                                        parent->mat->uvs, gCamera[winidx].mat.uvs[3], hier->look, uls, ult); /* spelled .mat.uvs[3], not .mat3.pos: only this spelling stops the three hoisted camera registers rotating */
                 MyDrawObjectWithEnvmap(ptr->lod[lod].displayList, texid, -1);
             } else if (cull < 0) {
                 MyDrawObject(ptr->lod[lod].displayList, texid, cull, hier->color.rgba);

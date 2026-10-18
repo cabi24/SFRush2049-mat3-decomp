@@ -1,5 +1,5 @@
 /* smoke.c - car smoke and water spray.
-   Partial reconstruction from GC ELF/DWARF. Keep NonMatching. */
+   Status: Matching. */
 #include "rush/rush_protos.h"
 #define MSL_NO_SQRTF
 #include "msl_math_inline.h"
@@ -93,6 +93,7 @@ void StartWater(signed short slot, unsigned int tire)
             offset2 = 0.25f + 0.75f * (fmph / 70.0f);
         else
             offset2 = 0.15f + 0.85f * (fmph / 90.0f);
+        /* `(&...uvs[0][0])[j]`, not a `(float *)` cast: the cast leaves an extra address temporary that raises smk's interference and rotates every callee-saved register */
         for (j = 0; j < 9; j++)
             (&smk->mat.uvs[0][0])[j] *= offset2;
     }

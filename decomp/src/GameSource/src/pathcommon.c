@@ -1,8 +1,5 @@
 /* pathcommon.c - checkpoint and path loading, traversal, and distance queries.
-   Status: NonMatching. All eighteen complete function bodies reproduce the GC ELF.
-   Original-placement instruction, relocation and literal validation is recorded separately.
-   A fresh private GC/2.7 link matches all unit ranges and the trusted DOL exception.
-   Matching promotion is proposed separately; canonical files are unchanged.
+   Status: Matching (all eighteen functions).
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\pathcommon.c; assembly: build/2049LE/asm/GameSource/src/pathcommon.s */
 #include "rush/rush_protos.h"
 #include "msl_math_inline.h"
@@ -18,6 +15,7 @@ static void FindClosestPt(int alt, int first, signed short *pos, int *path, int 
 
 static int gPathTrace[15];
 
+/* distance helper written as an inline function (no DWARF entry): its parameter temporaries reproduce the original FP registers of the path-time sums */
 static inline float PathDistance(float x, float y, float z)
 {
     return sqrtf(x*x + y*y + z*z);

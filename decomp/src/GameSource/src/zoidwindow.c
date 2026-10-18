@@ -1,6 +1,7 @@
 /* zoidwindow.c - viewport setup, fog, and screen projection. Status: matched.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\zoidwindow.c; assembly: build/2049LE/asm/GameSource/src/zoidwindow.s */
 #include "rush/rush_protos.h"
+/* inline angle-field initialiser (no DWARF entry): its argument temporaries preserve the original float registers in ZOID_SetWindow */
 static inline void _WindowSetAngles(anon_vp_s_48 *winfo, float hang, float vang) {
     winfo->whviewang = hang;
     winfo->wvviewang = vang;

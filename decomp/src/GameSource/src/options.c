@@ -4,6 +4,7 @@
 
 static void _SetDefaultOptions(void);
 
+/* explicit `= { 0 }`: the target keeps these objects in initialised data (.data/.sdata), not .bss */
 signed char gCheatActive[24] = { 0 };
 signed short gCheatState[23] = { 0 };
 signed char gOptions[41];

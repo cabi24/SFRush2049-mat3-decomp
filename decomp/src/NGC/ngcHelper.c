@@ -68,7 +68,7 @@ float appCycleToSeconds(void)
     return 0.0f;
 }
 
-/* stripped; kept for the int-to-float constant it creates before appParseInt's literals */
+/* stripped by the linker; kept only for the int-to-float constant it creates in .sdata2 before appParseInt's literals */
 static float appGetFps(void)
 {
     return (int)GVSyncCount;
@@ -154,7 +154,7 @@ void appCheatCodeBind(void)
 
 }
 
-/* stripped; kept for its message literal */
+/* stripped by the linker; kept only for its message literal in .rodata */
 static unsigned short appAsciiFix(unsigned char ascii_code)
 {
     OSReport("bad ASCII code 0x%x\n", ascii_code);

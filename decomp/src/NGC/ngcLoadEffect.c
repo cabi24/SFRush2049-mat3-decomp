@@ -42,7 +42,7 @@ void leIniFrameCopy(void)
     leCreateSprBuf();
 }
 
-/* This unused loading-texture initializer preserves the original data emission order. */
+/* Stripped by the linker: this unused loading-texture initializer is kept only to preserve the original data emission order. */
 static void leIniFrameCopy_Loading(void)
 {
     GXInitTexObj(&g_BGTexObj_Loading,0,0,0,6,0,0,0);

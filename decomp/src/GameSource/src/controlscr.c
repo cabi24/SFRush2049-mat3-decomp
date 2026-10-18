@@ -1,5 +1,5 @@
-/* controlscr.c - live function bodies recovered privately.
- * NonMatching: no canonical integration, unit layout promotion, or link performed.
+/* controlscr.c - controller configuration screen.
+ * Status: Matching.
  */
 #include "rush/rush_protos.h"
 #include "msl_math_inline.h"

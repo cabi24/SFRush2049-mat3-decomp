@@ -1,4 +1,4 @@
-/* circuitscr.c - circuit menu helpers. Partial recovery; keep NonMatching.
+/* circuitscr.c - circuit menu helpers. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\circuitscr.c; assembly: build/2049LE/asm/GameSource/src/circuitscr.s */
 #include "rush/rush_protos.h"
 #define MSL_NO_SQRTF

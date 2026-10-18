@@ -6,6 +6,7 @@ static int animText(void);
 
 static const anon_texname_dulx_24 multiblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
 static signed short gCurrentDemoTrack = -1;
+/* explicit `= 0`: emitted at the declaration point, before the function-local statics (.sbss order) */
 static signed char inited = 0;
 static _tBlit *blit = 0;
 static signed char preplayDone = 0;

@@ -1,4 +1,4 @@
-/* ngcMemcard.c - TODO: describe. Status: in progress.
+/* ngcMemcard.c - GameCube memory-card I/O behind the PS2 memory-card API. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\NGC\ngcMemcard.c; assembly: build/2049LE/asm/NGC/ngcMemcard.s */
 #include "rush/rush_protos.h"
 #include "rush/libc.h"
@@ -336,7 +336,7 @@ void PS2MCInit(void)
     Checking = 0;
 }
 
-/* Erased card-status mount helper; retained to preserve work-area BSS placement. */
+/* Erased card-status mount helper, stripped by the linker; retained only to preserve work-area .bss placement. */
 static void PS2MCCheckStatus(void)
 {
     CARDMount(CurSlot, _CardWorkArea, 0);

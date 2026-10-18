@@ -376,7 +376,7 @@ void NGCDC_SendBlit_MENU_RGBA(void * tex, void * tex_a, int nNumVertex, void * V
     GXEnd();
 }
 
-/* stripped */
+/* stripped by the linker; kept only because its local-array initialisers still occupy .rodata between the live functions */
 static void BlitOneTpl(void)
 {
     int i; /* r0 */
@@ -634,7 +634,7 @@ void BlitOneTpl_LURDRGBA_4COLOR(float left, float up, float right, float down, u
 }
 }
 
-/* stripped */
+/* stripped by the linker; kept only because its local-array initialisers still occupy .rodata between the live functions */
 static void BlitOneTpl_Obj_A(void * obj, void * obj_a)
 {
     int i; /* r0 */
@@ -652,7 +652,7 @@ static void BlitOneTpl_Obj_A(void * obj, void * obj_a)
     GXEnd();
 }
 
-/* stripped */
+/* stripped by the linker; kept only because its local-array initialisers still occupy .rodata between the live functions */
 static void BlitOneTpl_Obj(void * obj)
 {
     int i; /* r0 */
@@ -670,7 +670,7 @@ static void BlitOneTpl_Obj(void * obj)
     GXEnd();
 }
 
-/* stripped */
+/* stripped by the linker; kept only because its local-array initialisers still occupy .rodata between the live functions */
 static void BlitOneTpl_PS(void)
 {
     int i; /* r0 */

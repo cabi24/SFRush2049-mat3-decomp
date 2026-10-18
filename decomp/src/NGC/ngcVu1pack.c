@@ -24,7 +24,7 @@ static int GetAnEmptyGeoGroup(void);
 static anon_dmatag_Local_world_90 *AddVu1ObjPacket_WithLight(unsigned int *obj, float (*rotMTX)[4], int unused, float scale);
 
 float obj_trans[4] = { 0.0f, 1.0f, 0.0f, 0.0f };
-float obj_rot[4] = { 0 };
+float obj_rot[4] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 float g_FogFarZ = 500.0f;
 static _GXColor gxambient_color;
 static anon_c_rgba_4 ambient_color;
@@ -662,7 +662,7 @@ float **SaveOBJMatrix(float (*mtx)[4], int cull)
     if (g_NumTexSortObj < 700) {
         memcpy(g_TexSortMatrix[g_NumTexSortObj], mtx, 0x40);
         g_NumTexSortObj++;
-        return (float **)(&g_TexSortMatrix[g_NumTexSortObj] - 1);
+        return (float **)(&g_TexSortMatrix[g_NumTexSortObj] - 1); /* `&arr[n] - 1` after the increment gives slwi; add; subi 0x40 as in the target (`arr[n - 1]` does not) */
     }
 }
 
@@ -674,7 +674,7 @@ void AddPackToTexSortList(float **mtx, anon_name_width_38 *tex, unsigned int *pa
     g_TexSort[s_NumTexSorted]._matrix = mtx;
     g_TexSort[s_NumTexSorted]._next = 0;
     g_TexSort[s_NumTexSorted]._color = AddColor;
-    g_NumTexSortPack++;
+    g_NumTexSortPack++; /* written before s_NumTexSorted++ although the target stores it second: only this source order matches */
     s_NumTexSorted++;
 }
 
@@ -986,7 +986,7 @@ void ReCalculateNormal(unsigned int *displaylist)
     obj = (anon_numPack_name_2c *)displaylist;
     for (i = 0; i < obj->nStrips; i++) {
         for (j = 0; j < obj->strips[i].nVertex; j++) {
-            float zero = 0.0f;
+            float zero = 0.0f; /* a local zero: `x - 0.0f` is folded away, the target keeps the fsubs with a hoisted 0.0f */
             nor[0] = obj->strips[i].vertexs[j].pos[0] - zero;
             nor[1] = obj->strips[i].vertexs[j].pos[1] - -1.0f;
             nor[2] = obj->strips[i].vertexs[j].pos[2] - zero;

@@ -1,4 +1,4 @@
-/* audioscr.c - Audio options screen. Status: verified matching in private snapshot.
+/* audioscr.c - Audio options screen. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\audioscr.c; assembly: build/2049LE/asm/GameSource/src/audioscr.s */
 #include "rush/rush_protos.h"
 #define MSL_NO_SQRTF
@@ -30,7 +30,7 @@ static anon_buttonType_objIdx_40 buttonInfo[12] = {
     {1, -1}, {1, -1}, {1, -1}, {1, -1},
     {3, -1}, {4, -1}, {6, -1}, {2, -1}
 };
-static anon_x_w_10 menuRect = { 0 };
+static anon_x_w_10 menuRect = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 static float gButtonScale = 1.0f;
 static int gSong = 18;
 static int gLastSong = -1;

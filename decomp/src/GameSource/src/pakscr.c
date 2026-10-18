@@ -1,4 +1,4 @@
-/* pakscr.c - Memory-pak selection, deletion and status screen. NonMatching.
+/* pakscr.c - Memory-pak selection, deletion and status screen. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\pakscr.c; assembly: build/2049LE/asm/GameSource/src/pakscr.s */
 #include "rush/rush_protos.h"
 

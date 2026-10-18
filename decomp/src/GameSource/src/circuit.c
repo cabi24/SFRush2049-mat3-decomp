@@ -1,5 +1,5 @@
 /* circuit.c - Circuit generation, race standings and password persistence.
-   Status: five functions exact; ContinueCircuit remains a near miss.
+   Status: Matching (all six functions; ContinueCircuit via the _orient helper below).
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\circuit.c; assembly: build/2049LE/asm/GameSource/src/circuit.s */
 #include "rush/rush_protos.h"
 
@@ -37,6 +37,7 @@ void NewCircuit(enum_kNumCircuitTypes circuitType)
     circuit->difficulty = gCircuitDiff[circuitType];
 }
 
+/* inline helper owning j, pM, pB, orient: the two pointer locals name the &gCircuitTracks[i].field addresses the compiler hoists anyway, which moves the data/bss bases and lifts &gCircuitCars to r30 as in ContinueCircuit's original allocation */
 static inline void _orient(int i)
 {
     int j;

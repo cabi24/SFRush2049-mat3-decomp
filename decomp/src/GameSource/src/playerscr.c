@@ -1,4 +1,4 @@
-/* playerscr.c - TODO: describe. Status: in progress.
+/* playerscr.c - player selection screen: create, delete and claim players, memory-card states. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\playerscr.c; assembly: build/2049LE/asm/GameSource/src/playerscr.s */
 #define TB_FlashTextColors TB_FlashTextColors_pointer_declaration
 #include "rush/rush_protos.h"
@@ -1740,6 +1740,7 @@ static void initButtons(signed char p)
     buttonInfo[p][17].mat.mat3.pos[0] = 0.0f;
     buttonInfo[p][17].mat.mat3.pos[1] = gNumPlayers > 1 ? 105.0f : 115.0f;
     buttonInfo[p][17].mat.mat3.pos[2] = 200.0f;
+    /* no-op copies kept on purpose: the target reloads and re-stores both coordinates */
     buttonInfo[p][17].mat.mat3.pos[0] = buttonInfo[p][17].mat.mat3.pos[0];
     buttonInfo[p][17].mat.mat3.pos[1] = buttonInfo[p][17].mat.mat3.pos[1];
     tex = MBOX_FindTexture_WORK("CURSOR", &texIdx, 0, gNumModels - 1, 1);
@@ -1765,6 +1766,7 @@ static void initButtons(signed char p)
     buttonInfo[p][21].mat.mat3.pos[0] = -75.1f;
     buttonInfo[p][21].mat.mat3.pos[1] = 4.0f + (gNumPlayers > 1 ? 50.2f : 55.2f);
     buttonInfo[p][21].mat.mat3.pos[2] = 100.0f;
+    /* no-op copies kept on purpose: the target reloads and re-stores both coordinates */
     buttonInfo[p][21].mat.mat3.pos[0] = buttonInfo[p][21].mat.mat3.pos[0];
     buttonInfo[p][21].mat.mat3.pos[1] = buttonInfo[p][21].mat.mat3.pos[1];
     ScaleUV(buttonInfo[p][21].mat.mat3.uvs, buttonInfo[p][21].mat.mat3.uvs, 0.5f);
@@ -1773,6 +1775,7 @@ static void initButtons(signed char p)
     buttonInfo[p][22].mat.mat3.pos[0] = -87.1f;
     buttonInfo[p][22].mat.mat3.pos[1] = 4.0f + (gNumPlayers > 1 ? 50.2f : 55.2f);
     buttonInfo[p][22].mat.mat3.pos[2] = 100.0f;
+    /* no-op copies kept on purpose: the target reloads and re-stores both coordinates */
     buttonInfo[p][22].mat.mat3.pos[0] = buttonInfo[p][22].mat.mat3.pos[0];
     buttonInfo[p][22].mat.mat3.pos[1] = buttonInfo[p][22].mat.mat3.pos[1];
     buttonsInited[p] = 1;

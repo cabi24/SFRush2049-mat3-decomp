@@ -1,4 +1,4 @@
-/* gamerecords.c - Game records and player unlock queries. Partial reconstruction.
+/* gamerecords.c - Game records and player unlock queries. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\gamerecords.c; assembly: build/2049LE/asm/GameSource/src/gamerecords.s */
 #include "rush/rush_protos.h"
 

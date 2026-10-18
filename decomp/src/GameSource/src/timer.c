@@ -14,7 +14,7 @@ volatile int gLastFrameCount;
 static unsigned int gCountdownEnd;
 static unsigned int gCountdownStart;
 static volatile unsigned int gLastFrameCounter;
-static int gTimerPaused = 0;
+static int gTimerPaused = 0; /* explicit `= 0`: emitted at its declaration point, before the function-local statics */
 
 /* 0x80050c74 */
 void InitializeTimer(void)

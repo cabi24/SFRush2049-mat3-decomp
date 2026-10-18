@@ -1,4 +1,4 @@
-/* visuals.c - TODO: describe. Status: in progress.
+/* visuals.c - car visual objects (tires, shadows, sparks, blasts, environment maps). Status: NonMatching, GetCarsIRColor is the one open register-allocation near miss.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\visuals.c; assembly: build/2049LE/asm/GameSource/src/visuals.s */
 #define gWheelBlur gWheelBlur_header
 #define gNumCarPaintTexs gNumCarPaintTexs_header
@@ -1815,6 +1815,7 @@ static void StartShadow(signed short slot)
         shadow1[0]->strips->vertexs[i].color=(vert[i].r<<24)+(vert[i].g<<16)+(vert[i].b<<8)+vert[i].a;
     }
     for(i=0;i<4;i++) {
+        /* block local read before the stores: the target loads the blue byte first in this loop */
         unsigned int cb;
         cb=vert[i].b;
         shadow2->strips->vertexs[i].pos[0]=vert[i].x;
@@ -2184,7 +2185,7 @@ static void AnimateArrow(tVisual *v)
             voffset=0.75f*window->wvviewang;
             vscale=16.5f;
         } else {
-            vscale=14.5f;
+            vscale=14.5f; /* vscale before voffset here (the reverse of the branch above) gives the original instruction order */
             voffset=1.1f*window->wvviewang;
         }
         if(scale<0.48f*-window->whviewang && scale>-1.5707963705062866f) {

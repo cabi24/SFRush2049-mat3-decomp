@@ -51,6 +51,7 @@ unsigned char *gDefaultNames[58] = {
     (unsigned char *)"ORENGEJUSE", (unsigned char *)"SW3ET ROMEO", (unsigned char *)"GOOBLEMAN",
     (unsigned char *)"SHAWN P."
 };
+/* declared after gDefaultNames on purpose: that table's long string literals precede mblit in .rodata */
 static const anon_texname_dulx_24 mblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
 static anon_ll_fileh_4c **gLastPlayer[4] = { (void *)0xffffffff, (void *)0xffffffff, (void *)0xffffffff, (void *)0xffffffff };
 static anon_x_y_c gPlayerRects[4][4] = {
@@ -60,6 +61,7 @@ static anon_x_y_c gPlayerRects[4][4] = {
     165, 0, 0, 320, 220, 160, 110, 0, 0, 160, 110, 80, 55, 160, 0, 160, 110, 240, 55, 0, 110, 160,
     110, 80, 165, 160, 110, 160, 110, 240, 165
 };
+/* explicit `= 0`: these three are the first .sbss symbols in forward order, so they are emitted at their declaration point; the rest stay uninitialised (deferred, reverse order) */
 static signed char inited = 0;
 static _tBlit_2 *blit = 0;
 static signed char gTable = 0;
@@ -173,7 +175,7 @@ static void _InitScreen(void)
     gSavedGhost = 0;
     stuffUnlocked = 0;
     if (gRace == 2) {
-        gSaveGhostFile = (*gPlayers[0].save)->fileh != 0;
+        gSaveGhostFile = (*gPlayers[0].save)->fileh != 0; /* stored second in the target, but written first: the other order blocks hoisting the *save loads (possible alias) */
         gGhostPlayer = &gRealGhostPlayer;
         memcpy(gGhostPlayer, *gPlayers[0].save, sizeof(anon_ll_fileh_4c));
         gGhostPlayer->ll.prev = 0;
@@ -443,6 +445,7 @@ static void _SetHighScoreState(enum_kNumHighScoreStates newState)
 
             HAL_SetFont(11);
             width = HAL_GetTextWidth(gText.single[112], -1);
+            /* `width / 2` inline here (the other two pane blocks use `width /= 2;`) gives the original register order between width and the pane address */
             scorePanes[2] = InitPane(centeredLeft(width / 2) - 8, 190, 160 + width / 2 + 8, 198 + TB_GetFontLineHeight(),
                                      176, 0, 0, 0);
         }
@@ -499,7 +502,7 @@ static void _RankScores(void)
     }
 }
 
-/* stripped by the linker, but its 0.0f literal is the unit's `@526` in .sdata2 (between
+/* stripped by the linker; kept only because its 0.0f literal is the unit's `@526` in .sdata2 (between
    _SetHighScoreState's 15.0f and _PrintScores's 6969.0f; animText reuses it) */
 static signed short _HiScoreRank(float time, float *table)
 {
@@ -516,7 +519,7 @@ static signed short _HiScoreRank(float time, float *table)
     return -1;
 }
 
-/* stripped by the linker (no data) */
+/* stripped by the linker and leaves no data; an empty placeholder kept only at its DWARF position */
 static void _AddScore(void)
 {
     /* TODO */
@@ -866,7 +869,7 @@ static void ControlGhost(void)
         }
     } else if (gActiveEdges & 0xc00) {
         PlayUDSound(gActiveEdges);
-        gGhostMenuSelect = (gActiveEdges & 0x800) ? kGhostMenuNoSave : kGhostMenuSave;
+        gGhostMenuSelect = (gActiveEdges & 0x800) ? kGhostMenuNoSave : kGhostMenuSave; /* enum names, not 3/2: with int literals the select becomes branch-free, the original branches */
     } else if (gActiveEdges & 3) {
         PlayStartABSound(gActiveEdges);
         if (gGhostMenuSelect == 2) {
@@ -1285,7 +1288,7 @@ static void DrawScores(void)
     TB_DrawText(TB_CenterText(gText.single[112], 160), 194, gText.single[112]);
 }
 
-/* stripped by the linker (no data) */
+/* stripped by the linker and leaves no data; an empty placeholder kept only at its DWARF position */
 static int animArrowR(_tBlit_2 *blt)
 {
     int conflict; /* r30 */
@@ -1293,7 +1296,7 @@ static int animArrowR(_tBlit_2 *blt)
     /* TODO */
 }
 
-/* stripped by the linker (no data) */
+/* stripped by the linker and leaves no data; an empty placeholder kept only at its DWARF position */
 static int animArrowL(_tBlit_2 *blt)
 {
     int uninited; /* r30 */

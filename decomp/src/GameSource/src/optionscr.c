@@ -1,9 +1,10 @@
-/* optionscr.c - option menu, pause panes and animated buttons. Status: in progress.
+/* optionscr.c - option menu, pause panes and animated buttons. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\optionscr.c; assembly: build/2049LE/asm/GameSource/src/optionscr.s */
 #include "rush/rush_protos.h"
 #include "rush/libc.h"
 #include "msl_math_inline.h"
 
+/* inline add (no DWARF entry): its parameter temporaries keep the original grouping of the pane-height sum in the InitPane call */
 static inline int addPane(int a, int b) { return a + b; }
 static void initScreen(void);
 static void _TitlePane(void);

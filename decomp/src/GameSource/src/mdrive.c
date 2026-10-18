@@ -1,5 +1,5 @@
 /* mdrive.c - model task timing, car activation and drive entry points.
- * Partial recovery: unrecovered functions are declarations, never stubs.
+ * Status: Matching.
  */
 
 /* The generated extern drops this read-only table's qualifier. */
@@ -59,6 +59,7 @@ static void _UpdateModel(int slot);
 
 static void multiinit(signed short mode, signed short droneIndex);
 
+/* inline helper (not in the DWARF): the scalarised v[3] and the parameter temporary reproduce the original FP register use of the bodyForce sums */
 static inline float model_magnitude(float *vec)
 {
     float v[3];
@@ -68,11 +69,12 @@ static inline float model_magnitude(float *vec)
     return sqrtf(v[0] + v[1] + v[2]);
 }
 
+/* inline helper used for every partial sum of update_game_data's side-force chain; with the self-copy below it reproduces the original FP register allocation (5 words off without it) */
 static inline float add_force(float a, float b)
 {
     float r;
     r = a + b;
-    r = r;
+    r = r; /* self-copy: a no-op second definition of the sum that keeps the compound scheduling while the result stays a fresh value */
     return r;
 }
 
@@ -105,6 +107,7 @@ void munge_gLink_data(void)
     tModelData *m;
     tCarData *car;
     gNumActiveCars = 0;
+    /* volatile read: the target reloads gNumCars on every loop test; the shared header keeps it plain, so the qualifier sits at this use */
     for (i = 0; i < *(volatile signed short *)&gNumCars; i++) {
         m = &model[i];
         car = &gGameCar[i];
@@ -151,6 +154,7 @@ void init_cars(void)
     tModelData *m;
 
     gNumActiveCars = 0;
+    /* volatile read: the target reloads gNumCars on every loop test (header keeps it plain) */
     for (i = 0; i < *(volatile signed short *)&gNumCars; i++) {
         dt = model[i].fastin.dt;
         for (j = 0; j < sizeof(tModelData); j++) {
@@ -171,7 +175,7 @@ void init_cars(void)
         gGameCar[i].distance = -j;
         model[i].solid = model[i].collidable = 1;
         gGameCar[i].solid = 1;
-        gGameCar[i].collide_state = -1;
+        gGameCar[i].collide_state = -1; /* written right after the model stores: storing to another object first creates the -1 constant before 0 and binds it to r4, as in the original */
         model[i].drone_target = 0;
         model[i].catchup = model[i].time_boost = model[i].drone_scale = 1.0f;
         model[i].obResPt = 0;

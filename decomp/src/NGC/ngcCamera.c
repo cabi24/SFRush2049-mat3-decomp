@@ -5,6 +5,7 @@
 /* a matrix inside PS2UpdateCameraMatrix's VU1 environment block */
 #define VU1MTX(off) ((float (*)[4])((char *)vu1env + (off)))
 
+/* explicit `= { 0 }`: the target keeps these objects in initialised data (.data/.sdata), not .bss */
 float camera_p[4] = { 0 };
 float camera_zd[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
 float camera_yd[4] = { 0.0f, 1.0f, 0.0f, 1.0f };

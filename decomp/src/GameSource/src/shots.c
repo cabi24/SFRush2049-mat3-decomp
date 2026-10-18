@@ -1,5 +1,5 @@
 /* shots.c - battle damage, projectile collision and shot lifecycle, recovered C.
- * Full-unit matching proposal is backed by private native compile/link evidence.
+ * Status: Matching.
  */
 #include "rush/rush_protos.h"
 #include "msl_math_inline.h"

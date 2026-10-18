@@ -131,11 +131,13 @@ static void _AssignDrones(void)
         }
     }
     for (i = 0; i < num_humans; i++) {
+        /* the slot is loaded inside the gate, so the counter and the slot take each other's registers as in the original */
         if (car_in_conflict[humans[i]] < 10) {
             index = humans[i];
             my_place = places[index];
             index3 = -1;
             index2 = -1;
+            /* the neighbours go through the indx temporary, which reproduces the original register use of the distance tests */
             if (my_place > 0) {
                 indx = cars_in_order[my_place - 1];
                 if (model[indx].drone_type == 1 && car_in_conflict[indx] == 0)
@@ -160,6 +162,7 @@ static void _AssignDrones(void)
         }
     }
 
+    /* synthetic block with its own short i: the final phase only gets the original registers with a separate counter (13 words off without it) */
     {
     short i;
     for (i = 0; i < gNumActiveCars; i++) {

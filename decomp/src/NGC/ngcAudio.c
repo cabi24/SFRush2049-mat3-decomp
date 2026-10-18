@@ -1,4 +1,4 @@
-/* ngcAudio.c - GameCube audio, movie and music control. Status: NonMatching (36/37 independently verified bodies).
+/* ngcAudio.c - GameCube audio, movie and music control. Status: Matching.
 Original: D:\rush_ngc\Rush_NGC\NGC\ngcAudio.c; assembly: build/2049LE/asm/NGC/ngcAudio.s */
 #define fix_ShFile fix_ShFile_header_decl
 #define sndMalloc sndMalloc_header_decl
@@ -64,6 +64,7 @@ static void sndTickChannels(void);
 static void ax_ngc_callback(void);
 static void ax_drop_voice_callback(void * p);
 
+/* explicit `= { 0 }`: the target keeps these objects in initialised data (.data/.sdata), not .bss */
 static char s_strCurMusicName[128] = { 0 };
 static _sndLoadInfo s_li = { 0 };
 static char s_channels[48] = { 0 };
@@ -241,6 +242,7 @@ int ngcLoadEffectBank(int nBankID, int nSubID, int bLoadingEffect)
     appFileRead(fd, bnk->pBuf, file_size);
     appFileClose(fd);
     fix_ShFile(bnk->pBuf, file_size);
+    /* cursor spelled pBuf + 8 then += 4: same instructions as p + 8 / p += 12, but the extra temporary moves the string-pool base to r30 and restores the original registers */
     p = (char *)bnk->pBuf + 8;
     bnk->nResCount = *(int *)p;
     p += 4;
@@ -591,8 +593,8 @@ void sndPlayerMusicUnpause(void)
 }
 
 /* 0x800ae0bc, size 0xa4 */
-/* Erased GC helper: retain only its proven surviving diagnostic literals.
-Its executable body is a placeholder and is never accepted as a match. */
+/* Erased GC helper, stripped by the linker: kept only to reproduce its surviving diagnostic literals and
+their .rodata order; the executable body is a placeholder and is never accepted as a match. */
 static void ngcRefreshDVDStatus(void)
 {
     OSReport("Now loading....%3d%%(%d/%d)", 0, 0, 0);

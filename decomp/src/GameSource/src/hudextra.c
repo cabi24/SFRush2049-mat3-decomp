@@ -1,4 +1,4 @@
-/* HUD overlays, text and object animations. Matching candidate: 13/13 exact bodies; see the private link receipt.
+/* HUD overlays, text and object animations. Status: Matching (13/13 functions).
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\hudextra.c; assembly: build/2049LE/asm/GameSource/src/hudextra.s */
 #include "rush/rush_protos.h"
 

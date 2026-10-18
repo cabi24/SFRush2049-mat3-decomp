@@ -95,7 +95,7 @@ static const signed char gWaveReplace[315] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-static unsigned int gWaveDelNum[2] = { 0 };
+static unsigned int gWaveDelNum[2] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 signed char gMirrorWaves;
 static anon_loaded_ready_14 gWaveInstance[64];
 static unsigned int gWaveDelLater[2][1024];

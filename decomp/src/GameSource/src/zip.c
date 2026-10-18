@@ -68,6 +68,7 @@
     s->head[s->hash_size - 1] = NIL; \
     memset((char *)s->head, 0, (unsigned)(s->hash_size - 1) * sizeof(*s->head));
 
+/* zlib's `>= 0L` spelling matters: with `>= 0` CodeWarrior keeps block_start in a register instead of reloading it after the ternary as the target does */
 #define FLUSH_BLOCK_ONLY(s, eof) { \
     _tr_flush_block(s, (s->block_start >= 0L ? (char *)&s->window[(unsigned)s->block_start] : (char *)0), \
                     (unsigned)((long)s->strstart - s->block_start), (eof)); \
@@ -610,7 +611,7 @@ static unsigned int bi_reverse(unsigned int code, int len)
     return res >> 1;
 }
 
-/* stripped by the linker (no data) */
+/* stripped by the linker (zlib's bi_flush) and leaves no data; kept only at its original position */
 static void bi_flush(internal_state *s)
 {
     if (s->bi_valid == 16) {

@@ -1,4 +1,4 @@
-/* carscr.c - TODO: describe. Status: in progress.
+/* carscr.c - car selection screen: component options, stat bars, grid map. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\carscr.c; assembly: build/2049LE/asm/GameSource/src/carscr.s */
 #include "rush/rush_protos.h"
 #define MSL_NO_SQRTF
@@ -270,7 +270,7 @@ static anon_a_l_24 compLight[2] = {
     255, 0, 0, 192, 192, 192, 255, 0.0f, 1.0f, 0.0f, 0, 0, 0, 255, 1.0f, 0.0f, 0.0f
 }
 ;
-static int gActiveOption[4] = { 0 };
+static int gActiveOption[4] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 static float gTransStats[8][4] = {
     0.95f, 0.85f, 1.0f, 1.0f, 1.0f, 0.85f, 1.0f, 1.0f, 0.95f, 0.9f, 1.0f, 1.0f, 1.0f, 0.9f, 1.0f,
     1.0f, 0.95f, 0.95f, 1.0f, 1.0f, 1.0f, 0.95f, 1.0f, 1.0f, 0.85f, 1.0f, 1.0f, 1.0f, 0.9f, 1.0f,
@@ -305,7 +305,7 @@ static float buttonZ = 30.0f;
 static float cursorZ = 22.5f;
 int gCarPartFrame = -1;
 static int gridCarIdx = -1;
-static signed short gCarSheen[4] = { 0 };
+static signed short gCarSheen[4] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 static signed char gThisCar[4];
 static signed char gThisCarIndex[4];
 static signed char gNumGhosts;
@@ -462,7 +462,7 @@ void updateCarScreen(void)
                 if (gRace == 6) gPlayers[p].trans = 6;
                 else gPlayers[p].trans = GetPlayerCarTrans(gPlayers[p].save);
                 for (i = 0; i < 13; i++) gCarTrans[p+1][i] = (signed char)gPlayers[p].trans;
-                gPlayers[p].trans = gPlayers[p].trans;
+                gPlayers[p].trans = gPlayers[p].trans; /* no-op copy kept on purpose: the target reloads and re-stores the value here */
                 calcValidOptions(p);
                 buttonsJustInited[p] = 1;
                 break;
@@ -924,16 +924,16 @@ static void _InitScreen(void)
             cars[p][i].angle = 3.1415927f;
             cars[p][i].alpha = 0.0f;
         }
-        gThisCarIndex[p] = gThisCarIndex[p];
+        gThisCarIndex[p] = gThisCarIndex[p]; /* no-op copy kept on purpose: the target reloads and re-stores the value here */
         if (gRace == 6) gPlayers[p].trans = 6;
         else {
             gPlayers[p].trans = GetPlayerCarTrans(gPlayers[p].save);
             while (!IsTransUnlocked(p, gPlayers[p].trans)) gPlayers[p].trans -= 2;
             SavePlayerCarTrans(gPlayers[p].save, gPlayers[p].trans);
         }
-        gPlayers[p].trans = gPlayers[p].trans;
+        gPlayers[p].trans = gPlayers[p].trans; /* no-op copy kept on purpose: the target reloads and re-stores the value here */
         for (i = 0; i < 13; i++) gCarTrans[p+1][i] = gPlayers[p].trans;
-        gPlayers[p].trans = gPlayers[p].trans;
+        gPlayers[p].trans = gPlayers[p].trans; /* same no-op copy again, as in the target */
     }
     blit = (_tBlit_2 *)NewMultiBlit(0, 0, mb, 26);
     ZeroCameras();
@@ -1435,6 +1435,7 @@ static int animText(void)
 }
 
 
+/* inline helper taking both flash colours by value (as videoscr.c's flashText): the copies stay out of the DWARF locals and give the original stack use */
 static inline void carFlashColors(anon_c_rgba_4 c1, anon_c_rgba_4 c2)
 {
     TB_FlashTextColors(&c1, &c2);
@@ -1633,6 +1634,7 @@ static void calcStats(int p)
         gStats[p][i] *= gTireStats[gCarTires[p+1][gThisCar[p]]][i];
         gStats[p][i] *= gFrameStats[gCarFrame[p+1][gThisCar[p]]][i];
     }
+    /* no-op copies kept on purpose: the target reloads and re-stores each of these values */
     gCarFrame[p+1][gThisCar[p]] = gCarFrame[p+1][gThisCar[p]];
     gCarTires[p+1][gThisCar[p]] = gCarTires[p+1][gThisCar[p]];
     gCarEngines[p+1][gThisCar[p]] = gCarEngines[p+1][gThisCar[p]];
@@ -1667,6 +1669,7 @@ static inline void gridHeader(unsigned int *dst, unsigned int cmd, unsigned int 
     } else *dstList++ = (v).color; \
 } while (0)
 
+/* inline helper (no DWARF entry) with scalarised d1/d2/n arrays: the original lists no locals for this computation, and the helper temporaries reproduce its FP registers */
 static inline int gridAlignAxis(float *a, float *b, float *c)
 {
     float d1[3], d2[3], n[3];

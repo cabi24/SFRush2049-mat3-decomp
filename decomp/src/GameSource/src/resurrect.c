@@ -1,4 +1,4 @@
-/* Partial recovery of resurrect.c. This translation unit remains NonMatching. */
+/* resurrect.c - car resurrection after crashes and aborts. Status: Matching. */
 
 #include "rush/rush_types.h"
 
@@ -135,6 +135,7 @@ static const float pole_pos_offset[12][3] = {
     {-3.4f,0,0},{3.4f,0,0},{-23.8f,0,0},{-17,0,0},{-10.2f,0,0},{10.2f,0,0}
 };
 
+/* the header's sqrtf with plain 0.5/3.0 literals (camera.c variant, MSL_NO_SQRTF above), so the .sdata2 constants are anonymous doubles */
 inline float surface_sqrt(float x)
 {
     if (x > 0.0f) {
@@ -148,6 +149,7 @@ inline float surface_sqrt(float x)
     return x;
 }
 
+/* inline per-axis helper for GetResPt: its fresh product value plus the self-copy below reproduce the original FP registers (7 words off as plain statements) */
 static inline float project_axis(short first,short next,float position)
 {
     float direction=(float)next-first;

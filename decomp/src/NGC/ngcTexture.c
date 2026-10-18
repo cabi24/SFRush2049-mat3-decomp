@@ -1,4 +1,4 @@
-/* ngcTexture.c - GameCube texture linking and allocation. Status: NonMatching.
+/* ngcTexture.c - GameCube texture linking and allocation. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\NGC\ngcTexture.c; assembly: build/2049LE/asm/NGC/ngcTexture.s */
 /* Local call interfaces preserve the GC argument-register positions missing
    from the generated declarations. No shared header changes are required. */
@@ -104,7 +104,7 @@ static char *tex_forcenoalpha[39] = {
 static char *tex_resident_track1[6] = {
     "LUCKYTREE1", "ROAD1_BLUE", "RUSTROAD6", "LANDTEX_03", "JER_BIGPINEWALL", "AKA_KASIDE"
 };
-static int texidused[900] = { 0 };
+static int texidused[900] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 static int JustLoadedTextureGroup = -1;
 int g_bMenuLoaded;
 int g_NumTextures;
@@ -564,7 +564,7 @@ int GetAnEmptyGroup(void)
     /* Original falls through without defining a return value when full. */
 }
 
-/* Erased diagnostic placeholder. Its executable body is not reconstructed or
+/* Erased diagnostic placeholder, stripped by the linker. Its executable body is not reconstructed or
    counted; this retains the original pooled @1118 diagnostic literal. */
 static void PrintTop10SwappedTex(void)
 {

@@ -8,6 +8,7 @@
 void AudUpdateEmitter(int tag, float *pos, float *dir, float maxVol, float pitch);
 #include "msl_math_inline.h"
 
+/* abs written as an inline helper (no DWARF entry): it reproduces the original code for the two conversions in the velocity ratio */
 static inline int path_abs(int x) { return x < 0 ? -x : x; }
 
 static void _PlacePathTargetPos(tTarget *t);

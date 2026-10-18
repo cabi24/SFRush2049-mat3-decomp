@@ -420,6 +420,7 @@ void CheckForStunt(void)
             plyr->wingTime += gFrameSeconds;
         if ((info->active & 0xc08fffff) &&
             (gc->crash_state || m->resurrect.moving_state != -1)) {
+            /* volatile accesses: the target reloads info->active for every read-modify-write in this block instead of keeping it in a register */
             (*(volatile unsigned int *)&info->active) = 0x15000000;
             continue;
         }

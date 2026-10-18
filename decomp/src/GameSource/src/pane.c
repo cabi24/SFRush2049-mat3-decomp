@@ -4,7 +4,7 @@
 
 #define SWAP(a, b) ((a) ^= (b), (b) ^= (a), (a) ^= (b))
 
-static anon_used_perm_20 gPaneBlits[16] = { 0 };
+static anon_used_perm_20 gPaneBlits[16] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 
 /* 0x800305e8, size 0x218 */
 anon_used_perm_20 *InitPane(int x1, int y1, int x2, int y2, int alpha, int (*animFunc)(_tBlit_2 *), unsigned int animID, int permanent)

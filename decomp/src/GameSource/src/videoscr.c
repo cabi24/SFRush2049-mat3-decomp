@@ -1,9 +1,9 @@
-/* videoscr.c - video menu and display offsets. Status: partial, NonMatching.
+/* videoscr.c - video menu and display offsets. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\videoscr.c; assembly: build/2049LE/asm/GameSource/src/videoscr.s */
 #include "rush/rush_protos.h"
 #include "msl_math_inline.h"
 
-/* Inferred inline centering helper preserves the separate border calculation. */
+/* Inline centering helper: `160 - w - 8` written directly folds to one subfic 152, while the original has subfic 160 then subi 8. */
 static inline int centeredLeft(int halfWidth) { return 160 - halfWidth; }
 
 static void initScreen(void);
@@ -45,7 +45,7 @@ static anon_buttonType_objIdx_40 buttonInfo[12] = {
     { 6, -1, 0.0f, { 0 }, 0 },
     { 2, -1, 0.0f, { 0 }, 0 },
 };
-static anon_x_w_10 menuRect = { 0 };
+static anon_x_w_10 menuRect = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 static float gButtonScale = 1.0f;
 static signed char optionValid[4] = { 1, 1, 1, 1 };
 static float cursorSpeed;
@@ -321,7 +321,7 @@ static int animText(void)
     return 1;
 }
 
-/* Pass the flash colours by value; the copies are not named locals in the original DWARF. */
+/* Pass the flash colours by value through an inline: the copies stay out of the DWARF locals, as in the original, and give its stack and register use. */
 static inline void flashText(anon_c_rgba_4 color1, anon_c_rgba_4 color2)
 {
     TB_FlashTextColors(&color1, &color2);
@@ -412,6 +412,7 @@ static void animButtonText(void)
             gConfirmPane = InitPane(centeredLeft(width / 2) - 8, 52, 160 + width / 2 + 8, height + 60, 176, 0, 0, 0);
         }
         TB_DrawTextScrollBox(160, 56, width, height, -1, 0, gText.single[229]);
+        /* yes/no tail: the x value in x, the y value in the function's j and a block-local str give the original register assignment */
         {
             unsigned char *str;
             j = height - TB_GetFontLineHeight() + 56;
@@ -431,7 +432,7 @@ static void animButtonText(void)
     TB_SetJust(0, 3);
 }
 
-/* Scale a 320x240 menu coordinate to the 640x480 frame buffer. */
+/* Scale a 320x240 menu coordinate to the 640x480 frame buffer; an inline with a named temporary, because a macro does not reproduce the original r30/r31 order. */
 static inline int S2(int v)
 {
     int r = v*2;
@@ -443,6 +444,7 @@ static void drawColorBars(void)
 {
     int x;
     int i;
+    /* a one-iteration loop: the original's induction seed is a slwi of a register, not a folded 64 */
     for (x = 24; x < 32; x += 8)
         DC_SendFillRect(S2(x), S2(140), S2(32), S2(160), 255, 255, 255, 255, 65500.0f);
     for (i = 0; i < 32; x += 8, i++)

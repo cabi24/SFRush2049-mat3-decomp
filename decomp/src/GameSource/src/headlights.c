@@ -1,4 +1,4 @@
-/* headlights.c - headlight projections and surface animation. Status: matched (pending link verification).
+/* headlights.c - headlight projections and surface animation. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\headlights.c; assembly: build/2049LE/asm/GameSource/src/headlights.s */
 #include "rush/rush_protos.h"
 #include "msl_math_inline.h"

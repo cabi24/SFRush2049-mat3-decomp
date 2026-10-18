@@ -1,7 +1,7 @@
 /* warningscr.c - memory-card warning screen. */
 #include "rush/rush_protos.h"
 
-static signed char gPakScr = 0;
+static signed char gPakScr = 0; /* explicit `= 0`: emitted at its declaration point, before the function-local statics */
 
 /* 0x8008d30c */
 void updateWarningScreen(void)

@@ -1,9 +1,10 @@
-/* trackscr.c - private partial track-selection-screen reconstruction. Not link verified.
+/* trackscr.c - track selection screen. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\trackscr.c; assembly: build/2049LE/asm/GameSource/src/trackscr.s */
 #include "rush/rush_protos.h"
 #define MSL_NO_SQRTF
 #include "msl_math_inline.h"
 
+/* camera.c/tires.c sqrtf variant: automatic 0.5/3.0 constants, so the unit gets anonymous .sdata2 doubles instead of the header's _half/_three statics */
 inline float sqrtf(float x)
 {
     const double _half = .5;
@@ -181,7 +182,7 @@ anon_c_rgba_4 trackColors[19] = {
     {{ 0, 240, 0, 255 }},
     {{ 240, 240, 240, 255 }}
 };
-static anon_numPack_name_2c mapObj[7] = { 0 };
+static anon_numPack_name_2c mapObj[7] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 static float gButtonScale = 0.85f;
 static float gButtonSpace = 40.0f;
 static float buttonX = -55.0f;
@@ -204,6 +205,7 @@ static signed char trackMapsBuilt;
 int currentTrackMap;
 int desiredTrackMap;
 float mapTransition;
+/* explicit `= 0`: these statics are emitted at their declaration point in forward order, which the target .sbss needs (uninitialised ones are deferred to the end in reverse order) */
 static int buttonsInited = 0;
 static int buttonsJustInited = 0;
 static _tBlit_2 *blit = 0;
@@ -563,7 +565,7 @@ static void _UninitScreen(void)
 /* 0x80088d04, size 0x314 */
 static void showTrackSelect(void)
 {
-    static float angle = 0.0f;
+    static float angle = 0.0f; /* explicit `= 0`: emitted at this point in .sbss, before the deferred statics */
     static float fogPos[3];
     float uv[3][3];
     float speed;
@@ -858,7 +860,7 @@ static int OptionValid(int opt)
 /* 0x8008a494, size 0x130 */
 static void SetFogIntensity(int now)
 {
-    static anon_c_rgba_4 fogColor[2];
+    static anon_c_rgba_4 fogColor[2]; /* left uninitialised on purpose: an aggregate `= {0}` would move it to .sdata */
     static anon_name_start_18 n64FogPal;
     int red, green, blue;
     if (gFogColor < 19) gFogColor = gTrackNum;
@@ -881,7 +883,7 @@ static void SetFogIntensity(int now)
 /* 0x8008a5c4, size 0x48 */
 static void BlowFog(void)
 {
-    static anon_uls_ult_8 fogTileSize;
+    static anon_uls_ult_8 fogTileSize; /* left uninitialised on purpose (deferred, like fogColor) */
     anon_uls_ult_8 *tile = &fogTileSize;
     int s;
     int speed;
@@ -949,7 +951,7 @@ static void unloadTrackScreen(void)
     if (trackFogPoly) { ZOID_RemovePoly(trackFogPoly); trackFogPoly = 0; }
 }
 
-static anon_name_radius_48 *selTrackRomObjDef;
+static anon_name_radius_48 *selTrackRomObjDef; /* declared here, at its DWARF position: declaring it earlier puts it after fogTileSize in .sbss */
 
 /* 0x8008a824, size 0x18c */
 static void buildTrackMap(void)
@@ -991,7 +993,7 @@ static void animTrackMap(void)
 {
     static float cityPos[3] = {-100.0f,30.0f,200.0f};
     static float mapPos[3] = {50.0f,-15.0f,100.0f};
-    static float rotAngle = 0.0f;
+    static float rotAngle = 0.0f; /* explicit `= 0`: emitted at this point in .sbss */
     rotAngle += 6.2831854820251465f * gFrameSeconds / 10.0f;
     if (rotAngle > 6.2831854820251465f) rotAngle -= 6.2831854820251465f;
     if (currentTrackMap != desiredTrackMap) {
@@ -1298,7 +1300,7 @@ static void clearTrackMaps(void)
     }
 }
 
-/* animTrackMaps strip helper: inlined, no code of its own */
+/* animTrackMaps strip helper (inlined, no code of its own): pStrip as a parameter takes its register after the helper's scratch values, and the packed colour written inside the loop takes its register after the unrolled loop counter, both as in the original */
 static inline void animTrackMapStrip(int mapIdx,int pointIdx,anon_nVertex_iTex_10 *pStrip)
 {
     int fade,i;
@@ -1470,8 +1472,8 @@ static void uninitButtons(void)
 /* 0x8008cb54, size 0x7b8 */
 static void updateButtons(void)
 {
-    static float scrollSpeed = 0.0f;
-    static float cursorSpeed = 0.0f;
+    static float scrollSpeed = 0.0f; /* explicit `= 0`: emitted at this point in .sbss */
+    static float cursorSpeed = 0.0f; /* explicit `= 0`: emitted at this point in .sbss */
     int buttonIdx;
     float prevPos[3];
     float buttonY;

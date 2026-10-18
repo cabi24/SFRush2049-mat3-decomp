@@ -14,7 +14,7 @@ static unsigned long g_nMovieFrames;
 static unsigned long g_nMovieFramesFps;
 static unsigned long g_nMovieFramesCur;
 
-/* stripped */
+/* stripped by the linker; a placeholder kept only for the data it leaves behind and its order (see the header) */
 static int ngcLoadMovie(char * strFileName, unsigned long nFrames, unsigned long fps)
 {
     char name[256];
@@ -27,7 +27,7 @@ static int ngcLoadMovie(char * strFileName, unsigned long nFrames, unsigned long
     return fd;
 }
 
-/* stripped */
+/* stripped by the linker; a placeholder kept only for the data it leaves behind and its order (see the header) */
 static int ngcReleaseMovie(void)
 {
     g_MoviePal = 0;
@@ -43,19 +43,19 @@ int ngcPlayMovie(void)
     return 1;
 }
 
-/* stripped */
+/* stripped by the linker; a placeholder kept only for the data it leaves behind and its order (see the header) */
 static void ReleaseMovieMem(void)
 {
 }
 
-/* stripped */
+/* stripped by the linker; a placeholder kept only for the data it leaves behind and its order (see the header) */
 static int ngcPlayMovieNext(void)
 {
     g_nMovieFramesCur++;
     return g_nMovieFramesCur < g_nMovieFrames;
 }
 
-/* stripped */
+/* stripped by the linker; a placeholder kept only for the data it leaves behind and its order (see the header) */
 static int ngcPlayMovieNum(unsigned long num)
 {
     int i;
@@ -113,7 +113,7 @@ int ngcBlackBackground(void)
     GXEnd();
 }
 
-/* stripped */
+/* stripped by the linker; a placeholder kept only for the data it leaves behind and its order (see the header) */
 static int ngcPlayMovieSound(char * filename)
 {
     char name[256];
@@ -124,13 +124,13 @@ static int ngcPlayMovieSound(char * filename)
     return fd;
 }
 
-/* stripped */
+/* stripped by the linker; a placeholder kept only for the data it leaves behind and its order (see the header) */
 static int ngcEndMovieSound(void)
 {
     return 1;
 }
 
-/* stripped */
+/* stripped by the linker; a placeholder kept only for the data it leaves behind and its order (see the header) */
 static int ngcPlayMovieRushRush(void)
 {
     g_bMovieLoaded = ngcLoadMovie("rushrush", 0, 0);

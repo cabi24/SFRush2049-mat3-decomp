@@ -1,4 +1,4 @@
-/* weapons.c - Battle weapons and muzzle-flash animation. Status: complete reconstruction; NonMatching pending reviewed promotion.
+/* weapons.c - Battle weapons and muzzle-flash animation. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\weapons.c; assembly: build/2049LE/asm/GameSource/src/weapons.s */
 #include "rush/rush_protos.h"
 

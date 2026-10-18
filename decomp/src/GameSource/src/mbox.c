@@ -2,7 +2,7 @@
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\mbox.c; assembly: build/2049LE/asm/GameSource/src/mbox.s */
 #include "rush/rush_protos.h"
 
-anon_romObjDefs_count_8 gRomObjDefPtrs[64] = { 0 };
+anon_romObjDefs_count_8 gRomObjDefPtrs[64] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 unsigned char gNumModels;
 anon_palDefs_count_8 gPalDefPtrs[64];
 anon_texDefs_count_8 gTexDefPtrs[64];

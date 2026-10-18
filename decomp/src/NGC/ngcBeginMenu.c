@@ -1114,7 +1114,7 @@ void PreDrawPad(void)
 void DrawPad(void)
 {
 {
-    static int cnt;
+    static int cnt; /* left uninitialised on purpose: deferred to the end of .sbss, after prevTime */
     if (++cnt > 25) {
         cnt = -25;
     }
@@ -1350,6 +1350,7 @@ void XBX_ReleaseExtraPic(void)
 }
 }
 
+/* mid-file definition: earlier functions' string literals precede its strings in .rodata, and its pointer array follows XBX_DrawPausePic2's jump table in .data */
 char *MCMessages[53] = {
     "Wrong device in %s.  Please insert a Memory Card.",
     "Wrong device in %s.  Please insert a Memory Card.",
@@ -1807,6 +1808,7 @@ again:
         }
         ngcDoneRender();
     }
+    /* two nested loops (outer while (1), inner for (;;)): only a separate outer loop header makes the compiler hoist mcMessage's address before the loop as the original does */
     while (1) {
         for (;;) {
             ngcBeforeRender();
@@ -2097,7 +2099,7 @@ out:
     return mount;
 }
 
-/* stripped: the linker dropped MenuMCIO but its string literal survives at the end of .rodata. */
+/* stripped: the linker dropped MenuMCIO; this placeholder exists only so its string literal survives at the end of .rodata. */
 static void MenuMCIO(int state)
 {
     PrintFont(0, 0, "€ ACCEPT"); /* raw 0x80 byte (font control code), not an escape: the source must hold the byte itself */

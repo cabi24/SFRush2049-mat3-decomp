@@ -1,4 +1,4 @@
-/* gameoverscr.c - post-race menu and score screens. In progress, NonMatching.
+/* gameoverscr.c - post-race menu and score screens. Status: Matching.
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\gameoverscr.c */
 #define DC_SendFillRect hidden_DC_SendFillRect
 #include "rush/rush_protos.h"
@@ -794,6 +794,7 @@ static int animText(void)
 
 static void drawRect(int x, int y, int w, int h, unsigned char *color)
 {
+    /* bottom and the reassigned parameters keep the two conversions as statements, so 2.0f gets its .sdata2 number before 65400.0f while the call still loads f1 first */
     int bottom = y + h;
     w = (x + w) * 2;
     y = (int)(2.0f * y);
