@@ -50,7 +50,11 @@ whenever a new `src/` file appears**, ninja won't notice it otherwise.)
 cd C:/rush2049-mat3/decomp && build/tools/ninja.exe; build/tools/ninja.exe build/2049LE/report.json; python tools/verify_link.py --no-build; python tools/status.py
 ```
 `ninja` always ends with `build/2049LE/ok FAILED` (the sha1 step trips on the 5 `.dtors` bytes);
-that is expected. `verify_link.py` is the real gate.
+that is expected. `verify_link.py` is the real gate, **but only if every object compiled**: ninja relinks
+the DOL from stale objects after a compile failure and the hash still matches (2026-10-17 incident). So
+grep the full ninja output for any other `FAILED`/`Error` line, and run `build/tools/ninja.exe -n`: it must
+list only the CHECK step. Identifier renames must also cover the hand-written headers in
+`decomp/include/rush/` (`dolphin.h`), not just the generated ones and `decomp/src`.
 
 ## Open work, in suggested order
 
