@@ -959,32 +959,113 @@ tRGBA clr;
     unsigned char rgb[3];
     unsigned char *column[3];
     static int gTrackBaseColors[19] = { 3, 3, 12, 6, 12, 5, 3, 3, 3, 6, 3, 3, 12, 5, 6, 6, 3, 3, 5 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     a=(car->sound_flags[0]&0xf800)>>11;
     b=(car->sound_flags[1]&0xf800)>>11;
     hobj=(car->sound_flags[2]&0xf800)>>11;
     column[0]=(unsigned char *)gTrackColors[gTrackNum];
     column[2]=column[0]+2;
     column[1]=column[0]+1;
+
     rgb[0] = (unsigned int)(column[0][(a) * (int)sizeof(tRGBA)] + column[0][(b) * (int)sizeof(tRGBA)] + column[0][(hobj) * (int)sizeof(tRGBA)] + column[0][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)]) >> 2;
+
     rgb[1] = (unsigned int)(((column[1][(a) * (int)sizeof(tRGBA)] + column[1][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)]) + (column[1][(hobj) * (int)sizeof(tRGBA)] + column[1][(b) * (int)sizeof(tRGBA)]))) >> 2;
+
     rgb[2] = (unsigned int)(column[2][(a) * (int)sizeof(tRGBA)] + column[2][(b) * (int)sizeof(tRGBA)] + column[2][(hobj) * (int)sizeof(tRGBA)] + column[2][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)]) >> 2;
-    if (m->airdist[2] >= 20.0f) {
+
+
+
+
+
+
+
+
+
+
+
+    if (m->airdist[2] >= 20.0f)
+    {
         d1 = 0.025f * (m->airdist[2] - 20.0f);
-        if (d1 > 1.0f) return gTrackColors[gTrackNum][gTrackBaseColors[gTrackNum]];
+        if (d1 > 1.0f)
+            return gTrackColors[gTrackNum][gTrackBaseColors[gTrackNum]];
         if (d1 > 0.0f) {
-            sclr2 = gTrackColors[gTrackNum][gTrackBaseColors[gTrackNum]];
             d2 = 1.0f - d1;
-            rgb[0] = rgb[0] * d2 + sclr2.c[0] * d1;
-            rgb[1] = rgb[1] * d2 + sclr2.c[1] * d1;
-            rgb[2] = rgb[2] * d2 + sclr2.c[2] * d1;
+            sclr2 = gTrackColors[gTrackNum][gTrackBaseColors[gTrackNum]];
+            b = sclr2.c[0];
+            rgb[0] = rgb[0] * d2 + b * d1;
+            b = sclr2.c[1];
+            rgb[1] = rgb[1] * d2 + b * d1;
+            b = sclr2.c[2];
+            rgb[2] = rgb[2] * d2 + b * d1;
         }
     }
+
     weights[0]=0.34f;
     weights[1]=0.66f;
-    clr.c[0] = rgb[0] * weights[0] + car->prevIRclr.c[0] * weights[1];
-    clr.c[1] = rgb[1] * weights[0] + car->prevIRclr.c[1] * weights[1];
-    clr.c[2] = rgb[2] * weights[0] + car->prevIRclr.c[2] * weights[1];
+
+
+
+    a = car->prevIRclr.c[0];
+    clr.c[0] = rgb[0] * weights[0] + a * weights[1];
+    a = car->prevIRclr.c[1];
+    clr.c[1] = rgb[1] * weights[0] + a * weights[1];
+    a = car->prevIRclr.c[2];
+    clr.c[2] = rgb[2] * weights[0] + a * weights[1];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     clr.c[3] = 255;
+
     return clr;
 }
 
