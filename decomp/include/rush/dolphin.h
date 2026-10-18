@@ -71,7 +71,7 @@ void OSInitSemaphore(OSSemaphore *sem, long count);
 long OSSignalSemaphore(OSSemaphore *sem);
 long OSTryWaitSemaphore(OSSemaphore *sem);
 
-void C_MTXLookAt(float m[3][4], anon_x_y_c_2 *camPos, anon_x_y_c_2 *camUp, anon_x_y_c_2 *target);
+void C_MTXLookAt(float m[3][4], tVec3 *camPos, tVec3 *camUp, tVec3 *target);
 void PSMTX44Trans(float m[4][4], float xT, float yT, float zT);
 void PSMTX44RotRad(float m[4][4], char axis, float rad);
 
