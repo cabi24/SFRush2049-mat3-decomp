@@ -978,21 +978,21 @@ tRGBA clr;
 
 
 
+
     a=(car->sound_flags[0]&0xf800)>>11;
-    b=(car->sound_flags[1]&0xf800)>>11;
-    hobj=(car->sound_flags[2]&0xf800)>>11;
+    hobj=(car->sound_flags[1]&0xf800)>>11;
     column[0]=(unsigned char *)gTrackColors[gTrackNum];
     column[2]=column[0]+2;
     column[1]=column[0]+1;
 
-    rgb[0] = (unsigned int)(column[0][(a) * (int)sizeof(tRGBA)] + column[0][(b) * (int)sizeof(tRGBA)] + column[0][(hobj) * (int)sizeof(tRGBA)] + column[0][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)]) >> 2;
+    b = column[0][(a) * (int)sizeof(tRGBA)] + column[0][(hobj) * (int)sizeof(tRGBA)] + column[0][((car->sound_flags[2]&0xf800)>>11) * (int)sizeof(tRGBA)] + column[0][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)];
+    rgb[0] = b >> 2;
 
-    rgb[1] = (unsigned int)(((column[1][(a) * (int)sizeof(tRGBA)] + column[1][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)]) + (column[1][(hobj) * (int)sizeof(tRGBA)] + column[1][(b) * (int)sizeof(tRGBA)]))) >> 2;
+    b = column[1][(a) * (int)sizeof(tRGBA)] + column[1][(hobj) * (int)sizeof(tRGBA)] + column[1][((car->sound_flags[2]&0xf800)>>11) * (int)sizeof(tRGBA)] + column[1][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)];
+    rgb[1] = b >> 2;
 
-    rgb[2] = (unsigned int)(column[2][(a) * (int)sizeof(tRGBA)] + column[2][(b) * (int)sizeof(tRGBA)] + column[2][(hobj) * (int)sizeof(tRGBA)] + column[2][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)]) >> 2;
-
-
-
+    b = column[2][(a) * (int)sizeof(tRGBA)] + column[2][(hobj) * (int)sizeof(tRGBA)] + column[2][((car->sound_flags[2]&0xf800)>>11) * (int)sizeof(tRGBA)] + column[2][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)];
+    rgb[2] = b >> 2;
 
 
 
