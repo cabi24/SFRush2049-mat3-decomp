@@ -15,6 +15,8 @@ Last session: 2026-10-17 (Claude Code, sprint review + continuation). Read this 
   smoke, hud, targets and stree, and added one `block_relocations` entry to
   `config/2049LE/config.yml` (commit `9957440`: a Bink LogoData word that dtk read as a pointer
   into `CylinderInSurf`, which had forced the static global and renamed it).
+- **Readability (2026-10-17):** minified units reformatted, every matching hack commented in place, the 40
+  most-used anonymous types named; all under the unchanged DOL hash. See writeup "Readability pass".
 - **Not matched (3 functions, 2 NonMatching units):** `GetCarsIRColor` (visuals, 55/179 words),
   `Blits` and `Blits_First` (ngcZoid, 20/219 and 76/234 words at the exact size). `ContinueCircuit`
   matched 2026-10-17 (writeup: pointer locals naming hoisted `&a[i].field` addresses).
@@ -181,6 +183,12 @@ that is expected. `verify_link.py` is the real gate.
   is the fastest per-function diff (GC 2.6 compile + dtk disassembly against the target `.s`).
 - `decomp/docs/verification-baseline.md`, `docs/REVIEW.md`, `research/README.md`: Codex's
   verification rules and remaining-work notes (in git).
+- `decomp/include/rush/overrides.json`: qualifiers, prototypes, externs and **`type_names`** (chosen names
+  for anonymous DWARF types, keyed by the synthetic `anon_<m1>_<m2>_<size>` name; 40 named so far, 318
+  references to rarer ones remain). Regenerate headers with `python -B tools/dwarftypes.py rush_d.elf
+  decomp/include/rush` after editing it, then rename the references in `decomp/src` the same way.
+- `decomp/.clang-format`: the formatting used for reformatted units (whitespace-only; verify token
+  streams and restore CRLF afterwards). `pip install clang-format` provides the binary.
 - `decomp/tools/`: `skel.py`, `check.py`, `cwmatch.py`, `cwmatch_addr.py` (address-selected cwmatch
   over the ledger, rejects same-named statics), `datacheck.py` (target ELF vs built object data bytes,
   relocations masked: catches `.sdata2` literal order and data order that objdiff misses), `reorder.py`
