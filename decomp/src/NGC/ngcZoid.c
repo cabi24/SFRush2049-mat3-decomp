@@ -320,11 +320,13 @@ static void Blits_First(void)
     tTexture *tex;
     int h;
     int w;
+    int hh;
+    int ww;
     int x;
     int y;
     int vflip;
     int i;
-    int ww, hh, d[2];
+    int d[2];
 
     for (i = 0, b = gBlitInstanceList; i < gNumBlitInsts; i++, b++)
     {
@@ -347,6 +349,8 @@ static void Blits_First(void)
         else
             BlitClearAttribute(4);
         if (!b->width || !b->height) continue;
+        ww = b->width;
+        hh = b->height;
         if (!tex)
         {
             if (b->alpha == 0xff)
@@ -364,8 +368,6 @@ static void Blits_First(void)
             BlitRect(x, y, w, h, (unsigned char *)b->palette);
             continue;
         }
-        ww = b->width;
-        hh = b->height;
         x = b->x * 2;
         y = b->y * 2.0f;
         BlitScissor(x, y, x + ww - 1, y + hh - 1);
@@ -436,11 +438,13 @@ static void Blits(void)
     tTexture *tex;
     int h;
     int w;
+    int hh;
+    int ww;
     int x;
     int y;
     int vflip;
     int i;
-    int ww, hh, d[2];
+    int d[2];
 
     for (i = 0, b = gBlitInstanceList; i < gNumBlitInsts; i++, b++)
     {
@@ -467,6 +471,8 @@ static void Blits(void)
         else
             BlitClearAttribute(4);
         if (!b->width || !b->height) continue;
+        ww = b->width;
+        hh = b->height;
         if (!tex)
         {
             if (b->alpha == 0xff)
@@ -484,8 +490,6 @@ static void Blits(void)
             BlitRect(x, y, w, h, (unsigned char *)b->palette);
             continue;
         }
-        ww = b->width;
-        hh = b->height;
         x = b->x * 2;
         y = b->y * 2.0f;
         BlitScissor(x, y, x + ww - 1, y + hh - 1);
