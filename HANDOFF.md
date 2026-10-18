@@ -17,8 +17,10 @@ Last session: 2026-10-17 (Claude Code, sprint review + continuation). Read this 
   into `CylinderInSurf`, which had forced the static global and renamed it).
 - **Readability (2026-10-17):** minified units reformatted, every matching hack commented in place, the 40
   most-used anonymous types named; all under the unchanged DOL hash. See writeup "Readability pass".
-- **Not matched (3 functions, 2 NonMatching units):** `GetCarsIRColor` (visuals, 55/179 words),
-  `Blits` and `Blits_First` (ngcZoid, 20/219 and 76/234 words at the exact size). `ContinueCircuit`
+- **Not matched (3 functions, 2 NonMatching units):** `GetCarsIRColor` (visuals, 21/179 words),
+  `Blits` and `Blits_First` (ngcZoid, 32/234 and 19/219 words at the exact size). All three now have the
+  original's statement layout (DWARF `.line` table, `tools/lines.py`) and DWARF local lists; only register
+  colouring remains. `ContinueCircuit`
   matched 2026-10-17 (writeup: pointer locals naming hoisted `&a[i].field` addresses).
   All register-allocation / codegen-shape residue; see "Open work".
 - **Repo layout on this PC:** `C:\rush2049-mat3` *is* the git checkout (source-only). Originals
@@ -58,14 +60,17 @@ list only the CHECK step. Identifier renames must also cover the hand-written he
 
 ## Open work, in suggested order
 
-0. **`GameSource/src/visuals` — `GetCarsIRColor` 55/179 words** (61/62, data exact, layout full).
+0. **`GameSource/src/visuals` — `GetCarsIRColor` 21/179 words** (61/62, data exact, layout full).
    Pure register allocation: target (base, base+1, base+2, idx0..3) = (r5, r31, r28, r12, r11, r30,
    r29), ours (r5, r31, r12, r28, r11, r30, r29). Five sessions, ~60,000 objects (notes in
    `C:\rush2049-mat3-review\work\visuals-rev{,3,4,5}\NOTES.md`). Best lead: the original DWARF lists
    `a // r0`, `b // r6`, `hobj // r11` as surviving locals; `a = gTrackNum;` used across blocks
-   reproduces `a r0` with no code change, `b`/`hobj` not yet. Known: real second definitions list `b`/`hobj` but move the srawi pair or the register;
-   an inline parameter on idx0 gives r12 but changes the shape. The 55 body is a local minimum.
-1. **`NGC/ngcZoid` — `Blits`/`Blits_First`** (17/19). The target's `mr r6,rX / add r6,rY,r6` inside
+   reproduces `a r0` with no code change, `b`/`hobj` not yet. 
+   2026-10-17 evening: the line table and the kept-definition rule (writeup) reconstructed the blend and
+   tail exactly and the schedule is now the target's; a red-channel inline helper taking idx0/idx1
+   makes the bases callee-saved. Residual: base+2/idx0 swapped (5 of 7 registers right); the helper
+   knob is exhausted (`C:\rush2049-mat3-review\work\visuals-rev6\NOTES.md`).
+1. **`NGC/ngcZoid` — `Blits`/`Blits_First` 32/234 and 19/219** (17/19). The target's `mr r6,rX / add r6,rY,r6` inside
    the branchless BlitDraw arms is a phi-copy shape; CodeWarrior places phi copies at the
    definitions and never sinks them, every other integer copy is removed before codegen, and no
    compiler 1.0–2.7 produces it. **Found 2026-10-17:** a select whose alternative is an IR-distinct
@@ -74,9 +79,11 @@ list only the CHECK step. Identifier renames must also cover the hand-written he
    the target size (20/219 and 76/234 words). Residual: the copies land lowest-free (r0/r10) where
    the target coalesces them into the argument registers r6/r7; five passes
    (`C:\rush2049-mat3-review\work\ngcZoid-rev2\NOTES.md`) rule out guard spellings, in-place adds, inline wrappers
-   and evaluation order; two more passes (`ngcZoid-rev3`) rule out the SDK ClampStick analogy (older
-   compiler), pointer locals, late-folding zeros and reassociation. Open fact: in the else arm the
-   copy cannot take r0 in the target; every construct reproducing that costs instructions.
+   and evaluation order; `ngcZoid-rev3` rules out the SDK ClampStick analogy (older compiler), pointer
+   locals, late-folding zeros and reassociation; `ngcZoid-rev4` (line table) fixed the statement layout
+   (select on the BlitDraw line), Blits' tex double assignment (76 -> 32) and the ww/hh DWARF listing.
+   Residual: creation order of the temporaries (target hh r31, ww r30, gWhite r29; ours gWhite first)
+   and the else-arm copies in r0/r10 vs r6/r7. Untried: a real outer `while (1)` around the loop.
 2. **Tooling:** run `tools/datacheck.py <unit>` (per-unit data-byte check incl. `.sdata2` literal
    order) before `mark.py` in the per-file workflow; the `skel.py` gaps below still stand.
 3. **Linker:** only GC 2.7 completes a full link, hence the 5-byte `.dtors` difference; pre-2.7
