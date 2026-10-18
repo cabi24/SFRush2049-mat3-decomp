@@ -27,7 +27,7 @@ static char *buttonNames[11] = {
     "ARROW_FGG1", "BAR_BGG1", "BAR_FGG1", "BUTTON_S1G1", "BUTTON_S0G1"
 };
 
-static const anon_texname_dulx_24 buttonsFrontEnd[89] = {
+static const tBlitDef buttonsFrontEnd[89] = {
     { "CONTROLS_LG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 254, (int (*)(_tBlit *))animControls, 257 },
     { "CONTROLS_LG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 254, (int (*)(_tBlit *))animControls, 258 },
     { "CONTROLS_LG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 254, (int (*)(_tBlit *))animControls, 259 },
@@ -119,7 +119,7 @@ static const anon_texname_dulx_24 buttonsFrontEnd[89] = {
     { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (int (*)(_tBlit *))animText, 0 },
 };
 
-static const anon_texname_dulx_24 buttonsPauseSingle[23] = {
+static const tBlitDef buttonsPauseSingle[23] = {
     { "CONTROLS_LG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 254, (int (*)(_tBlit *))animControls, 257 },
     { "CONTROLS_LG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 254, (int (*)(_tBlit *))animControls, 258 },
     { "CONTROLS_LG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 254, (int (*)(_tBlit *))animControls, 259 },
@@ -145,7 +145,7 @@ static const anon_texname_dulx_24 buttonsPauseSingle[23] = {
     { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (int (*)(_tBlit *))animText, 0 },
 };
 
-static const anon_texname_dulx_24 buttonsPauseMulti[45] = {
+static const tBlitDef buttonsPauseMulti[45] = {
     { "CONTROLS_LG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 254, (int (*)(_tBlit *))animControls, 257 },
     { "CONTROLS_LG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 254, (int (*)(_tBlit *))animControls, 258 },
     { "CONTROLS_LG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 254, (int (*)(_tBlit *))animControls, 259 },
@@ -194,7 +194,7 @@ static const anon_texname_dulx_24 buttonsPauseMulti[45] = {
 };
 
 
-static anon_buttonType_objIdx_40 buttonInfo[4][18] = {
+static tMenuButton buttonInfo[4][18] = {
 {
     { 0, -1, 0.0f, { { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } }, 0 },
     { 0, -1, 0.0f, { { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } }, 0 },
@@ -775,14 +775,14 @@ static void animButtonText(signed char p)
                     x = screenPos[0] / 2 - (300.0f * (45.0f * gTextPosScale)) / buttonZ;
                 y = screenPos[1] / 2.0f;
                 if (buttonInfo[p][i].angle < 1.5707964f) {
-                    anon_c_rgba_4 color1, color2;
+                    tRGBA color1, color2;
                     color2 = flashColors[1];
                     color1 = flashColors[0];
                     TB_FlashTextColors(&color1, &color2);
                     TB_SetTextColor(1);
                     if (!PS_PakRumble(gPlayers[p].controller) && i == 11) TB_SetTextColor(3);
                 } else {
-                    anon_c_rgba_4 color1, color2;
+                    tRGBA color1, color2;
                     color2 = flashColors[1];
                     color1 = flashColors[0];
                     TB_FlashTextColors(&color1, &color2);
@@ -840,8 +840,8 @@ static int validControl(signed char p)
 
 static void initButtons(signed char p)
 {
-    anon_c_rgba_4 buttonColor = {255, 255, 255, 255};
-    anon_name_width_30 *tex;
+    tRGBA buttonColor = {255, 255, 255, 255};
+    tTexture *tex;
     unsigned short texIdx;
     int buttonIdx;
     for (buttonIdx = 0; buttonIdx < 18; buttonIdx++) {
@@ -912,9 +912,9 @@ static void updateButtons(signed char p)
     float selectedPos;
     int gControlMenuCount;
     int gWhichControl;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
-    anon_c_rgba_4 buttonColor = { {255,255,255,255} };
+    tRGBA buttonColor = { {255,255,255,255} };
     if (buttonsInited[p]) {
         gControlMenuCount = 0;
         gWhichControl = 0;

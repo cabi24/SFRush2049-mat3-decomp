@@ -20,12 +20,12 @@ static char *buttonNames[9] = {
     "BUTTON_S3G1", "BUTTON_S1G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1", "ARROW_BGG1",
     "ARROW_FGG1", "BAR_BGG1", "BAR_FGG1"
 };
-static const anon_texname_dulx_24 frontEndBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
-static const anon_texname_dulx_24 pauseBlit[2] = {
+static const tBlitDef frontEndBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
+static const tBlitDef pauseBlit[2] = {
     0, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animPanes, 0, (void *)0xffffffff, 0, 0, 0, 0, -1,
     -1, -1, -1, 0, 0, (void *)&animText, 0
 };
-static anon_buttonType_objIdx_40 buttonInfo[12] = {
+static tMenuButton buttonInfo[12] = {
     {0, -1}, {0, -1}, {0, -1}, {0, -1},
     {1, -1}, {1, -1}, {1, -1}, {1, -1},
     {3, -1}, {4, -1}, {6, -1}, {2, -1}
@@ -36,7 +36,7 @@ static int gSong = 18;
 static int gLastSong = -1;
 static float cursorSpeed;
 static signed char gControllerRemoved;
-static anon_used_perm_20 *gTitlePane;
+static tBlitSet *gTitlePane;
 static enum_kNumMenuDir_2 exitAudioScreen;
 static int gAudioMenuSelect;
 static signed char panesCreated;
@@ -269,7 +269,7 @@ static int animText(void)
     }
     HAL_SetTextTranslucency(-1.0f);
     {
-        anon_c_rgba_4 c1, c2;
+        tRGBA c1, c2;
         c2 = flashColors[1]; c1 = flashColors[0];
         TB_FlashTextColors(&c1, &c2);
     }
@@ -298,12 +298,12 @@ static void animButtonText(void)
                 HAL_SetTextTranslucency(128.0f);
             else HAL_SetTextTranslucency(-1.0f);
             if (buttonInfo[i].angle < 1.5707964f) {
-                anon_c_rgba_4 c1, c2;
+                tRGBA c1, c2;
                 c2 = flashColors[1];c1 = flashColors[0];
                 TB_FlashTextColors(&c1, &c2);
                 TB_SetTextColor(1);
             } else {
-                anon_c_rgba_4 c1, c2;
+                tRGBA c1, c2;
                 c2 = flashColors[1];c1 = flashColors[0];
                 TB_FlashTextColors(&c1, &c2);
                 TB_SetTextColor(22);
@@ -330,7 +330,7 @@ static void animButtonText(void)
     TB_SetJust(0, 3);
     HAL_SetTextTranslucency(-1.0f);
     {
-        anon_c_rgba_4 c1, c2;
+        tRGBA c1, c2;
         c2 = flashColors[1];c1 = flashColors[0];
         TB_FlashTextColors(&c1, &c2);
     }
@@ -391,8 +391,8 @@ static void calcMenuRect(void)
 /* 0x80066dd8, size 0x2bc */
 static void initButtons(void)
 {
-    anon_c_rgba_4 buttonColor = {{255,255,255,255}};
-    anon_name_width_30 *tex;
+    tRGBA buttonColor = {{255,255,255,255}};
+    tTexture *tex;
     unsigned short texIdx;
     int buttonIdx;
     for (buttonIdx = 0; buttonIdx < 12; buttonIdx++) {
@@ -453,7 +453,7 @@ static void updateButtons(void)
     int buttonIdx;
     float prevPos[3];
     float buttonY, selectY;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
     if (!buttonsInited) return;
     buttonY = 100.0f;

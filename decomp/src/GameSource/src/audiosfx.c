@@ -2,27 +2,27 @@
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\audiosfx.c; assembly: build/2049LE/asm/GameSource/src/audiosfx.s */
 #include "rush/rush_protos.h"
 
-static int _GetSfxInstance(anon_used_started_4c **theSound);
-static anon_dlle_cmd_20 *_NewCmd(void);
-static anon_dlle_cmd_20 *_FindChangeCmd(anon_used_started_4c *sound);
-static void _SendCmd(anon_dlle_cmd_20 *cmd);
-static void _FreeCmd(anon_dlle_cmd_20 *cmd);
+static int _GetSfxInstance(tSfxVoice **theSound);
+static tSfxCmd *_NewCmd(void);
+static tSfxCmd *_FindChangeCmd(tSfxVoice *sound);
+static void _SendCmd(tSfxCmd *cmd);
+static void _FreeCmd(tSfxCmd *cmd);
 
 static unsigned int gNextIndex = 1;
 float gFrontDistance;
 float gSoundSpeed;
-static anon_used_started_4c *gSfxInstances;
+static tSfxVoice *gSfxInstances;
 static int gNumChannels;
 static int gStoppedChannels[1];
 static int gNumInstances;
-static anon_dlle_cmd_20 *gCmds;
+static tSfxCmd *gCmds;
 static signed char gStopAllEffects;
 static signed char gInited;
-static anon_handle_dbl_10 gCmdQ;
-static anon_handle_dbl_10 gFreeQ;
+static tDLList gCmdQ;
+static tDLList gFreeQ;
 
 /* 0x8009d630, size 0xd8 */
-static int _GetSfxInstance(anon_used_started_4c **theSound)
+static int _GetSfxInstance(tSfxVoice **theSound)
 {
     unsigned int i; /* r9 */
 
@@ -45,16 +45,16 @@ static int _GetSfxInstance(anon_used_started_4c **theSound)
 }
 
 /* 0x8009d708, size 0x10 */
-void _FreeSfxInstance(anon_used_started_4c *theSound)
+void _FreeSfxInstance(tSfxVoice *theSound)
 {
     theSound->used = 0;
     theSound->index = 0;
 }
 
 /* 0x8009d718, size 0x44 */
-static anon_dlle_cmd_20 *_NewCmd(void)
+static tSfxCmd *_NewCmd(void)
 {
-    anon_dlle_cmd_20 *cmd; /* r31 */
+    tSfxCmd *cmd; /* r31 */
 
     cmd = gFreeQ.tail;
     cmd->failCounter = 0;
@@ -63,9 +63,9 @@ static anon_dlle_cmd_20 *_NewCmd(void)
 }
 
 /* 0x8009d75c, size 0x44 */
-static anon_dlle_cmd_20 *_FindChangeCmd(anon_used_started_4c *sound)
+static tSfxCmd *_FindChangeCmd(tSfxVoice *sound)
 {
-    anon_dlle_cmd_20 *c; /* r4 */
+    tSfxCmd *c; /* r4 */
 
     for (c = gCmdQ.tail; c; c = c->dlle.prev) {
         if (c->sound == sound && c->cmd == 3) {
@@ -76,10 +76,10 @@ static anon_dlle_cmd_20 *_FindChangeCmd(anon_used_started_4c *sound)
 }
 
 /* 0x8009d7a0, size 0xc0 */
-static void _SendCmd(anon_dlle_cmd_20 *cmd)
+static void _SendCmd(tSfxCmd *cmd)
 {
-    anon_dlle_cmd_20 *c; /* r3 */
-    anon_dlle_cmd_20 *next; /* r31 */
+    tSfxCmd *c; /* r3 */
+    tSfxCmd *next; /* r31 */
 
     if (cmd->cmd != 4 && cmd->cmd == 2 && !cmd->sound->started) {
         for (c = gCmdQ.tail; c; c = next) {
@@ -96,7 +96,7 @@ static void _SendCmd(anon_dlle_cmd_20 *cmd)
 }
 
 /* 0x8009d860, size 0x4c */
-static void _FreeCmd(anon_dlle_cmd_20 *cmd)
+static void _FreeCmd(tSfxCmd *cmd)
 {
     RemoveLLE(&gCmdQ, cmd);
     InsertLLE(&gFreeQ, cmd, gFreeQ.head);
@@ -111,13 +111,13 @@ void AudioSfxInit(int maxSfx)
     InitLL(&gFreeQ, 0, 1);
     InitLL(&gCmdQ, 0, 1);
     gNumInstances = maxSfx;
-    gSfxInstances = AllocateMemoryHeap(0, maxSfx * sizeof(anon_used_started_4c));
+    gSfxInstances = AllocateMemoryHeap(0, maxSfx * sizeof(tSfxVoice));
     PurgeableMemory(gSfxInstances, 0);
-    memset(gSfxInstances, 0, gNumInstances * sizeof(anon_used_started_4c));
+    memset(gSfxInstances, 0, gNumInstances * sizeof(tSfxVoice));
     numCmds = maxSfx * 3;
-    gCmds = AllocateMemoryHeap(0, numCmds * sizeof(anon_dlle_cmd_20));
+    gCmds = AllocateMemoryHeap(0, numCmds * sizeof(tSfxCmd));
     PurgeableMemory(gCmds, 0);
-    memset(gCmds, 0, numCmds * sizeof(anon_dlle_cmd_20));
+    memset(gCmds, 0, numCmds * sizeof(tSfxCmd));
     for (i = 0; i < numCmds; i++) {
         InsertLLE(&gFreeQ, &gCmds[i], gFreeQ.head);
     }
@@ -132,14 +132,14 @@ void AudioSfxInit(int maxSfx)
    separate queue-address temporaries instead of reusing loop 2's r31. */
 static inline void *_CmdQueueTail(void *queue)
 {
-    return ((anon_handle_dbl_10 *)queue)->tail;
+    return ((tDLList *)queue)->tail;
 }
 
 /* 0x8009d9ac, size 0x388 */
 void AudioSfxServer(void)
 {
-    anon_dlle_cmd_20 *cmd; /* r3 */
-    anon_dlle_cmd_20 *next; /* r28 */
+    tSfxCmd *cmd; /* r3 */
+    tSfxCmd *next; /* r28 */
     int i; /* r5 */
 
     if (!gInited) {
@@ -176,7 +176,7 @@ void AudioSfxServer(void)
             }
         }
     }
-    for (cmd = ((anon_handle_dbl_10 *)&gCmdQ)->tail; cmd; cmd = next) {
+    for (cmd = ((tDLList *)&gCmdQ)->tail; cmd; cmd = next) {
         next = cmd->dlle.prev;
         if (cmd->sound && cmd->sound->stop && cmd->cmd != 2) {
             _FreeCmd(cmd);
@@ -239,8 +239,8 @@ void AudioSfxServer(void)
 /* 0x8009dd34, size 0xa0 */
 unsigned int AudioPlayEffect(int soundId, float volume, float pan)
 {
-    anon_used_started_4c *theSound; /* stack */
-    anon_dlle_cmd_20 *cmd; /* r0 */
+    tSfxVoice *theSound; /* stack */
+    tSfxCmd *cmd; /* r0 */
 
     theSound = 0;
     if (soundId == -1) {
@@ -274,7 +274,7 @@ int AudioEffectPlaying(unsigned int theSound)
 /* 0x8009de38, size 0x80 */
 void AudioStopEffect(unsigned int theSound)
 {
-    anon_dlle_cmd_20 *cmd; /* r0 */
+    tSfxCmd *cmd; /* r0 */
 
     if (!theSound || gSfxInstances[theSound & 0xff].index != theSound) {
         return;
@@ -303,7 +303,7 @@ void AudioStopAllEffects(void)
 /* 0x8009df00, size 0xa8 */
 void AudioSetEffectVolume(unsigned int theSound, float vol)
 {
-    anon_dlle_cmd_20 *cmd; /* r0 */
+    tSfxCmd *cmd; /* r0 */
 
     if (!theSound || gSfxInstances[theSound & 0xff].index != theSound) {
         return;
@@ -326,7 +326,7 @@ void AudioSetEffectVolume(unsigned int theSound, float vol)
 /* 0x8009dfa8, size 0xa8 */
 void AudioSetEffectLRPan(unsigned int theSound, float pan)
 {
-    anon_dlle_cmd_20 *cmd; /* r0 */
+    tSfxCmd *cmd; /* r0 */
 
     if (!theSound || gSfxInstances[theSound & 0xff].index != theSound) {
         return;
@@ -349,7 +349,7 @@ void AudioSetEffectLRPan(unsigned int theSound, float pan)
 /* 0x8009e050, size 0xa8 */
 void AudioSetEffectFBPan(unsigned int theSound, float pan)
 {
-    anon_dlle_cmd_20 *cmd; /* r0 */
+    tSfxCmd *cmd; /* r0 */
 
     if (!theSound || gSfxInstances[theSound & 0xff].index != theSound) {
         return;
@@ -372,7 +372,7 @@ void AudioSetEffectFBPan(unsigned int theSound, float pan)
 /* 0x8009e0f8, size 0xa8 */
 void AudioSetEffectPitch(unsigned int theSound, float pitch)
 {
-    anon_dlle_cmd_20 *cmd; /* r0 */
+    tSfxCmd *cmd; /* r0 */
 
     if (!theSound || gSfxInstances[theSound & 0xff].index != theSound) {
         return;
@@ -395,7 +395,7 @@ void AudioSetEffectPitch(unsigned int theSound, float pitch)
 /* 0x8009e1a0, size 0x60 */
 void AudioSetMono(int mono)
 {
-    anon_dlle_cmd_20 *cmd; /* r0 */
+    tSfxCmd *cmd; /* r0 */
 
     cmd = _NewCmd();
     cmd->cmd = 4;

@@ -62,7 +62,7 @@ static void SetSelectTireSizes(signed short slot, signed short player)
 {
     signed short tire;
     _tCar *carp;
-    anon_mat3_mat4_30 *mat;
+    tUVMatrix *mat;
     carp=gCarModels[(short)(slot%13)];
     for(tire=0;tire<4;tire++) {
         mat=ZOID_FindMatrix(gCarParts[slot].tires[tire]);
@@ -95,8 +95,8 @@ void UpdateSelectCar(signed short slot, signed short player, unsigned char Paint
     float newuvs[3][3];
     signed short idx;
     signed short cam;
-    anon_c_rgba_4 alphaCol={255,255,255,255};
-    anon_name_width_30 *wheelTex;
+    tRGBA alphaCol={255,255,255,255};
+    tTexture *wheelTex;
     idx=slot%13;
     if(gNumWindows<3) {if(player==2) player=0;if(player==3) player=1;}
     switch(player) {case 0:cam=1;break;case 1:cam=2;break;case 2:cam=4;break;case 3:cam=8;break;}

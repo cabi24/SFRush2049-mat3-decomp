@@ -72,7 +72,7 @@ static int animWrongWay(void);
 
 static int updateFrame(void);
 
-static const anon_texname_dulx_24 RaceMultiBlit[90] = {
+static const tBlitDef RaceMultiBlit[90] = {
     { "SPEEDBG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 255, (int (*)(_tBlit *))animSpeed, 16 },
     { "SPEEDBG2", 0, 0, -1, -1, -1, -1, -1, -1, 0, 255, (int (*)(_tBlit *))animSpeed, 32 },
     { "SPEEDBG2", 0, 0, -1, -1, -1, -1, -1, -1, 0, 255, (int (*)(_tBlit *))animSpeed, 33 },
@@ -165,7 +165,7 @@ static const anon_texname_dulx_24 RaceMultiBlit[90] = {
     { "MAPDOT", 0, 0, -1, -1, -1, -1, -1, -1, 0, 255, (int (*)(_tBlit *))animDot, 7 },
 };
 
-static const anon_texname_dulx_24 HudMultiBlit[5] = {
+static const tBlitDef HudMultiBlit[5] = {
     { (const char *)-1, 0, 0, -1, -1, -1, -1, -1, -1, 0, 0, (int (*)(_tBlit *))updateFrame, 0 },
     { "CROSSBONES", 0, 0, -1, -1, -1, -1, -1, -1, 0, 255, (int (*)(_tBlit *))animBones, 0 },
     { "CROSSBONES", 0, 0, -1, -1, -1, -1, -1, -1, 0, 255, (int (*)(_tBlit *))animBones, 1 },
@@ -173,19 +173,19 @@ static const anon_texname_dulx_24 HudMultiBlit[5] = {
     { "CROSSBONES", 0, 0, -1, -1, -1, -1, -1, -1, 0, 255, (int (*)(_tBlit *))animBones, 3 },
 };
 
-static const anon_texname_dulx_24 ResultsMultiBlit[1] = {
+static const tBlitDef ResultsMultiBlit[1] = {
     { (const char *)-1, 0, 0, -1, -1, -1, -1, -1, -1, 0, 0, (int (*)(_tBlit *))animResults, 0 },
 };
 
-static const anon_texname_dulx_24 TwoPlayerMultiBlit[1] = {
+static const tBlitDef TwoPlayerMultiBlit[1] = {
     { "MULTI_LOGO", 240, 0, -1, -1, -1, -1, -1, -1, 1, 255, 0, 0 },
 };
 
-static const anon_texname_dulx_24 ThreePlayerMultiBlit[1] = {
+static const tBlitDef ThreePlayerMultiBlit[1] = {
     { "MULTI_LOGO", 160, 112, 320, 220, 0, 219, 160, 479, 1, 255, 0, 0 },
 };
 
-static const anon_texname_dulx_24 OverlayMultiBlit[1] = {
+static const tBlitDef OverlayMultiBlit[1] = {
     { (const char *)-1, 0, 0, -1, -1, -1, -1, -1, -1, 0, 0, (int (*)(_tBlit *))animCreditText, 0 },
 };
 
@@ -501,7 +501,7 @@ void ShowHUD(void)
     }
 }
 
-static anon_used_perm_20 *resultPane[5];
+static tBlitSet *resultPane[5];
 
 
 void RemoveHUD(void)
@@ -1743,7 +1743,7 @@ static int animTrackMap(_tBlit *blt)
 {
     int width, height, w, h, xOffset, yOffset;
     int x, y, x1, y1, x2, p, i;
-    anon_name_width_38 *ps2tex;
+    tTextureEx *ps2tex;
     unsigned char *data;
     _GXTexObj *pTexObj;
     if (Hidden((_tBlit_2 *)blt, gNumWindows > 4 || !(gGameState & 0x400000) || !gShowTrackMap))
@@ -1770,7 +1770,7 @@ static int animTrackMap(_tBlit *blt)
     }
     xOffset = (kMapSize - 8 - w) / 2 + 4;
     yOffset = (kMapSize - 8 - h) / 2 + 4;
-    ps2tex = (anon_name_width_38 *)blt->texture->strip;
+    ps2tex = (tTextureEx *)blt->texture->strip;
     if (ps2tex) {
         if (dataMap) {
             DeallocateMemory(dataMap);

@@ -3,7 +3,7 @@
 #define TB_FlashTextColors TB_FlashTextColors_pointer_declaration
 #include "rush/rush_protos.h"
 #undef TB_FlashTextColors
-void TB_FlashTextColors(anon_c_rgba_4 color1, anon_c_rgba_4 color2);
+void TB_FlashTextColors(tRGBA color1, tRGBA color2);
 #define abs(x) ((x) >= 0 ? (x) : -(x))
 #define MSL_NO_SQRTF
 #include "msl_math_inline.h"
@@ -34,8 +34,8 @@ static void setPlayerState(int p, enum_kPlayerStateCount newState);
 static void updateSelectInfo(int p);
 static void updatePakInfo(void);
 static void calcSelectMenuMaxSize(void);
-static void claimPlayer(int playerIdx, anon_ll_fileh_4c **player);
-static int playerClaimed(int playerIdx, anon_ll_fileh_4c **player);
+static void claimPlayer(int playerIdx, tPlayerProfile **player);
+static int playerClaimed(int playerIdx, tPlayerProfile **player);
 static int playerBeingCreated(int playerIdx);
 static int playerBeingDeleted(int playerIdx);
 static void initButtons(signed char p);
@@ -47,7 +47,7 @@ static char *buttonNames[12] = {
     "BUTTON_S2G1", "BUTTON_S2G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1", "ARROW_BGG1",
     "ARROW_FGG1", "BUTTON_S4G1", "BUTTON_S0G1", "BUTTON_S8G1", "BAR_BGG1", "BAR_FGG1"
 };
-static anon_buttonType_objIdx_40 buttonInfo[4][23] = {
+static tMenuButton buttonInfo[4][23] = {
  {
 { 0, -1, 0.0f, { { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } }, 0 },
 { 7, -1, 0.0f, { { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } }, 0 },
@@ -149,7 +149,7 @@ static anon_buttonType_objIdx_40 buttonInfo[4][23] = {
 { 6, -1, 0.0f, { { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } }, 0 }
  }
 };
-static anon_texname_dulx_24 multiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
+static tBlitDef multiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
 static anon_x_y_18 gPlayerRects[4][4] = {
     40, 20, 240, 200, 160, 120, 0, 0, 320, 220, 160, 110, 0, 0, 320, 220, 160, 110, 0, 0, 320, 220,
     160, 110, 60, 20, 200, 100, 160, 70, 60, 120, 200, 100, 160, 170, 0, 0, 320, 220, 160, 110, 0,
@@ -196,10 +196,10 @@ static int gPakFull[4];
 static int gNumPakPlayers[4];
 static int buttonsJustInited[4];
 static signed char gSelectMenuValid[4][15];
-static anon_used_perm_20 *pane[4];
+static tBlitSet *pane[4];
 static enum_kSelectMenuCount gSelectMenuSelect[4];
 static enum_kPlayerStateCount gPlayerState[4];
-static anon_ll_fileh_4c **gSelectedPlayer[4];
+static tPlayerProfile **gSelectedPlayer[4];
 signed char gDefaultControls_Add[11];
 
 /* 0x80079e98, size 0xe8 */
@@ -228,7 +228,7 @@ void updatePlayerScreen(void)
                 int i;
                 for (i = 0; i < gNumPlayers; i++) {
                     if (gPlayers[i].save != &gJustPlayers[i]) {
-                        anon_ll_fileh_4c **player;
+                        tPlayerProfile **player;
                         for (player = gPlayerFiles.head; player; player = (*player)->ll.next)
                             if (gPlayers[i].save == player) break;
                         if (!player) {
@@ -286,7 +286,7 @@ restart:;
     } else if (exitPlayerScreen != kMenuStay) {
         switch (exitPlayerScreen) {
         case kMenuForward: {
-            anon_ll_fileh_4c **player;
+            tPlayerProfile **player;
 
             for (player = gPlayerFiles.head; player; player = (*player)->ll.next) {
                 int i;
@@ -406,7 +406,7 @@ static void uninitScreen(void)
 /* 0x8007a7b0, size 0xa4 */
 static void updatePlayer(int p)
 {
-    anon_ll_fileh_4c **player;
+    tPlayerProfile **player;
     if (gSelectedPlayer[p] && gSelectedPlayer[p] != &gJustPlayers[p]) {
         for (player = gPlayerFiles.head; player; player = (*player)->ll.next)
             if (gSelectedPlayer[p] == player)
@@ -664,7 +664,7 @@ static void controlFormatMC(int p)
 /* 0x8007b464, size 0x594 */
 static void controlCreatePlayer(int p)
 {
-    anon_ll_fileh_4c **player;
+    tPlayerProfile **player;
     int pIdx;
     if (gCreateMenuNotify[p] == 1) {
         if (gPlayers[p].edges & 3) {
@@ -762,7 +762,7 @@ static void controlDeletePlayer(int p)
 {
     signed char origSelect = gDeleteMenuSelect[p];
     int pIdx;
-    anon_ll_fileh_4c **player;
+    tPlayerProfile **player;
     if (gNumPakPlayers[gSelectPakIdx[p]] <= 0) {
         setPlayerState(p, kPlayerStateSelect);
         return;
@@ -946,7 +946,7 @@ static void drawSelect(int p)
     int menuItem;
     signed short screenPos[2];
     float gTextPosScale = gButtonScale;
-    anon_ll_fileh_4c **player;
+    tPlayerProfile **player;
     int fullx;
     int fully;
     float tempVec[3];
@@ -1256,7 +1256,7 @@ static void drawDeletePlayer(int p)
     int menuItem;
     signed short screenPos[2];
     float gTextPosScale = gButtonScale;
-    anon_ll_fileh_4c **player;
+    tPlayerProfile **player;
     int i;
     signed short w;
     static unsigned char s_str[] = "NOT FORMATTED";
@@ -1530,8 +1530,8 @@ static int animText(void)
 /* 0x8007ee28, size 0x2d0 */
 static void setPlayerState(int p, enum_kPlayerStateCount newState)
 {
-    anon_ll_fileh_4c **player;
-    anon_ll_fileh_4c **pPlayer;
+    tPlayerProfile **player;
+    tPlayerProfile **pPlayer;
     if (newState == kPlayerStateSelect) {
         gSelectedPlayer[p] = 0;
         for (player = gPlayerFiles.head; player; player = (*player)->ll.next)
@@ -1640,7 +1640,7 @@ static void updateSelectInfo(int p)
 static void updatePakInfo(void)
 {
     int pak;
-    anon_ll_fileh_4c **player;
+    tPlayerProfile **player;
     int p;
     for (pak = 0; pak < 4; pak++) {
         gPakFull[pak] = 0;
@@ -1670,7 +1670,7 @@ static void calcSelectMenuMaxSize(void)
 }
 
 /* 0x8007f584, size 0x44 */
-static void claimPlayer(int playerIdx, anon_ll_fileh_4c **player)
+static void claimPlayer(int playerIdx, tPlayerProfile **player)
 {
     gPlayers[playerIdx].save = player;
     SetPlayerControls(playerIdx, (*player)->controls);
@@ -1678,7 +1678,7 @@ static void claimPlayer(int playerIdx, anon_ll_fileh_4c **player)
 }
 
 /* 0x8007f5c8, size 0x54 */
-static int playerClaimed(int playerIdx, anon_ll_fileh_4c **player)
+static int playerClaimed(int playerIdx, tPlayerProfile **player)
 {
     int claimed = 0;
     signed char p;
@@ -1715,8 +1715,8 @@ static int playerBeingDeleted(int playerIdx)
 /* 0x8007f6b4, size 0x4cc */
 static void initButtons(signed char p)
 {
-    anon_c_rgba_4 buttonColor = { { 255, 255, 255, 255 } };
-    anon_name_width_30 *tex;
+    tRGBA buttonColor = { { 255, 255, 255, 255 } };
+    tTexture *tex;
     unsigned short texIdx;
     int buttonIdx;
     for (buttonIdx = 0; buttonIdx < 23; buttonIdx++) {
@@ -1806,9 +1806,9 @@ static void updateButtons(signed char p)
     float buttonY;
     float selectedPos;
     signed char clearScrollSpeed = 1;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
-    anon_c_rgba_4 buttonColor = { { 255,255,255,255 } };
+    tRGBA buttonColor = { { 255,255,255,255 } };
     if (!buttonsInited[p]) return;
     if (gPlayerState[p] == kPlayerStateWait) {
         for (buttonIdx=0;buttonIdx<23;buttonIdx++) {

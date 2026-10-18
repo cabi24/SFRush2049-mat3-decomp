@@ -4,9 +4,9 @@
 
 unsigned char gStreakColors[4][4] = { 228, 190, 59, 168, 0, 169, 47, 168, 27, 56, 229, 216, 255, 255, 255, 96 };
 static tStreak gStreakPolyArray[150];
-static anon_dbl_numElements_18 gStreakPolyList;
+static tStatList gStreakPolyList;
 static tStreak gStreakArray[50];
-static anon_dbl_numElements_18 gStreakList;
+static tStatList gStreakList;
 
 static void _AnimateStreakPolys(void);
 static void _NewStreakPoly(tStreak *s);

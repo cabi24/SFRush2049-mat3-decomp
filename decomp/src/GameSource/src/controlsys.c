@@ -37,7 +37,7 @@ unsigned int gAutoEdges[4];
 unsigned int gContLevels[4];
 unsigned int gContEdges[4];
 float gContStick[4][2];
-anon_attached_incompatible_14 gControllerData[4];
+tPadInfo gControllerData[4];
 
 /* 0x8000da18, size 0xa4 */
 void InitControlSys(void)

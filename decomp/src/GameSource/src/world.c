@@ -3,10 +3,10 @@
 #include "rush/rush_protos.h"
 #include "msl_math_inline.h"
 
-static void NewWorldObject(anon_name_mat_68 *Wnode, signed short Parent);
+static void NewWorldObject(tModelPart *Wnode, signed short Parent);
 static int worldcmp(const anon_woff_wname_14 *awhdr, const anon_woff_wname_14 *bwhdr);
 static anon_woff_wname_14 *FindWorld(const char *wstr);
-static void WorldDistance(anon_name_mat_68 *Wnode, float *pos, int *best, float *dist, int *widx, int *index);
+static void WorldDistance(tModelPart *Wnode, float *pos, int *best, float *dist, int *widx, int *index);
 
 unsigned int track1Parts[117][4] = {
     0xd92145ff, 0xbff, 0x3fb8000, 0x14f018, 0x1ff, 0x803, 0x3d80000, 0x140018, 0x4907d7ff, 0x803,
@@ -265,16 +265,16 @@ signed char gFogIntensity;
 int *gWorldData;
 anon_woff_wname_14 *WorldTable;
 signed char gInvisibleTrack;
-anon_name_mat_68 *WorldBase;
+tModelPart *WorldBase;
 volatile signed short Worlddlidx;
-anon_name_mat_68 *cur_world_obj;
+tModelPart *cur_world_obj;
 
 /* 0x8005dd58, size 0x218 */
-static void NewWorldObject(anon_name_mat_68 *Wnode, signed short Parent)
+static void NewWorldObject(tModelPart *Wnode, signed short Parent)
 {
     signed short dlindex; /* r27 */
     int mbobj; /* r0 */
-    anon_name_mat_68 *ptr; /* r26 */
+    tModelPart *ptr; /* r26 */
     signed short cur_dlindex; /* r30 */
 
     cur_dlindex = -1;
@@ -353,7 +353,7 @@ signed short NewWorld(const char *World, signed short Parent)
 
     Worlddlidx = -1;
     whdr = FindWorld(World);
-    WorldBase = (anon_name_mat_68 *)whdr->woff;
+    WorldBase = (tModelPart *)whdr->woff;
     NewWorldObject(WorldBase, Parent);
     InitSTree();
     return Worlddlidx;
@@ -362,7 +362,7 @@ signed short NewWorld(const char *World, signed short Parent)
 /* 0x8005e02c, size 0xc0 */
 signed short FindWorldGroup(float *pos)
 {
-    anon_name_mat_68 *Wnode; /* r5 */
+    tModelPart *Wnode; /* r5 */
     float dx;
     float dy;
     float dz;
@@ -398,7 +398,7 @@ void WorldClear(void)
 }
 
 /* 0x8005e0fc, size 0x1f8 */
-static void WorldDistance(anon_name_mat_68 *Wnode, float *pos, int *best, float *dist, int *widx, int *index)
+static void WorldDistance(tModelPart *Wnode, float *pos, int *best, float *dist, int *widx, int *index)
 {
     float dx;
     float dy;
@@ -554,7 +554,7 @@ static signed short fogMax[4][4] = {
 /* 0x8005e5cc, size 0x1f4 */
 void WorldFogDensity(int winidx, float *pos)
 {
-    anon_vp_s_48 *win; /* r31 */
+    tWindowInfo *win; /* r31 */
     anon_x_z_10 *wf; /* r30 */
     anon_x_z_10 *best; /* r29 */
     float bestDist; /* f30 */

@@ -1472,11 +1472,11 @@ void DoLoadSaveReset(void)
 /* 0x800b1578, size 0x70 */
 void DeleteAllRecords(void)
 {
-    anon_ll_fileh_4c **pStatPlayer; /* r31 */
+    tPlayerProfile **pStatPlayer; /* r31 */
     SaveServer(0, 0);
     SaveServer(0, 0);
     SaveServer(0, 0);
-    for (pStatPlayer = gPlayerFiles.head; pStatPlayer; pStatPlayer = (anon_ll_fileh_4c **)(*pStatPlayer)->ll.next) {
+    for (pStatPlayer = gPlayerFiles.head; pStatPlayer; pStatPlayer = (tPlayerProfile **)(*pStatPlayer)->ll.next) {
         ClearPlayerRecords(pStatPlayer);
     }
 }

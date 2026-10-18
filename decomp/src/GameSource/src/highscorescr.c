@@ -52,8 +52,8 @@ unsigned char *gDefaultNames[58] = {
     (unsigned char *)"SHAWN P."
 };
 /* declared after gDefaultNames on purpose: that table's long string literals precede mblit in .rodata */
-static const anon_texname_dulx_24 mblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
-static anon_ll_fileh_4c **gLastPlayer[4] = { (void *)0xffffffff, (void *)0xffffffff, (void *)0xffffffff, (void *)0xffffffff };
+static const tBlitDef mblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
+static tPlayerProfile **gLastPlayer[4] = { (void *)0xffffffff, (void *)0xffffffff, (void *)0xffffffff, (void *)0xffffffff };
 static anon_x_y_c gPlayerRects[4][4] = {
     80, 55, 160, 110, 160, 110, 0, 0, 320, 220, 160, 110, 0, 0, 320, 220, 160, 110, 0, 0, 320, 220,
     160, 110, 80, 0, 160, 110, 160, 55, 80, 110, 160, 110, 160, 165, 0, 0, 320, 220, 160, 110, 0,
@@ -80,19 +80,19 @@ static signed char gGhostMenuConfirm;
 static signed char gYes;
 static signed char gGhostMenuNotify;
 static signed char gShostSaveFail;
-static anon_ll_fileh_30 **gSavedGhost;
-anon_ll_fileh_4c *gGhostPlayer;
+static tGhostFile **gSavedGhost;
+tPlayerProfile *gGhostPlayer;
 static signed char gSaveGhostFile;
-static anon_used_perm_20 *codePane;
+static tBlitSet *codePane;
 static float gCameraMatrix[4][4];
 static signed char gFlash[3][5];
 static enum_kGhostNotSame gGhostStatus[4];
-static anon_ll_fileh_30 **gPakGhosts[4];
+static tGhostFile **gPakGhosts[4];
 static unsigned char gScoreTimes[5][10];
 static unsigned char *gScoreNames[5];
-static anon_ll_fileh_4c **gThisPlayer[4];
-static anon_used_perm_20 *ghostPanes[3];
-static anon_used_perm_20 *scorePanes[3];
+static tPlayerProfile **gThisPlayer[4];
+static tBlitSet *ghostPanes[3];
+static tBlitSet *scorePanes[3];
 static unsigned char gCircuitCode[32];
 static signed char gPrevUnlockedFrames[4][6];
 static signed char gPrevUnlockedTires[4][5];
@@ -101,9 +101,9 @@ static signed char gPrevUnlockedTrans[4][8];
 static signed char gPrevUnlockedCircuits[4][4];
 static signed char gPrevUnlockedCars[4][13];
 static signed char gPrevUnlockedTracks[4][19];
-anon_ll_fileh_4c gRealGhostPlayer;
+tPlayerProfile gRealGhostPlayer;
 static unsigned char gScoreName[4][13];
-static anon_used_perm_20 *namePanes[4];
+static tBlitSet *namePanes[4];
 
 /* 0x8006fccc, size 0x1bc */
 void updateHighScoreScreen(void)
@@ -177,7 +177,7 @@ static void _InitScreen(void)
     if (gRace == 2) {
         gSaveGhostFile = (*gPlayers[0].save)->fileh != 0; /* stored second in the target, but written first: the other order blocks hoisting the *save loads (possible alias) */
         gGhostPlayer = &gRealGhostPlayer;
-        memcpy(gGhostPlayer, *gPlayers[0].save, sizeof(anon_ll_fileh_4c));
+        memcpy(gGhostPlayer, *gPlayers[0].save, sizeof(tPlayerProfile));
         gGhostPlayer->ll.prev = 0;
         gGhostPlayer->ll.next = 0;
         gGhostPlayer->fileh = 0;
@@ -530,7 +530,7 @@ static void _PrintScores(void)
 {
     int i; /* r27 */
     float *s; /* r26 */
-    anon_ll_fileh_4c ***p; /* r25 */
+    tPlayerProfile ***p; /* r25 */
     float defTime; /* f31 */
     unsigned int seed; /* stack */
     int width; /* r0 */
@@ -550,7 +550,7 @@ static void _PrintScores(void)
             sprintf((char *)gScoreTimes[i], "%01d:%02d.%03d", (unsigned int)defTime / 60, (unsigned int)defTime % 60,
                     (unsigned int)(defTime * 1000.0f) % 1000);
         } else {
-            if (*p >= (anon_ll_fileh_4c **)0 && *p <= (anon_ll_fileh_4c **)20) {
+            if (*p >= (tPlayerProfile **)0 && *p <= (tPlayerProfile **)20) {
                 gScoreNames[i] = gTempNames[(int)*p];
             } else {
                 gScoreNames[i] = (**p)->name;
@@ -578,9 +578,9 @@ static int _GhostChanged(int pak)
 /* 0x80070fec, size 0x21c */
 static void _FindGhosts(int pak)
 {
-    anon_ll_fileh_4c *player = gGhostPlayer; /* r28 */
-    anon_ll_fileh_30 **ghosth; /* r27 */
-    anon_ll_fileh_30 *ghost; /* r26 */
+    tPlayerProfile *player = gGhostPlayer; /* r28 */
+    tGhostFile **ghosth; /* r27 */
+    tGhostFile *ghost; /* r26 */
     unsigned int existingGhostSize = 0; /* r25 */
 
     gPakGhosts[pak] = 0;
@@ -757,7 +757,7 @@ static void ControlName(int p)
             }
             censor((char *)gScoreName[p]);
             gDrawName[p] = 0;
-            gThisPlayer[p] = gLastPlayer[gPlayers[p].controller] = (anon_ll_fileh_4c **)FindTempNameIdx((char *)gScoreName[p]);
+            gThisPlayer[p] = gLastPlayer[gPlayers[p].controller] = (tPlayerProfile **)FindTempNameIdx((char *)gScoreName[p]);
             for (t = 0; t < 3; t++) {
                 for (s = 0; s < 5; s++) {
                     if (gNewTotalScore[t][s] == p) {

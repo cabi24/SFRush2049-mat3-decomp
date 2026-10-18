@@ -8,11 +8,11 @@ static unsigned int gCacheHitSize;
 static unsigned int gCacheMissSize;
 static void * gCacheHeap;
 char g_MyPacketName[32];
-static anon_handle_dbl_10 gUnloaded;
-static anon_handle_dbl_10 gCache;
+static tDLList gUnloaded;
+static tDLList gCache;
 
 /* the original declares _LoadFile without a prototype and calls it with five arguments */
-static anon_ll_name_3c **_FindFile(anon_handle_dbl_10 *list, char *filename);
+static anon_ll_name_3c **_FindFile(tDLList *list, char *filename);
 static void *_LoadFile();
 
 /* 0x80013860 */
@@ -51,7 +51,7 @@ void *GDFS_LoadFile(char *filename, void *buffer, unsigned int *size, int cache,
 }
 
 /* 0x800139ac */
-static anon_ll_name_3c **_FindFile(anon_handle_dbl_10 *list, char *filename)
+static anon_ll_name_3c **_FindFile(tDLList *list, char *filename)
 {
     anon_ll_name_3c **fileh;
 

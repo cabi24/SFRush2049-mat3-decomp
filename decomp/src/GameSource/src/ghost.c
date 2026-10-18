@@ -2,20 +2,20 @@
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\ghost.c; assembly: build/2049LE/asm/GameSource/src/ghost.s */
 #include "rush/rush_protos.h"
 
-anon_headerChecksum_revision_54 *gGhostToSave;
+tSaveHeader *gGhostToSave;
 static signed char gEndingGhosts;
 static signed char gInited;
-static anon_ll_fileh_30 *gNewGhosts[4];
-static anon_ll_fileh_30 gRealNewGhosts[4];
-static anon_headerChecksum_revision_54 gRealNewGhostHeaders[4];
-static anon_headerChecksum_revision_54 *gNewGhostHeaders[4];
-static anon_ll_fileh_4c gRealGhostPlayers[4];
-static anon_ll_fileh_4c *gGhostPlayers[4];
+static tGhostFile *gNewGhosts[4];
+static tGhostFile gRealNewGhosts[4];
+static tSaveHeader gRealNewGhostHeaders[4];
+static tSaveHeader *gNewGhostHeaders[4];
+static tPlayerProfile gRealGhostPlayers[4];
+static tPlayerProfile *gGhostPlayers[4];
 
 /* 0x80019870, size 0x594 */
 void GhostStart(void)
 {
-    anon_headerChecksum_revision_54 *g; /* r23 */
+    tSaveHeader *g; /* r23 */
     int i; /* r17 */
     int np; /* r16 */
     int car; /* r15 */
@@ -103,7 +103,7 @@ void GhostStart(void)
 /* 0x80019e04, size 0x3dc */
 int GhostUpdate(int i, float *time)
 {
-    anon_headerChecksum_revision_54 *g; /* r5 */
+    tSaveHeader *g; /* r5 */
 
     *time = gRetraceTime;
     if (gEndingGhosts) {
@@ -159,7 +159,7 @@ int GhostUpdate(int i, float *time)
 /* 0x8001a1e0, size 0x104 */
 void GhostEnd(void)
 {
-    anon_headerChecksum_revision_54 *g; /* r27 */
+    tSaveHeader *g; /* r27 */
     int i; /* r31 */
 
     gGhostToSave = 0;
@@ -169,7 +169,7 @@ void GhostEnd(void)
     gEndingGhosts = 1;
     for (i = 0; i < gNumPlayers; i++) {
         if (gGhosts[i]) {
-            anon_ll_fileh_30 **ghost = gGhosts[i];
+            tGhostFile **ghost = gGhosts[i];
 
             gGhosts[i] = 0;
             model[i].fastin.modelrun = 0;

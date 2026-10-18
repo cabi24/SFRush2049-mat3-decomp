@@ -61,7 +61,7 @@ static char *buttonNames[9] = {
     "BUTTON_S1G1", "BUTTON_S1G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1", "ARROW_BGG1",
     "ARROW_FGG1", "BAR_BGG1", "BAR_FGG1"
 };
-static anon_buttonType_objIdx_40 buttonInfo[48] = {
+static tMenuButton buttonInfo[48] = {
     { 0, -1, 0.0f, {{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }}, 0 },
     { 0, -1, 0.0f, {{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }}, 0 },
     { 0, -1, 0.0f, {{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }}, 0 },
@@ -131,7 +131,7 @@ float yFog[19] = {
     15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f,
     15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f
 };
-static anon_vp_20 vp = { 1280.0f, 896.0f, 0.0f, 0.0f, 1280.0f, 896.0f, 0.0f, 0.0f };
+static tViewport vp = { 1280.0f, 896.0f, 0.0f, 0.0f, 1280.0f, 896.0f, 0.0f, 0.0f };
 static float cameraPos[3] = { 0.0f, 3300.0f, -6900.0f };
 anon_objIdx_cityX_48 trackMap[20] = {
     -1, 6.1861f, 54.2055f, -0.182355f, 0.846221f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -161,7 +161,7 @@ anon_objIdx_cityX_48 trackMap[20] = {
     0.0f, 0.0f, -1, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 0.0f, 0.0f, 0.0f
 };
-anon_c_rgba_4 trackColors[19] = {
+tRGBA trackColors[19] = {
     {{ 240, 0, 0, 255 }},
     {{ 0, 240, 0, 255 }},
     {{ 240, 240, 0, 255 }},
@@ -182,7 +182,7 @@ anon_c_rgba_4 trackColors[19] = {
     {{ 0, 240, 0, 255 }},
     {{ 240, 240, 240, 255 }}
 };
-static anon_numPack_name_2c mapObj[7] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
+static tPackedObject mapObj[7] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 static float gButtonScale = 0.85f;
 static float gButtonSpace = 40.0f;
 static float buttonX = -55.0f;
@@ -211,14 +211,14 @@ static int buttonsJustInited = 0;
 static _tBlit_2 *blit = 0;
 static signed char inited = 0;
 static float pathPos = 0.0f;
-anon_nverts_flags_68 *trackScreenPoly = 0;
-anon_nverts_flags_68 *trackFogPoly = 0;
+tPoly *trackScreenPoly = 0;
+tPoly *trackFogPoly = 0;
 static float gCameraMatrix[4][4];
-anon_mat3_mat4_30 trackMapMat;
+tUVMatrix trackMapMat;
 static anon_gTrackNum_pos_18 gTracks[19];
 static signed short gOpts[21];
 
-static const anon_texname_dulx_24 mblit[18] = {
+static const tBlitDef mblit[18] = {
     "SLIDER", 0, 0, -1, -1, -1, -1, -1, -1, 0, 0xfe, (void *)&animNewSlider, 0xe0000, "SLIDER", 0,
     0, -1, -1, -1, -1, -1, -1, 0, 0xfe, (void *)&animNewSlider, 0xe0001, "SLIDER", 0, 0, -1, -1,
     -1, -1, -1, -1, 0, 0xfe, (void *)&animNewSlider, 0xf0000, "SLIDER", 0, 0, -1, -1, -1, -1, -1,
@@ -244,7 +244,7 @@ void updateTrackScreen(void)
 {
     int i;
     int j;
-    anon_ll_fileh_4c **player;
+    tPlayerProfile **player;
     int add;
     if (gSkipToGameState != 1) {
         if (gSkipToGameState != gGameState) { setGameState(0x100); return; }
@@ -723,7 +723,7 @@ static int animFan(_tBlit_2 *blt)
 static int animText(void)
 {
     int i;
-    anon_ll_fileh_4c **player;
+    tPlayerProfile **player;
     for (i = 0; i < gNumPlayers; i++) {
         if (gPlayers[i].save != &gJustPlayers[i]) {
             player = gPlayerFiles.head;
@@ -767,10 +767,10 @@ static void animButtonText(void)
             x = screenPos[0]/2 - 35.0f*gButtonScale;
             y = screenPos[1]/2.0f;
             if (buttonInfo[item].angle < 1.5707963705062866f) {
-                anon_c_rgba_4 c1,c2; c2=flashColors[1]; c1=flashColors[0];
+                tRGBA c1,c2; c2=flashColors[1]; c1=flashColors[0];
                 TB_FlashTextColors(&c1,&c2); TB_SetTextColor(1);
             } else {
-                anon_c_rgba_4 c1,c2; c2=flashColors[1]; c1=flashColors[0];
+                tRGBA c1,c2; c2=flashColors[1]; c1=flashColors[0];
                 TB_FlashTextColors(&c1,&c2); TB_SetTextColor(22);
             }
             TB_DrawText(x,y,gText.taba[gText.tab[1]+gOpts[i]]);
@@ -781,10 +781,10 @@ static void animButtonText(void)
             x = screenPos[0]/2 - 35.0f*gButtonScale;
             y = screenPos[1]/2.0f;
             if (buttonInfo[item+21].angle < 1.5707963705062866f) {
-                anon_c_rgba_4 c1,c2; c2=flashColors[1]; c1=flashColors[0];
+                tRGBA c1,c2; c2=flashColors[1]; c1=flashColors[0];
                 TB_FlashTextColors(&c1,&c2); TB_SetTextColor(1);
             } else {
-                anon_c_rgba_4 c1,c2; c2=flashColors[1]; c1=flashColors[0];
+                tRGBA c1,c2; c2=flashColors[1]; c1=flashColors[0];
                 TB_FlashTextColors(&c1,&c2); TB_SetTextColor(22);
             }
             switch (item) {
@@ -860,7 +860,7 @@ static int OptionValid(int opt)
 /* 0x8008a494, size 0x130 */
 static void SetFogIntensity(int now)
 {
-    static anon_c_rgba_4 fogColor[2]; /* left uninitialised on purpose: an aggregate `= {0}` would move it to .sdata */
+    static tRGBA fogColor[2]; /* left uninitialised on purpose: an aggregate `= {0}` would move it to .sdata */
     static anon_name_start_18 n64FogPal;
     int red, green, blue;
     if (gFogColor < 19) gFogColor = gTrackNum;
@@ -907,7 +907,7 @@ static void loadTrackScreen(void)
 {
     float polyVerts[4][3];
     unsigned short texIdx;
-    anon_c_rgba_4 backColor = {{255,255,255,255}};
+    tRGBA backColor = {{255,255,255,255}};
     unloadTrackScreen();
     if (!((gTrackNum >= 0 && gTrackNum <= 5) ||
         (gTrackNum >= 6 && gTrackNum <= 13) ||
@@ -951,7 +951,7 @@ static void unloadTrackScreen(void)
     if (trackFogPoly) { ZOID_RemovePoly(trackFogPoly); trackFogPoly = 0; }
 }
 
-static anon_name_radius_48 *selTrackRomObjDef; /* declared here, at its DWARF position: declaring it earlier puts it after fogTileSize in .sbss */
+static tModelDef *selTrackRomObjDef; /* declared here, at its DWARF position: declaring it earlier puts it after fogTileSize in .sbss */
 
 /* 0x8008a824, size 0x18c */
 static void buildTrackMap(void)
@@ -1077,8 +1077,8 @@ static void buildRaceTrackMaps(void)
     float yoffset; /* f25 */
     float zoffset; /* f24 */
     int trackMBIdx; /* r17 */
-    anon_name_radius_48 *trackRomObjDef; /* r16 */
-    anon_numPack_name_2c *trackPS2; /* r15 */
+    tModelDef *trackRomObjDef; /* r16 */
+    tPackedObject *trackPS2; /* r15 */
     int sizePS2; /* stack */
     int i; /* r0 */
     float sectVerts[8][3]; /* stack */
@@ -1096,10 +1096,10 @@ static void buildRaceTrackMaps(void)
             trackRomObjDef = &gRomObjDefPtrs[trackMBIdx >> 10].romObjDefs[trackMBIdx & 1023];
             trackPS2 = &mapObj[gTrackNum];
             trackPS2->numPack = kNumMapSects;
-            trackPS2->tex = (anon_name_width_30 **)AllocateMemoryHeap(0,kNumMapSects*4);
+            trackPS2->tex = (tTexture **)AllocateMemoryHeap(0,kNumMapSects*4);
             trackPS2->pPack = (unsigned int **)AllocateMemoryHeap(0,kNumMapSects*4);
             trackPS2->nStrips = kNumMapSects;
-            trackPS2->strips = (anon_nVertex_iTex_10 *)AllocateMemoryHeap(0,trackPS2->nStrips*16);
+            trackPS2->strips = (tMapStrip *)AllocateMemoryHeap(0,trackPS2->nStrips*16);
             for (pointIdx = 0; pointIdx < kNumMapSects; pointIdx++) {
                 float len0,len1,len2;
                 if (pointIdx > 0) prevPt = (gResPath.numPts*(pointIdx-1))/kNumMapSects; else prevPt = -1;
@@ -1301,7 +1301,7 @@ static void clearTrackMaps(void)
 }
 
 /* animTrackMaps strip helper (inlined, no code of its own): pStrip as a parameter takes its register after the helper's scratch values, and the packed colour written inside the loop takes its register after the unrolled loop counter, both as in the original */
-static inline void animTrackMapStrip(int mapIdx,int pointIdx,anon_nVertex_iTex_10 *pStrip)
+static inline void animTrackMapStrip(int mapIdx,int pointIdx,tMapStrip *pStrip)
 {
     int fade,i;
     unsigned char red,green,blue;
@@ -1340,8 +1340,8 @@ static void animTrackMaps(void)
     static float mapPos[3] = {-100.0f,30.0f,200.0f};
     int trackIdx;
     int pointIdx;
-    anon_numPack_name_2c *trackPS2;
-    anon_nVertex_iTex_10 *pStrip;
+    tPackedObject *trackPS2;
+    tMapStrip *pStrip;
     int fade;
     int i;
     int mapIdx;
@@ -1404,8 +1404,8 @@ static void unloadPathData(void)
 /* 0x8008c718, size 0x3ac */
 static void initButtons(void)
 {
-    anon_c_rgba_4 buttonColor = {{255,255,255,255}};
-    anon_name_width_30 *tex;
+    tRGBA buttonColor = {{255,255,255,255}};
+    tTexture *tex;
     unsigned short texIdx;
     int buttonIdx;
     for (buttonIdx = 0; buttonIdx < 48; buttonIdx++) {
@@ -1479,9 +1479,9 @@ static void updateButtons(void)
     float buttonY;
     float selectedPos;
     signed char clearScrollSpeed = 1;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
-    anon_c_rgba_4 buttonColor = {{255,255,255,255}};
+    tRGBA buttonColor = {{255,255,255,255}};
     if (buttonsInited) {
         if (gButtonScale * ((gNumOptions-1)*gButtonSpace) > maxY-minY)
             selectedPos = maxY - gActiveOption*(maxY-minY)/(gNumOptions-1);

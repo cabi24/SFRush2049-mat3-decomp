@@ -6,12 +6,12 @@
 #define TEX_PALETTE_VERSION 2142000
 #define OSRoundUp32B(x) (((unsigned long)(x) + 31) & ~31)
 
-static void LoadTexPalette(anon_versionNumber_numDescriptors_c **pal, char *name);
-static void UnpackTexPalette(anon_versionNumber_numDescriptors_c *pal);
-static void TexFreeFunc(anon_versionNumber_numDescriptors_c **pal);
+static void LoadTexPalette(tTPLHeader **pal, char *name);
+static void UnpackTexPalette(tTPLHeader *pal);
+static void TexFreeFunc(tTPLHeader **pal);
 
 /* 0x800abd48, size 0xb0 */
-void NGCTEXGetPalette(anon_versionNumber_numDescriptors_c **pal, char *name)
+void NGCTEXGetPalette(tTPLHeader **pal, char *name)
 {
     void * p = (void *)TexFreeFunc; /* r31 */
 
@@ -28,13 +28,13 @@ void NGCTEXGetPalette(anon_versionNumber_numDescriptors_c **pal, char *name)
 }
 
 /* 0x800abdf8, size 0xb0 */
-static void LoadTexPalette(anon_versionNumber_numDescriptors_c **pal, char *name)
+static void LoadTexPalette(tTPLHeader **pal, char *name)
 {
     DVDFileInfo dfi; /* stack */
     long sResult; /* r0 */
 
     DVDOpen(name, &dfi);
-    *pal = (anon_versionNumber_numDescriptors_c *)_mem_driver_malloc(OSRoundUp32B(dfi.length));
+    *pal = (tTPLHeader *)_mem_driver_malloc(OSRoundUp32B(dfi.length));
     enter_cs_read();
     g_bLoadingNow = 1;
     sResult = DVDReadPrio(&dfi, *pal, OSRoundUp32B(dfi.length), 0, 2);
@@ -49,7 +49,7 @@ static void LoadTexPalette(anon_versionNumber_numDescriptors_c **pal, char *name
 }
 
 /* 0x800abea8, size 0x114 */
-static void UnpackTexPalette(anon_versionNumber_numDescriptors_c *pal)
+static void UnpackTexPalette(tTPLHeader *pal)
 {
     unsigned short i; /* r3 */
 
@@ -81,20 +81,20 @@ static void UnpackTexPalette(anon_versionNumber_numDescriptors_c *pal)
 }
 
 /* 0x800abfbc, size 0x10 */
-anon_textureHeader_CLUTHeader_8 *TEXGet(anon_versionNumber_numDescriptors_c *pal, unsigned long id)
+anon_textureHeader_CLUTHeader_8 *TEXGet(tTPLHeader *pal, unsigned long id)
 {
     return &pal->descriptorArray[id];
 }
 
 /* 0x800abfcc, size 0x38 */
-static void TexFreeFunc(anon_versionNumber_numDescriptors_c **pal)
+static void TexFreeFunc(tTPLHeader **pal)
 {
     _mem_driver_free(*pal);
     *pal = 0;
 }
 
 /* 0x800ac004, size 0x58 */
-void NGCTEXReleasePalette(anon_versionNumber_numDescriptors_c **pal)
+void NGCTEXReleasePalette(tTPLHeader **pal)
 {
     if (DOCacheInitialized) {
         DSReleaseCacheObj(&DODisplayCache, *pal);
@@ -105,7 +105,7 @@ void NGCTEXReleasePalette(anon_versionNumber_numDescriptors_c **pal)
 }
 
 /* 0x800ac05c, size 0xfc (the first parameter is unnamed in the original) */
-void NGCTEXGetGXTexObjFromPalette(void *unused, anon_versionNumber_numDescriptors_c *pal, _GXTexObj *to, unsigned long id)
+void NGCTEXGetGXTexObjFromPalette(void *unused, tTPLHeader *pal, _GXTexObj *to, unsigned long id)
 {
     anon_textureHeader_CLUTHeader_8 *tdp; /* r0 */
     unsigned char mipMap; /* r30 */

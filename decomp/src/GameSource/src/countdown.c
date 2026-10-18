@@ -8,10 +8,10 @@ signed short gCountDown;
 /* 0x8000e518 */
 void ShowCountdown(int active)
 {
-    static anon_nverts_flags_68 *poly[4];
+    static tPoly *poly[4];
     static unsigned short polyTidx;
     static unsigned short lastCountDown;
-    static anon_c_rgba_4 polyColor = { 0xff, 0xff, 0xff, 0xc0 };
+    static tRGBA polyColor = { 0xff, 0xff, 0xff, 0xc0 };
     static float polyXYZ[4][3] = {
         { 1.0f, 1.0f, 6.0f }, { -1.0f, 1.0f, 6.0f }, { -1.0f, -1.0f, 6.0f }, { 1.0f, -1.0f, 6.0f }
     };

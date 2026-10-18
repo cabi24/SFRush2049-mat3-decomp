@@ -51,7 +51,7 @@ void PS2SwapBuffer(void)
 }
 
 /* 0x800978a0 */
-void PS2SetRenderTarget(anon_vp_s_48 *win)
+void PS2SetRenderTarget(tWindowInfo *win)
 {
     int w;
     int h;

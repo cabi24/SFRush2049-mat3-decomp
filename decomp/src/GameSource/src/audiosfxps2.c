@@ -86,7 +86,7 @@ static void get_effect_volume(float vol, float pan, int *left, int *right)
 }
 
 /* 0x8009e31c, size 0x250 */
-int _AudioPlayEffect(anon_used_started_4c *theSound, float volume, float pan)
+int _AudioPlayEffect(tSfxVoice *theSound, float volume, float pan)
 {
     int soundId;
     unsigned int resid; /* r30 */
@@ -140,7 +140,7 @@ static inline float _SfxTimeAdd(float duration, float grace)
 }
 
 /* 0x8009e56c, size 0xac */
-int _AudioEffectPlaying(anon_used_started_4c *theSound)
+int _AudioEffectPlaying(tSfxVoice *theSound)
 {
     int ret; /* r3 */
     float cur_time; /* f0 */
@@ -166,7 +166,7 @@ int _AudioEffectPlaying(anon_used_started_4c *theSound)
 }
 
 /* 0x8009e618, size 0x58 */
-int _AudioStopEffect(anon_used_started_4c *theSound)
+int _AudioStopEffect(tSfxVoice *theSound)
 {
     if (theSound->sound != 0xffffffff) {
         theSound->sound = 0xffffffff;
@@ -177,7 +177,7 @@ int _AudioStopEffect(anon_used_started_4c *theSound)
 }
 
 /* 0x8009e670, size 0x14 */
-int _AudioSetEffectVolume(anon_used_started_4c *theSound, float vol)
+int _AudioSetEffectVolume(tSfxVoice *theSound, float vol)
 {
     theSound->vol = vol;
     theSound->dirty = 1;
@@ -185,7 +185,7 @@ int _AudioSetEffectVolume(anon_used_started_4c *theSound, float vol)
 }
 
 /* 0x8009e684, size 0x14 */
-int _AudioSetEffectLRPan(anon_used_started_4c *theSound, float pan)
+int _AudioSetEffectLRPan(tSfxVoice *theSound, float pan)
 {
     theSound->lrpan = pan;
     theSound->dirty = 1;
@@ -193,7 +193,7 @@ int _AudioSetEffectLRPan(anon_used_started_4c *theSound, float pan)
 }
 
 /* 0x8009e698, size 0x14 */
-int _AudioSetEffectFBPan(anon_used_started_4c *theSound, float pan)
+int _AudioSetEffectFBPan(tSfxVoice *theSound, float pan)
 {
     theSound->fbpan = pan;
     theSound->dirty = 1;
@@ -201,7 +201,7 @@ int _AudioSetEffectFBPan(anon_used_started_4c *theSound, float pan)
 }
 
 /* 0x8009e6ac, size 0x14 */
-int _AudioSetEffectPitch(anon_used_started_4c *theSound, float pitch)
+int _AudioSetEffectPitch(tSfxVoice *theSound, float pitch)
 {
     theSound->targetPitch = pitch;
     theSound->dirty = 1;
@@ -209,7 +209,7 @@ int _AudioSetEffectPitch(anon_used_started_4c *theSound, float pitch)
 }
 
 /* 0x8009e6c0, size 0x1e4 */
-void _AudioUpdateEffect(anon_used_started_4c *theSound)
+void _AudioUpdateEffect(tSfxVoice *theSound)
 {
     float fPitchInc; /* f1 */
     _SNDUPDATEMONOEFFECT ume; /* stack */

@@ -7,7 +7,7 @@ static void uninitScreen(void);
 static void printOption(int x, int y, int item, const unsigned char *name, const unsigned char *value);
 static int animText(void);
 
-static const anon_texname_dulx_24 multiblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
+static const tBlitDef multiblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
 static enum_kNumMenuDir_3 gCheatMenuExit;
 static int gSelectedOption;
 static _tBlit *blit;

@@ -5,19 +5,19 @@
 #include "msl_math_inline.h"
 
 static void _ReleaseSkid(tSkid *s);
-static void _UpdateSkid(tNewSkid *ns, signed short slot, unsigned int tire, anon_c_rgba_4 *color);
-static tSkid *_GetSkid(anon_c_rgba_4 *color);
-static void _StartSkid(tNewSkid *ns, signed short slot, unsigned int tire, anon_c_rgba_4 *color);
+static void _UpdateSkid(tNewSkid *ns, signed short slot, unsigned int tire, tRGBA *color);
+static tSkid *_GetSkid(tRGBA *color);
+static void _StartSkid(tNewSkid *ns, signed short slot, unsigned int tire, tRGBA *color);
 static void _StopSkid(tNewSkid *ns);
-static void _ContinueSkid(tNewSkid *ns, signed short slot, unsigned int tire, anon_c_rgba_4 *color);
+static void _ContinueSkid(tNewSkid *ns, signed short slot, unsigned int tire, tRGBA *color);
 
-anon_c_rgba_4 gDirtColor = { 80, 56, 24, 128 };
-static anon_name_width_30 *gSkidTexDef;
+tRGBA gDirtColor = { 80, 56, 24, 128 };
+static tTexture *gSkidTexDef;
 static int inited;
 tCarData *thecar;
 static tNewSkid gNewSkid[6][4];
 static tSkid gSkidArray[100];
-static anon_dbl_numElements_18 gSkidList;
+static tStatList gSkidList;
 
 /* 0x8003f9a0, size 0x40 */
 static void _ReleaseSkid(tSkid *s)
@@ -27,7 +27,7 @@ static void _ReleaseSkid(tSkid *s)
 }
 
 /* 0x8003f9e0, size 0x3e8 */
-static void _UpdateSkid(tNewSkid *ns, signed short slot, unsigned int tire, anon_c_rgba_4 *color)
+static void _UpdateSkid(tNewSkid *ns, signed short slot, unsigned int tire, tRGBA *color)
 {
     tCarData *car = &gGameCar[slot];
     tModelData *m = &model[slot];
@@ -86,7 +86,7 @@ static void _UpdateSkid(tNewSkid *ns, signed short slot, unsigned int tire, anon
 }
 
 /* 0x8003fdc8, size 0x3c8 */
-static tSkid *_GetSkid(anon_c_rgba_4 *color)
+static tSkid *_GetSkid(tRGBA *color)
 {
     int i;
     tSkid *s;
@@ -157,7 +157,7 @@ static tSkid *_GetSkid(anon_c_rgba_4 *color)
 }
 
 /* 0x80040190, size 0xcc */
-static void _StartSkid(tNewSkid *ns, signed short slot, unsigned int tire, anon_c_rgba_4 *color)
+static void _StartSkid(tNewSkid *ns, signed short slot, unsigned int tire, tRGBA *color)
 {
     tSkid *s;
     if ((s = _GetSkid(color)) != 0) {
@@ -189,7 +189,7 @@ static void _StopSkid(tNewSkid *ns)
 }
 
 /* 0x800402b4, size 0x308 */
-static void _ContinueSkid(tNewSkid *ns, signed short slot, unsigned int tire, anon_c_rgba_4 *color)
+static void _ContinueSkid(tNewSkid *ns, signed short slot, unsigned int tire, tRGBA *color)
 {
     float lensq;
     float invlen;
@@ -230,7 +230,7 @@ void InitSkids(void)
     _tdstVertext vert[4];
     int i;
     int j;
-    anon_name_width_38 *pTexDef;
+    tTextureEx *pTexDef;
     GMem = 1;
     if (inited) ClearSkids();
     inited = 1;
@@ -258,7 +258,7 @@ void InitSkids(void)
         gSkidArray[j].polys[0].tex = AllocateMemoryHeap(0, 4);
         gSkidArray[j].polys[0].tex[0] = AllocateMemoryHeap(0, 0x38);
         memcpy(gSkidArray[j].polys[0].tex[0], (void *)gSkidTexDef->strip, 0x38);
-        pTexDef = (anon_name_width_38 *)gSkidArray[j].polys[0].tex[0];
+        pTexDef = (tTextureEx *)gSkidArray[j].polys[0].tex[0];
         pTexDef->ps2flags = 0;
         pTexDef->ps2flags |= 1;
         gSkidArray[j].polys[0].displaylist = 0;
@@ -280,7 +280,7 @@ void UpdateSkids(int slot)
     int laston;
     tModelData *m = &model[slot];
     tNewSkid *ns;
-    anon_c_rgba_4 *color;
+    tRGBA *color;
     if (gNumPlayers > 1) return;
     ns = gNewSkid[slot];
     for (tire = 0; tire < 4; tire++, ns++) {

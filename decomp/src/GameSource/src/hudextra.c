@@ -18,7 +18,7 @@ static char *stuntCoinTexNames[10] = {
 };
 static char *powerupIconNames[3] = { 0, "WEPICON_INVSG1", "WEPICON_SHLDG1" };
 
-static const anon_texname_dulx_24 StuntMultiBlit[17] = {
+static const tBlitDef StuntMultiBlit[17] = {
     "SPEEDBG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 0xff, (void *)&animSpeed, 0x10, "SPEEDBG2", 0, 0,
     -1, -1, -1, -1, -1, -1, 0, 0xff, (void *)&animSpeed, 0x20, "SPEEDBG2", 0, 0, -1, -1, -1, -1,
     -1, -1, 0, 0xff, (void *)&animSpeed, 0x21, "SPEEDBG2", 0, 0, -1, -1, -1, -1, -1, -1, 0, 0xff,
@@ -37,7 +37,7 @@ static const anon_texname_dulx_24 StuntMultiBlit[17] = {
     (void *)&animCountdownTimer, 0, (void *)0xffffffff, 0, 0, -1, -1, -1, -1, -1, -1, 0, 0,
     (void *)&animStuntPoints, 0
 };
-static const anon_texname_dulx_24 BattleMultiBlit[10] = {
+static const tBlitDef BattleMultiBlit[10] = {
     "HEALTHBG", 0, 0, -1, -1, -1, -1, -1, -1, 0, 0xff, (void *)&animHealth, 0, "HEALTHBAR", 0, 0,
     -1, -1, -1, -1, -1, -1, 0, 0xff, (void *)&animHealth, 1, "HEALTHBG", 0, 0, -1, -1, -1, -1, -1,
     -1, 0, 0xff, (void *)&animHealth, 0x10, "HEALTHBAR", 0, 0, -1, -1, -1, -1, -1, -1, 0, 0xff,
@@ -102,13 +102,13 @@ static anon_type_idx_34 weaponIcon[4];
 void ShowHUDExtra(void)
 {
     int i;
-    anon_used_perm_20 *pane;
+    tBlitSet *pane;
     int w, h;
     int playerIdx;
     int s;
     if (!blit) {
         if (gRace == kBattle)
-            blit = (_tBlit_2 *)NewMultiBlit(0, 0, (anon_texname_dulx_24 *)BattleMultiBlit, 10);
+            blit = (_tBlit_2 *)NewMultiBlit(0, 0, (tBlitDef *)BattleMultiBlit, 10);
         else if (gRace == kStunt) {
             if (gNumWindows == 1) HAL_SetFont(10);
             else if (gNumWindows == 2) HAL_SetFont(11);
@@ -125,7 +125,7 @@ void ShowHUDExtra(void)
                     128, 0, playerIdx << 4, 1);
                 ChangePaneColor(pane, playerPaneColors[playerIdx][0], playerPaneColors[playerIdx][1]);
             }
-            blit = (_tBlit_2 *)NewMultiBlit(0, 0, (anon_texname_dulx_24 *)StuntMultiBlit, 17);
+            blit = (_tBlit_2 *)NewMultiBlit(0, 0, (tBlitDef *)StuntMultiBlit, 17);
         }
         ClearBattlePoints();
         for (i=0; i<4; i++) {
@@ -275,9 +275,9 @@ static int animStuntCoins()
     int d, e;
     tStuntPlayer *p;
     anon_type_idx_54 *coin;
-    anon_c_rgba_4 coinColor = {255,255,255,255};
+    tRGBA coinColor = {255,255,255,255};
     float alpha;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
     if ((gGameState & 0x7c03fffe) || gPauseState) return 1;
     for (i=0; i<gNumPlayers; i++) {
@@ -538,8 +538,8 @@ static int animBattleCoins()
 {
     signed short screenPos[2];
     int player;
-    anon_c_rgba_4 coinColor;
-    anon_name_width_30 *tex;
+    tRGBA coinColor;
+    tTexture *tex;
     unsigned short texIdx;
     for (player=0; player<gNumWindows; player++) {
         if (battleCoin[player].idx == -1) {

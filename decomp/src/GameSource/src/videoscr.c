@@ -23,15 +23,15 @@ static char *buttonNames[9] = {
     "BUTTON_S3G1", "BUTTON_S1G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1", "ARROW_BGG1",
     "ARROW_FGG1", "BAR_BGG1", "BAR_FGG1"
 };
-static const anon_texname_dulx_24 frontEndBlit[2] = {
+static const tBlitDef frontEndBlit[2] = {
     0, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animPanes, 0, (void *)0xffffffff, 0, 0, 0, 0, -1,
     -1, -1, -1, 0, 0, (void *)&animText, 0
 };
-static const anon_texname_dulx_24 pauseBlit[2] = {
+static const tBlitDef pauseBlit[2] = {
     0, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animPanes, 0, (void *)0xffffffff, 0, 0, 0, 0, -1,
     -1, -1, -1, 0, 0, (void *)&animText, 0
 };
-static anon_buttonType_objIdx_40 buttonInfo[12] = {
+static tMenuButton buttonInfo[12] = {
     { 0, -1, 0.0f, { 0 }, 0 },
     { 0, -1, 0.0f, { 0 }, 0 },
     { 0, -1, 0.0f, { 0 }, 0 },
@@ -50,9 +50,9 @@ static float gButtonScale = 1.0f;
 static signed char optionValid[4] = { 1, 1, 1, 1 };
 static float cursorSpeed;
 static signed char gControllerRemoved;
-static anon_used_perm_20 *gTitlePane;
-static anon_used_perm_20 *gConfirmPane;
-static anon_used_perm_20 *gTestPane;
+static tBlitSet *gTitlePane;
+static tBlitSet *gConfirmPane;
+static tBlitSet *gTestPane;
 static signed char gYesFrequency;
 static signed char gConfirmFrequency;
 static signed char gTestFrequency;
@@ -263,8 +263,8 @@ static int animText(void)
     unsigned char *str;
     unsigned char str1[40];
     int freqX;
-    anon_c_rgba_4 color1;
-    anon_c_rgba_4 color2;
+    tRGBA color1;
+    tRGBA color2;
     drawColorBars();
     if (buttonsInited == 1) {
         animButtonText();
@@ -322,7 +322,7 @@ static int animText(void)
 }
 
 /* Pass the flash colours by value through an inline: the copies stay out of the DWARF locals, as in the original, and give its stack and register use. */
-static inline void flashText(anon_c_rgba_4 color1, anon_c_rgba_4 color2)
+static inline void flashText(tRGBA color1, tRGBA color2)
 {
     TB_FlashTextColors(&color1, &color2);
 }
@@ -508,8 +508,8 @@ static void calcMenuRect(void)
 /* 0x80065338, size 0x2bc */
 static void initButtons(void)
 {
-    anon_c_rgba_4 buttonColor = { { 255, 255, 255, 255 } };
-    anon_name_width_30 *tex;
+    tRGBA buttonColor = { { 255, 255, 255, 255 } };
+    tTexture *tex;
     unsigned short texIdx;
     int buttonIdx;
     for (buttonIdx = 0; buttonIdx < 12; buttonIdx++) {
@@ -572,7 +572,7 @@ static void updateButtons(void)
     float prevPos[3];
     float buttonY;
     float selectY;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
     if (buttonsInited) {
         buttonY = 100.0f;

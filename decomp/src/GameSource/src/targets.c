@@ -28,7 +28,7 @@ inline float sqrtf(float x)
 
 /* Not in DWARF (inlined): the original reads the type flags through a pointer temporary,
    which gives the base-in-r0 / index-product-in-r3 allocation of the targetInfo address. */
-static inline anon_name_mboxname_34_2 *TInfo(tTarget *t) { return &targetInfo[t->infoIdx]; }
+static inline tTargetInfo *TInfo(tTarget *t) { return &targetInfo[t->infoIdx]; }
 /* SetTargetDefs: the visibility/collision SetupTarget arguments come back through an inline; the
    named vis/col copies are then propagated away and the inline temporaries are coloured first. */
 static inline int _NB(unsigned int f, int b) { return ((f >> b) & 1) ^ 1; }
@@ -69,7 +69,7 @@ static int (*gTargetCollFuncPtrs[6])(void *, void *, void *, void *) = {
     (int (*)(void *, void *, void *, void *))_TargetCollBBox,
     (int (*)(void *, void *, void *, void *))_TargetCollTrigger
 };
-anon_name_mboxname_34_2 targetInfo[118] = {
+tTargetInfo targetInfo[118] = {
     "GOLDCOIN", "GOLDCOINL4_LOD1", (void *)&_StartCoin, (void *)&_AnimateCoin, 0, 0x22a, -1, 6, 0,
     9.0f, 59, -1, -1, 0, 400.0f, -1.0f, "SILVERCOIN", "SILVERCOINL4_LO", (void *)&_StartCoin,
     (void *)&_AnimateCoin, 0, 0x22a, -1, 6, 0, 9.0f, 59, -1, -1, 0, 400.0f, -1.0f, "BARGE",
@@ -302,10 +302,10 @@ static tAlwaysCol *gAlwaysCol;
 static int s_init;
 static float gCameraMatrix[4][4];
 static void * gTargetOwnStructPtrs[8];
-anon_dbl_numElements_18 gAlwaysColList;
+tStatList gAlwaysColList;
 static tPlayerMines gPlayerMines[4];
 static tTarget gTargetArray[150];
-anon_dbl_numElements_18 gTargetList;
+tStatList gTargetList;
 static void * gTargetStructPtrs[8];
 
 /* 0x8004b54c, size 0x98 */
@@ -378,15 +378,15 @@ int SetupTarget(void * obj, signed short Parent, float *pos, int fromWorld, sign
     char *name; /* r27 */
     tTarget *t; /* r24 */
     unsigned int dlflags; /* r23 */
-    anon_name_mboxname_34_2 *tInfo; /* r22 */
+    tTargetInfo *tInfo; /* r22 */
     signed char targDir; /* r24 */
     float tmpf1; /* f6 */
     float tmpf2; /* f31 */
-    anon_mat3_mat4_30 *mat; /* r3 */
+    tUVMatrix *mat; /* r3 */
     tAlwaysCol *acol; /* r0 */
     unsigned short flags; /* not in the DWARF: a 16-bit copy of the type flags that the original code needs */
     name = obj;
-    if (fromWorld) dlflags = ((anon_name_mat_68 *)obj)->dlflags;
+    if (fromWorld) dlflags = ((tModelPart *)obj)->dlflags;
     else dlflags = 0;
     for (i = 0; i < sizeof(targetInfo) / sizeof(targetInfo[0]); i++) {
         if (!strncmp(name, targetInfo[i].name, strlen(targetInfo[i].name))) {
@@ -414,9 +414,9 @@ int SetupTarget(void * obj, signed short Parent, float *pos, int fromWorld, sign
                 if (tInfo->oRad == -1.0f) tInfo->oRad = MBOX_GetObjectRadius(t->mbIdx);
                 tmpf1 = 1.0f;
                 for (i = 0; i < 3; i++) {
-                    tmpf2 = sqrtf(((anon_name_mat_68 *)obj)->mat.uvs[i][0] * ((anon_name_mat_68 *)obj)->mat.uvs[i][0] +
-                                  ((anon_name_mat_68 *)obj)->mat.uvs[i][1] * ((anon_name_mat_68 *)obj)->mat.uvs[i][1] +
-                                  ((anon_name_mat_68 *)obj)->mat.uvs[i][2] * ((anon_name_mat_68 *)obj)->mat.uvs[i][2]);
+                    tmpf2 = sqrtf(((tModelPart *)obj)->mat.uvs[i][0] * ((tModelPart *)obj)->mat.uvs[i][0] +
+                                  ((tModelPart *)obj)->mat.uvs[i][1] * ((tModelPart *)obj)->mat.uvs[i][1] +
+                                  ((tModelPart *)obj)->mat.uvs[i][2] * ((tModelPart *)obj)->mat.uvs[i][2]);
                     if (tmpf2 > tmpf1) tmpf1 = tmpf2;
                 }
                 if (tmpf1 > 1.0f) {
@@ -468,10 +468,10 @@ int SetupTarget(void * obj, signed short Parent, float *pos, int fromWorld, sign
             }
             if (vis) {
                 if (fromWorld) {
-                    t->mat.mat3.pos[0] = ((anon_name_mat_68 *)obj)->mat.mat3.pos[0];
-                    t->mat.mat3.pos[1] = ((anon_name_mat_68 *)obj)->mat.mat3.pos[1];
-                    t->mat.mat3.pos[2] = ((anon_name_mat_68 *)obj)->mat.mat3.pos[2];
-                    CopyUV(((anon_name_mat_68 *)obj)->mat.mat3.uvs, t->mat.mat3.uvs);
+                    t->mat.mat3.pos[0] = ((tModelPart *)obj)->mat.mat3.pos[0];
+                    t->mat.mat3.pos[1] = ((tModelPart *)obj)->mat.mat3.pos[1];
+                    t->mat.mat3.pos[2] = ((tModelPart *)obj)->mat.mat3.pos[2];
+                    CopyUV(((tModelPart *)obj)->mat.mat3.uvs, t->mat.mat3.uvs);
                 } else {
                     t->mat.mat3.pos[0] = pos[0];
                     t->mat.mat3.pos[1] = pos[1];
@@ -512,7 +512,7 @@ int SetupTarget(void * obj, signed short Parent, float *pos, int fromWorld, sign
                 t->radius = tInfo->collVal;
             }
             if (tInfo->collFuncIdx != 6) t->Flags |= 8;
-            if (fromWorld) t->mbIdx = ((anon_name_mat_68 *)obj)->tidx;
+            if (fromWorld) t->mbIdx = ((tModelPart *)obj)->tidx;
             else if (tInfo->structureID == 4) t->mbIdx = (int)gTargetPaths.paths[owner].parent;
             if (gGameState & 0x00400000) {
                 if (gRace == kBattle) {
@@ -579,7 +579,7 @@ static void SetTargetDef(tTarget *t)
 {
     int x; /* r0 */
     int i; /* r9 */
-    anon_name_mboxname_34_2 *tInfo; /* r31 */
+    tTargetInfo *tInfo; /* r31 */
     tVisual *v; /* r0 */
     tInfo = &targetInfo[t->infoIdx];
     x = tInfo->structureID;
@@ -726,7 +726,7 @@ void CheckTargetCollision(signed short slot)
     void * d3; /* r5 */
     float x, z; /* not in the DWARF */
     float mh; /* f3 */
-    anon_name_mboxname_34_2 *tInfo; /* r27 */
+    tTargetInfo *tInfo; /* r27 */
     tTargetGroup *tg; /* r30 */
     int currentG; /* r0 */
     int i; /* r29 */
@@ -968,7 +968,7 @@ static void _StartGuardrail(tTarget *t)
     signed short parent; /* r0 */
     unsigned int flags; /* r28 */
     char name[20]; /* stack */
-    anon_name_mboxname_34_2 *tInfo; /* r0 */
+    tTargetInfo *tInfo; /* r0 */
     int i; /* r0 */
     /* stripped */
 }
@@ -1010,8 +1010,8 @@ static void _AnimateMine(tVisual *v, signed short op)
     int j; /* r7 */
     tTarget *t; /* r26 */
     tTargetStructMine *m; /* r25 */
-    anon_c_rgba_4 clr; /* stack */
-    anon_c_rgba_4 *clrPtr; /* r0 */
+    tRGBA clr; /* stack */
+    tRGBA *clrPtr; /* r0 */
     float opos[3]; /* stack */
     float uvs[3][3]; /* stack */
     float oldT; /* f1 */
@@ -1048,7 +1048,7 @@ static void _AnimateMine(tVisual *v, signed short op)
                 for (j = 0; j < 3; j++) t->mat.mat3.uvs[i][j] = uvs[i][j];
             }
         }
-        m->dlIdx = MBOX_NewObject(gWprObjList[5], (anon_mat3_mat4_30 *)unitmatrix, t->dlIdx, 0x80);
+        m->dlIdx = MBOX_NewObject(gWprObjList[5], (tUVMatrix *)unitmatrix, t->dlIdx, 0x80);
         ZOID_SetTexture(m->dlIdx, &gTexDefPtrs[gMineTextures[4] >> 10].texDefs[gMineTextures[4] & 1023], -1);
         m->flashTime = 0.0f;
         m->on = 0;
@@ -1350,7 +1350,7 @@ static char *flag_pals[3] = { "REDFLAG", "GRNFLAG", "BLUFLAG" };
 static void _AnimateFlag(tVisual *v, signed short op)
 {
     tTarget *t; /* r31 */
-    anon_name_width_30 *tex; /* r3 */
+    tTexture *tex; /* r3 */
     signed char clrIdx; /* r0 */
     unsigned short ind; /* stack */
     char *color; /* r29 */
@@ -1381,7 +1381,7 @@ static void _AnimateFlag(tVisual *v, signed short op)
 static void _StartCactus(tTarget *t)
 {
     tVisual *v; /* r30 */
-    anon_name_mboxname_34_2 *tInfo; /* r29 */
+    tTargetInfo *tInfo; /* r29 */
     tCarData *car; /* r5 */
     float vel[3]; /* stack */
     tInfo = &targetInfo[t->infoIdx];
@@ -1407,7 +1407,7 @@ static void _StartCactus(tTarget *t)
 static void _StartFence(tTarget *t)
 {
     tVisual *v; /* r0 */
-    anon_name_mboxname_34_2 *tInfo; /* r31 */
+    tTargetInfo *tInfo; /* r31 */
     tInfo = &targetInfo[t->infoIdx];
     t->frames = 12;
     v = GrabEnvEntry();
@@ -1426,7 +1426,7 @@ static void _StartFence(tTarget *t)
 static void _StartWindow(tTarget *t)
 {
     tVisual *v; /* r30 */
-    anon_name_mboxname_34_2 *tInfo; /* r29 */
+    tTargetInfo *tInfo; /* r29 */
     tCarData *car; /* r3 */
     tInfo = &targetInfo[t->infoIdx];
     t->frames = 7;
@@ -1449,11 +1449,11 @@ static void _StartWindow(tTarget *t)
 static void _StartCone(tTarget *t)
 {
     tVisual *v; /* r29 */
-    anon_mat3_mat4_30 tmat; /* stack */
+    tUVMatrix tmat; /* stack */
     float *vel; /* r28 */
     float *angV; /* r0 */
     tCarData *car; /* r27 */
-    anon_name_mboxname_34_2 *tInfo; /* r28 */
+    tTargetInfo *tInfo; /* r28 */
     tInfo = &targetInfo[t->infoIdx];
     car = &gGameCar[t->slot];
     if (gCarMines && tInfo->objListIdx == 550) {
@@ -1540,8 +1540,8 @@ static void _AnimateCoin(tVisual *v, signed short op)
         return;
     }
     if (!(t->Flags & 1)) {
-        anon_c_rgba_4 gClr = { 0x00, 0xC8, 0xFF, 0xFF };
-        anon_c_rgba_4 sClr = { 0xFF, 0xE6, 0xC8, 0xFF };
+        tRGBA gClr = { 0x00, 0xC8, 0xFF, 0xFF };
+        tRGBA sClr = { 0xFF, 0xE6, 0xC8, 0xFF };
         if (t->Flags & 0x40) {
             c->whichcoin = coinNum = gWhichGoldCoin + 8;
             gWhichGoldCoin++;
@@ -1677,7 +1677,7 @@ static void _AnimateObjSwapGeneric(tVisual *v, signed short op)
 static void _StartKnockdown(tTarget *t)
 {
     tVisual *v; /* r31 */
-    anon_mat3_mat4_30 mat; /* stack */
+    tUVMatrix mat; /* stack */
     v = GrabEnvEntry();
     if (v) {
         v->index = 0;

@@ -13,7 +13,7 @@ static void initButtons(void);
 static void uninitButtons(void);
 static void updateButtons(void);
 
-static const anon_texname_dulx_24 mblit[1] = {(void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0,
+static const tBlitDef mblit[1] = {(void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0,
                                               (void *)&animText,  0};
 static signed char validOption[10] = {1, 1, 1, 1, 1, 0, 1, 0, 0, 0};
 static char *buttonNames[8] = {"BUTTON_S1G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1",
@@ -239,7 +239,7 @@ static int animText(void)
     HAL_SetTextTranslucency(-1.0f);
     TB_SetJust(0, 3);
     {
-        anon_c_rgba_4 c1, c2;
+        tRGBA c1, c2;
         c2 = flashColors[1];
         c1 = flashColors[0];
         TB_FlashTextColors(&c1, &c2);
@@ -274,13 +274,13 @@ static void animButtonText(void)
             else
                 HAL_SetTextTranslucency(-1.0f);
             if (buttonInfo[i].angle < 1.5707964f) {
-                anon_c_rgba_4 c1, c2;
+                tRGBA c1, c2;
                 c2 = flashColors[1];
                 c1 = flashColors[0];
                 TB_FlashTextColors(&c1, &c2);
                 HAL_SetTextColor(224, 224, 224, 255);
             } else {
-                anon_c_rgba_4 c1, c2;
+                tRGBA c1, c2;
                 c2 = flashColors[1];
                 c1 = flashColors[0];
                 TB_FlashTextColors(&c1, &c2);
@@ -313,7 +313,7 @@ static void animButtonText(void)
     HAL_SetTextTranslucency(-1.0f);
     TB_SetJust(0, 3);
     {
-        anon_c_rgba_4 c1, c2;
+        tRGBA c1, c2;
         c2 = flashColors[1];
         c1 = flashColors[0];
         TB_FlashTextColors(&c1, &c2);
@@ -335,8 +335,8 @@ static signed char optionValid(enum_kStartMenuCount opt)
 /* 0x80086da4, size 0x3cc */
 static void initButtons(void)
 {
-    anon_c_rgba_4 buttonColor = {255, 255, 255, 255};
-    anon_name_width_30 *tex;
+    tRGBA buttonColor = {255, 255, 255, 255};
+    tTexture *tex;
     unsigned short texIdx;
     int buttonIdx;
     for (buttonIdx = 0; buttonIdx < 18; buttonIdx++)
@@ -409,7 +409,7 @@ static void updateButtons(void)
 {
     int buttonIdx;
     float prevPos[3];
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
     float buttonY, selectedY;
     if (!buttonsInited)

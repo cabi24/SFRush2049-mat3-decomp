@@ -7,7 +7,7 @@ signed char gCatchup;
 signed char gUseCatchup;
 signed short gNumPlayers;
 int gStuntsDone;
-anon_slot_controller_50 gPlayers[4];
+tPadState gPlayers[4];
 tStuntPlayer gStuntPlayer[4];
 tCarData gGameCar[6];
 tModelData model[6];

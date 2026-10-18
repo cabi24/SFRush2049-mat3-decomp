@@ -1,7 +1,7 @@
 /* sky.c - per-window sky dome objects that follow the camera. */
 #include "rush/rush_protos.h"
 
-anon_mat3_mat4_30 *skyMatrices[4];
+tUVMatrix *skyMatrices[4];
 
 /* 0x80040d80 */
 void SkyInit(void)

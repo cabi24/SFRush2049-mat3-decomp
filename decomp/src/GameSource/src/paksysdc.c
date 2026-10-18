@@ -48,7 +48,7 @@ unsigned char rwbuff[1024];
 anon__Create__Modify_40 _IdFileInfo;
 /* Split target .bss has sh_addralign=64; table begins at 0x9c0. */
 static anon__Create__Modify_40 table[99] __attribute__((aligned(64)));
-anon_handle_dbl_10 gPS_Files[4];
+tDLList gPS_Files[4];
 anon_changed_inserted_25c gPaks[4];
 
 /* 0x8002ef58, size 0xac */

@@ -47,9 +47,9 @@ void ngcBlitInit_swap(void)
 static void CameraInit_swap(float (*v)[4])
 {
     float p[4][4]; /* stack */
-    anon_x_y_c_2 camPt = { 0.0f, 0.0f, 0.0f }; /* stack */
-    anon_x_y_c_2 at = { 0.0f, 0.0f, -100.0f }; /* stack */
-    anon_x_y_c_2 up = { 0.0f, 1.0f, 0.0f }; /* stack */
+    tVec3 camPt = { 0.0f, 0.0f, 0.0f }; /* stack */
+    tVec3 at = { 0.0f, 0.0f, -100.0f }; /* stack */
+    tVec3 up = { 0.0f, 1.0f, 0.0f }; /* stack */
 
     camPt.x += g_MoveCamX;
     camPt.y += g_MoveCamY;
@@ -66,9 +66,9 @@ static void CameraInit_swap(float (*v)[4])
 static void CameraInit(float (*v)[4])
 {
     float p[4][4]; /* stack */
-    anon_x_y_c_2 camPt = { 0.0f, 0.0f, 0.0f }; /* stack */
-    anon_x_y_c_2 at = { 0.0f, 0.0f, -100.0f }; /* stack */
-    anon_x_y_c_2 up = { 0.0f, 1.0f, 0.0f }; /* stack */
+    tVec3 camPt = { 0.0f, 0.0f, 0.0f }; /* stack */
+    tVec3 at = { 0.0f, 0.0f, -100.0f }; /* stack */
+    tVec3 up = { 0.0f, 1.0f, 0.0f }; /* stack */
 
     C_MTXOrtho(p, 448.0f, 0.0f, 0.0f, 640.0f, -4000.0f, 4000.0f);
     GXSetProjection(p, 1);
@@ -78,7 +78,7 @@ static void CameraInit(float (*v)[4])
 /* 0x800a9798, size 0x71c */
 void NGCDC_SendBlit(void * tex, int nNumVertex, void * Vertices, unsigned int color)
 {
-    anon_name_width_38 *pTexDef = (anon_name_width_38 *)((anon_name_width_30 *)tex)->strip; /* r30 */
+    tTextureEx *pTexDef = (tTextureEx *)((tTexture *)tex)->strip; /* r30 */
     KMVERTICES *pVertices = Vertices; /* r29 */
     int i; /* r16 */
     int j; /* r0 */
@@ -223,9 +223,9 @@ void NGCDC_SendBlit_MENU(void * tex, void * tex_a, int nNumVertex, void * Vertic
     float vp[6] ATTRIBUTE_ALIGN(32); /* stack */
     float v[3][4]; /* stack */
     float p[4][4]; /* stack */
-    anon_x_y_c_2 camPt = { 0.0f, 0.0f, 0.0f }; /* stack */
-    anon_x_y_c_2 at = { 0.0f, 0.0f, -100.0f }; /* stack */
-    anon_x_y_c_2 up = { 0.0f, 1.0f, 0.0f }; /* stack */
+    tVec3 camPt = { 0.0f, 0.0f, 0.0f }; /* stack */
+    tVec3 at = { 0.0f, 0.0f, -100.0f }; /* stack */
+    tVec3 up = { 0.0f, 1.0f, 0.0f }; /* stack */
 
     pVertices = Vertices;
     CameraInit(v);
@@ -309,9 +309,9 @@ void NGCDC_SendBlit_MENU_RGBA(void * tex, void * tex_a, int nNumVertex, void * V
     float vp[6] ATTRIBUTE_ALIGN(32); /* stack */
     float v[3][4]; /* stack */
     float p[4][4]; /* stack */
-    anon_x_y_c_2 camPt = { 0.0f, 0.0f, 0.0f }; /* stack */
-    anon_x_y_c_2 at = { 0.0f, 0.0f, -100.0f }; /* stack */
-    anon_x_y_c_2 up = { 0.0f, 1.0f, 0.0f }; /* stack */
+    tVec3 camPt = { 0.0f, 0.0f, 0.0f }; /* stack */
+    tVec3 at = { 0.0f, 0.0f, -100.0f }; /* stack */
+    tVec3 up = { 0.0f, 1.0f, 0.0f }; /* stack */
 
     pVertices = Vertices;
     CameraInit(v);

@@ -3,7 +3,7 @@
 #include "rush/rush_protos.h"
 
 /* 0x80025338 */
-void InitLL(anon_handle_dbl_10 *list, char handle, char dbl)
+void InitLL(tDLList *list, char handle, char dbl)
 {
     list->handle = handle;
     list->dbl = dbl;
@@ -11,7 +11,7 @@ void InitLL(anon_handle_dbl_10 *list, char handle, char dbl)
 }
 
 /* 0x80025360 */
-void ClearLL(anon_handle_dbl_10 *list)
+void ClearLL(tDLList *list)
 {
     list->head = NULL;
     list->tail = NULL;
@@ -19,7 +19,7 @@ void ClearLL(anon_handle_dbl_10 *list)
 }
 
 /* 0x80025374 */
-void InsertLLE(anon_handle_dbl_10 *list, void *insert, void *before)
+void InsertLLE(tDLList *list, void *insert, void *before)
 {
     tDLLE *in;
     tDLLE *direct;
@@ -89,7 +89,7 @@ void InsertLLE(anon_handle_dbl_10 *list, void *insert, void *before)
 }
 
 /* 0x800254c8 */
-void RemoveLLE(anon_handle_dbl_10 *list, void *element)
+void RemoveLLE(tDLList *list, void *element)
 {
     tDLLE *prev;
     tDLLE **prevh;

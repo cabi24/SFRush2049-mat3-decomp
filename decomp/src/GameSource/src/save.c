@@ -14,47 +14,47 @@ extern void PS_WriteFile(tPS_File **fileh, void *data, unsigned int size);
 
 static void _RemovePlayerFile(tPS_File **fileh);
 static void _MovePlayerFile(tPS_File **from, tPS_File **to);
-static signed char _GetRaceSetting(anon_ll_fileh_4c **player, unsigned char option, int track);
-static signed char _GetBattleSetting(anon_ll_fileh_4c **player, unsigned char option, int track);
-static signed char _GetStuntSetting(anon_ll_fileh_4c **player, unsigned char option, int track);
-static signed char _GetObstacleSetting(anon_ll_fileh_4c **player, unsigned char option, int track);
-static void _SaveRaceSetting(anon_ll_fileh_4c **player, unsigned char option, signed char value, unsigned char track);
-static void _SaveBattleSetting(anon_ll_fileh_4c **player, unsigned char option, signed char value, int track);
-static void _SaveStuntSetting(anon_ll_fileh_4c **player, unsigned char option, signed char value, int track);
-static void _SaveObstacleSetting(anon_ll_fileh_4c **player, unsigned char option, signed char value, int track);
+static signed char _GetRaceSetting(tPlayerProfile **player, unsigned char option, int track);
+static signed char _GetBattleSetting(tPlayerProfile **player, unsigned char option, int track);
+static signed char _GetStuntSetting(tPlayerProfile **player, unsigned char option, int track);
+static signed char _GetObstacleSetting(tPlayerProfile **player, unsigned char option, int track);
+static void _SaveRaceSetting(tPlayerProfile **player, unsigned char option, signed char value, unsigned char track);
+static void _SaveBattleSetting(tPlayerProfile **player, unsigned char option, signed char value, int track);
+static void _SaveStuntSetting(tPlayerProfile **player, unsigned char option, signed char value, int track);
+static void _SaveObstacleSetting(tPlayerProfile **player, unsigned char option, signed char value, int track);
 static unsigned int _CalcChecksum(void * start, unsigned int size);
-static void _SetDefaultCarSettings(anon_ll_fileh_4c **p, int car);
-static void _InitPlayer(anon_ll_fileh_4c **player);
-static anon_ll_fileh_4c **_NewPlayer(void);
-static void _FreePlayer(anon_ll_fileh_4c **player);
+static void _SetDefaultCarSettings(tPlayerProfile **p, int car);
+static void _InitPlayer(tPlayerProfile **player);
+static tPlayerProfile **_NewPlayer(void);
+static void _FreePlayer(tPlayerProfile **player);
 static int _AlreadyReadPlayer(tPS_File **fileh);
-static anon_ll_fileh_4c **_ReadPlayer(tPS_File **fileh);
-static int _CheckAndRepairPlayer(anon_ll_fileh_4c **player, int repair);
+static tPlayerProfile **_ReadPlayer(tPS_File **fileh);
+static int _CheckAndRepairPlayer(tPlayerProfile **player, int repair);
 static int _AlreadyReadGhost(tPS_File **fileh);
-static anon_ll_fileh_30 **_ReadGhostHeader(tPS_File **fileh);
-static void _DecodeGhost(anon_ll_fileh_30 **ghosth);
-static int _CheckAndRepairGhost(anon_ll_fileh_30 **ghosth, int data, int repair);
+static tGhostFile **_ReadGhostHeader(tPS_File **fileh);
+static void _DecodeGhost(tGhostFile **ghosth);
+static int _CheckAndRepairGhost(tGhostFile **ghosth, int data, int repair);
 static int _GetUniqueExtension(int pak, char *name, char *extPrefix, char *ext);
 static int _Pow(int num, int exp);
-static int _VerifyPlayer(anon_ll_fileh_4c **playerh, int pak);
-static int _VerifyGhost(anon_ll_fileh_30 **ghosth, int pak);
+static int _VerifyPlayer(tPlayerProfile **playerh, int pak);
+static int _VerifyGhost(tGhostFile **ghosth, int pak);
 static int _VerifyFile(tPS_File **fileh, int pak);
 
 const char *gPlayerNameChars = { "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.:<>!@$^*(){}-_=|'" };
 signed char gSaveGhostFiles = 1;
-anon_ll_fileh_30 **gLimboGhosts;
-static anon_ll_fileh_30 *gRealLimboGhosts;
+tGhostFile **gLimboGhosts;
+static tGhostFile *gRealLimboGhosts;
 static unsigned char gNumLimbo;
 static signed char gGlobalsSet;
 static signed char gInited;
-anon_ll_fileh_30 **gGhosts[4];
+tGhostFile **gGhosts[4];
 static float gCameraMatrix[4][4];
-anon_handle_dbl_10 gGhostFiles;
-anon_handle_dbl_10 gPlayerFiles;
-static anon_nameChecksum_id_814 gRealJustPlayerData[4];
-static anon_nameChecksum_id_814 *gJustPlayerData[4];
-anon_ll_fileh_4c *gJustPlayers[4];
-static anon_ll_fileh_4c gRealJustPlayers[4];
+tDLList gGhostFiles;
+tDLList gPlayerFiles;
+static tSaveData gRealJustPlayerData[4];
+static tSaveData *gJustPlayerData[4];
+tPlayerProfile *gJustPlayers[4];
+static tPlayerProfile gRealJustPlayers[4];
 
 /* inline narrowing to unsigned char (no DWARF entry): its return temporary reproduces the original code for the track argument of the race-setting calls */
 static inline unsigned char track_arg(int t) { return t; }
@@ -145,7 +145,7 @@ void SaveGlobals(void)
 }
 
 /* 0x80037e48, size 0xc4 */
-void SaveSelectPlayer(anon_ll_fileh_4c **player)
+void SaveSelectPlayer(tPlayerProfile **player)
 {
     int i;
     if (!gGlobalsSet) {
@@ -160,8 +160,8 @@ void SaveSelectPlayer(anon_ll_fileh_4c **player)
 /* 0x80037f0c, size 0xf0 */
 static void _RemovePlayerFile(tPS_File **fileh)
 {
-    anon_ll_fileh_4c **player;
-    anon_ll_fileh_30 **ghost;
+    tPlayerProfile **player;
+    tGhostFile **ghost;
     int i;
     for (player = gPlayerFiles.head; player; player = (*player)->ll.next) {
         if ((*player)->fileh == fileh) {
@@ -186,8 +186,8 @@ static void _RemovePlayerFile(tPS_File **fileh)
 /* 0x80037ffc, size 0x6c */
 static void _MovePlayerFile(tPS_File **from, tPS_File **to)
 {
-    anon_ll_fileh_4c **player;
-    anon_ll_fileh_30 **ghost;
+    tPlayerProfile **player;
+    tGhostFile **ghost;
     for (player = gPlayerFiles.head; player; player = (*player)->ll.next) {
         if ((*player)->fileh == from) {
             (*player)->fileh = to;
@@ -203,13 +203,13 @@ static void _MovePlayerFile(tPS_File **from, tPS_File **to)
 }
 
 /* 0x80038068, size 0x14 */
-unsigned char GetPlayerRaceType(anon_ll_fileh_4c **player)
+unsigned char GetPlayerRaceType(tPlayerProfile **player)
 {
     return (*(*player)->datah)->raceType;
 }
 
 /* 0x8003807c, size 0x54 */
-void SavePlayerRaceType(anon_ll_fileh_4c **player, int raceType)
+void SavePlayerRaceType(tPlayerProfile **player, int raceType)
 {
     if ((*(*player)->datah)->raceType != raceType) {
         (*(*player)->datah)->raceType = raceType;
@@ -218,7 +218,7 @@ void SavePlayerRaceType(anon_ll_fileh_4c **player, int raceType)
 }
 
 /* 0x800380d0, size 0x50 */
-unsigned char GetPlayerCar(anon_ll_fileh_4c **player)
+unsigned char GetPlayerCar(tPlayerProfile **player)
 {
     switch ((*(*player)->datah)->raceType) {
     case 6: return (*(*player)->datah)->battleSettings.car;
@@ -229,9 +229,9 @@ unsigned char GetPlayerCar(anon_ll_fileh_4c **player)
 }
 
 /* 0x80038120, size 0x158 */
-void SavePlayerCar(anon_ll_fileh_4c **player, unsigned char car)
+void SavePlayerCar(tPlayerProfile **player, unsigned char car)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     switch (data->raceType) {
     case 0:
     case 1:
@@ -268,7 +268,7 @@ void SavePlayerCar(anon_ll_fileh_4c **player, unsigned char car)
 }
 
 /* 0x80038278, size 0x50 */
-unsigned char GetPlayerCarView(anon_ll_fileh_4c **player)
+unsigned char GetPlayerCarView(tPlayerProfile **player)
 {
     switch ((*(*player)->datah)->raceType) {
     case 6: return (*(*player)->datah)->battleSettings.carView;
@@ -279,9 +279,9 @@ unsigned char GetPlayerCarView(anon_ll_fileh_4c **player)
 }
 
 /* 0x800382c8, size 0x158 */
-void SavePlayerCarView(anon_ll_fileh_4c **player, unsigned char view)
+void SavePlayerCarView(tPlayerProfile **player, unsigned char view)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     switch (data->raceType) {
     case 0:
     case 1:
@@ -318,7 +318,7 @@ void SavePlayerCarView(anon_ll_fileh_4c **player, unsigned char view)
 }
 
 /* 0x80038420, size 0x50 */
-unsigned char GetPlayerCarTrans(anon_ll_fileh_4c **player)
+unsigned char GetPlayerCarTrans(tPlayerProfile **player)
 {
     switch ((*(*player)->datah)->raceType) {
     case 6: return (*(*player)->datah)->battleSettings.trans;
@@ -329,9 +329,9 @@ unsigned char GetPlayerCarTrans(anon_ll_fileh_4c **player)
 }
 
 /* 0x80038470, size 0x158 */
-void SavePlayerCarTrans(anon_ll_fileh_4c **player, unsigned char trans)
+void SavePlayerCarTrans(tPlayerProfile **player, unsigned char trans)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     switch (data->raceType) {
     case 0:
     case 1:
@@ -368,7 +368,7 @@ void SavePlayerCarTrans(anon_ll_fileh_4c **player, unsigned char trans)
 }
 
 /* 0x800385c8, size 0x70 */
-unsigned char GetPlayerTrack(anon_ll_fileh_4c **player, int raceType)
+unsigned char GetPlayerTrack(tPlayerProfile **player, int raceType)
 {
     switch (raceType) {
     case 6: return (*(*player)->datah)->battleSettings.track;
@@ -379,9 +379,9 @@ unsigned char GetPlayerTrack(anon_ll_fileh_4c **player, int raceType)
 }
 
 /* 0x80038638, size 0x178 */
-void SavePlayerTrack(anon_ll_fileh_4c **player, int raceType, unsigned char track)
+void SavePlayerTrack(tPlayerProfile **player, int raceType, unsigned char track)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     switch (raceType) {
     case 0:
     case 1:
@@ -419,7 +419,7 @@ void SavePlayerTrack(anon_ll_fileh_4c **player, int raceType, unsigned char trac
 }
 
 /* 0x800387b0, size 0xd8 */
-signed char GetPlayerOption(anon_ll_fileh_4c **player, unsigned char option)
+signed char GetPlayerOption(tPlayerProfile **player, unsigned char option)
 {
     if (option < 21) return (*(*player)->datah)->options[option];
     if (gTrackNum >= 0 && gTrackNum < 6) return _GetRaceSetting(player, option, track_arg(gTrackNum));
@@ -430,9 +430,9 @@ signed char GetPlayerOption(anon_ll_fileh_4c **player, unsigned char option)
 }
 
 /* 0x80038888, size 0x8c */
-static signed char _GetRaceSetting(anon_ll_fileh_4c **player, unsigned char option, int track)
+static signed char _GetRaceSetting(tPlayerProfile **player, unsigned char option, int track)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     switch (option) {
     case 21: return data->raceSettings.laps;
     case 22: return data->raceSettings.drones;
@@ -449,9 +449,9 @@ static signed char _GetRaceSetting(anon_ll_fileh_4c **player, unsigned char opti
 }
 
 /* 0x80038914, size 0x7c */
-static signed char _GetBattleSetting(anon_ll_fileh_4c **player, unsigned char option, int track)
+static signed char _GetBattleSetting(tPlayerProfile **player, unsigned char option, int track)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     switch (option) {
     case 23: return data->battleSettings.gravity;
     case 28: return data->battleSettings.mirror;
@@ -466,9 +466,9 @@ static signed char _GetBattleSetting(anon_ll_fileh_4c **player, unsigned char op
 }
 
 /* 0x80038990, size 0x84 */
-static signed char _GetStuntSetting(anon_ll_fileh_4c **player, unsigned char option, int track)
+static signed char _GetStuntSetting(tPlayerProfile **player, unsigned char option, int track)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     switch (option) {
     case 23: return data->stuntSettings.gravity;
     case 28: return data->stuntSettings.mirror;
@@ -484,9 +484,9 @@ static signed char _GetStuntSetting(anon_ll_fileh_4c **player, unsigned char opt
 }
 
 /* 0x80038a14, size 0x60 */
-static signed char _GetObstacleSetting(anon_ll_fileh_4c **player, unsigned char option, int track)
+static signed char _GetObstacleSetting(tPlayerProfile **player, unsigned char option, int track)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     switch (option) {
     case 23: return data->obstacleSettings.gravity;
     case 28: return data->obstacleSettings.mirror;
@@ -497,9 +497,9 @@ static signed char _GetObstacleSetting(anon_ll_fileh_4c **player, unsigned char 
 }
 
 /* 0x80038a74, size 0x13c */
-void SavePlayerOption(anon_ll_fileh_4c **player, unsigned char option, signed char value)
+void SavePlayerOption(tPlayerProfile **player, unsigned char option, signed char value)
 {
-    anon_nameChecksum_id_814 *data;
+    tSaveData *data;
     if ((*player)->datah == 0) return;
     data = *(*player)->datah;
     if (option < 21) {
@@ -516,9 +516,9 @@ void SavePlayerOption(anon_ll_fileh_4c **player, unsigned char option, signed ch
 }
 
 /* 0x80038bb0, size 0xf4 */
-static void _SaveRaceSetting(anon_ll_fileh_4c **player, unsigned char option, signed char value, unsigned char track)
+static void _SaveRaceSetting(tPlayerProfile **player, unsigned char option, signed char value, unsigned char track)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     signed char *setting;
     switch (option) {
     case 21: setting = &data->raceSettings.laps; break;
@@ -541,9 +541,9 @@ static void _SaveRaceSetting(anon_ll_fileh_4c **player, unsigned char option, si
 }
 
 /* 0x80038ca4, size 0xe4 */
-static void _SaveBattleSetting(anon_ll_fileh_4c **player, unsigned char option, signed char value, int track)
+static void _SaveBattleSetting(tPlayerProfile **player, unsigned char option, signed char value, int track)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     signed char *setting;
     switch (option) {
     case 23: setting = &data->battleSettings.gravity; break;
@@ -564,9 +564,9 @@ static void _SaveBattleSetting(anon_ll_fileh_4c **player, unsigned char option, 
 }
 
 /* 0x80038d88, size 0xec */
-static void _SaveStuntSetting(anon_ll_fileh_4c **player, unsigned char option, signed char value, int track)
+static void _SaveStuntSetting(tPlayerProfile **player, unsigned char option, signed char value, int track)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     signed char *setting;
     switch (option) {
     case 23: setting = &data->stuntSettings.gravity; break;
@@ -588,9 +588,9 @@ static void _SaveStuntSetting(anon_ll_fileh_4c **player, unsigned char option, s
 }
 
 /* 0x80038e74, size 0xc8 */
-static void _SaveObstacleSetting(anon_ll_fileh_4c **player, unsigned char option, signed char value, int track)
+static void _SaveObstacleSetting(tPlayerProfile **player, unsigned char option, signed char value, int track)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     signed char *setting;
     switch (option) {
     case 23: setting = &data->obstacleSettings.gravity; break;
@@ -607,15 +607,15 @@ static void _SaveObstacleSetting(anon_ll_fileh_4c **player, unsigned char option
 }
 
 /* 0x80038f3c, size 0x24 */
-signed char GetPlayerCarSetting(anon_ll_fileh_4c **player, unsigned char car, unsigned char setting)
+signed char GetPlayerCarSetting(tPlayerProfile **player, unsigned char car, unsigned char setting)
 {
     return (*(*player)->datah)->carSettings[car].settings[setting];
 }
 
 /* 0x80038f60, size 0x98 */
-void SavePlayerCarSetting(anon_ll_fileh_4c **player, unsigned char car, unsigned char setting, signed char value)
+void SavePlayerCarSetting(tPlayerProfile **player, unsigned char car, unsigned char setting, signed char value)
 {
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     if (data->carSettings[car].settings[setting] != value) {
         data->carSettings[car].settings[setting] = value;
         data->carSettings[car].checksum = _CalcChecksum(data->carSettings[car].settings, 12);
@@ -624,9 +624,9 @@ void SavePlayerCarSetting(anon_ll_fileh_4c **player, unsigned char car, unsigned
 }
 
 /* 0x80038ff8, size 0xac */
-void SavePlayerControls(anon_ll_fileh_4c **player, signed char *controls)
+void SavePlayerControls(tPlayerProfile **player, signed char *controls)
 {
-    anon_nameChecksum_id_814 *data;
+    tSaveData *data;
     if ((*player)->datah == 0) return;
     data = *(*player)->datah;
     if (memcmp(data->controls, controls, 12)) {
@@ -638,13 +638,13 @@ void SavePlayerControls(anon_ll_fileh_4c **player, signed char *controls)
 }
 
 /* 0x800390a4, size 0x17c */
-void SavePlayerStats(anon_ll_fileh_4c **player, unsigned char track)
+void SavePlayerStats(tPlayerProfile **player, unsigned char track)
 {
     anon_checksum_scores_60 *raceStats;
     anon_checksum_totalMatches_c *battleStats;
     anon_checksum_bestStunt_40 *stuntStats;
     anon_checksum_bestTime_18 *obstacleStats;
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     if (track < 6 || (track >= 19 && track < 25)) {
         if (track >= 19) raceStats = &data->raceStats[track - 13];
         else raceStats = &data->raceStats[track];
@@ -666,12 +666,12 @@ void SavePlayerStats(anon_ll_fileh_4c **player, unsigned char track)
 }
 
 /* 0x80039220, size 0x15c */
-void SavePlayerCoins(anon_ll_fileh_4c **player, unsigned char track)
+void SavePlayerCoins(tPlayerProfile **player, unsigned char track)
 {
     int raceTrack;
     anon_checksum_scores_60 *raceStats;
     anon_checksum_bestStunt_40 *stuntStats;
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     if (track < 6 || (track >= 19 && track < 25)) {
         if (track >= 19) track = track_arg(track - 19);
         raceTrack = track;
@@ -691,15 +691,15 @@ void SavePlayerCoins(anon_ll_fileh_4c **player, unsigned char track)
 }
 
 /* 0x8003937c, size 0x64 */
-void SavePlayerCircuit(anon_ll_fileh_4c **player)
+void SavePlayerCircuit(tPlayerProfile **player)
 {
-    anon_checksum_active_4c *data = &(*(*player)->datah)->circuit;
+    tCircuit *data = &(*(*player)->datah)->circuit;
     data->checksum = _CalcChecksum((char *)data + 4, sizeof(*data) - 4);
     PS_WriteFile((*player)->fileh, data, sizeof(*data));
 }
 
 /* 0x800393e0, size 0x70 */
-void SavePlayerCircuitStats(anon_ll_fileh_4c **player, unsigned char circuit)
+void SavePlayerCircuitStats(tPlayerProfile **player, unsigned char circuit)
 {
     anon_checksum_numCircuits_1c *data = &(*(*player)->datah)->circuitStats[circuit];
     data->checksum = _CalcChecksum((char *)data + 4, sizeof(*data) - 4);
@@ -726,7 +726,7 @@ static unsigned int _CalcChecksum(void * start, unsigned int size)
 }
 
 /* 0x80039504, size 0x184 */
-static void _SetDefaultCarSettings(anon_ll_fileh_4c **p, int car)
+static void _SetDefaultCarSettings(tPlayerProfile **p, int car)
 {
     SavePlayerCarSetting(p, car, 0, ((signed char *)gCarHandling)[car]);
     SavePlayerCarSetting(p, car, 1, ((signed char *)gCarEngines)[car]);
@@ -741,9 +741,9 @@ static void _SetDefaultCarSettings(anon_ll_fileh_4c **p, int car)
 }
 
 /* 0x80039688, size 0x18c */
-static void _InitPlayer(anon_ll_fileh_4c **player)
+static void _InitPlayer(tPlayerProfile **player)
 {
-    anon_nameChecksum_id_814 *data;
+    tSaveData *data;
     int i;
     int track;
     memset(*player, 0, sizeof(**player) - sizeof((*player)->datah));
@@ -769,9 +769,9 @@ static void _InitPlayer(anon_ll_fileh_4c **player)
 }
 
 /* 0x80039814, size 0x174 */
-int ClearPlayerRecords(anon_ll_fileh_4c **player)
+int ClearPlayerRecords(tPlayerProfile **player)
 {
-    anon_nameChecksum_id_814 *data;
+    tSaveData *data;
     if (!ReadPlayerData(player)) return 0;
     data = *(*player)->datah;
     memset(data->raceStats, 0, sizeof(data->raceStats));
@@ -796,13 +796,13 @@ int ClearPlayerRecords(anon_ll_fileh_4c **player)
 }
 
 /* 0x80039988, size 0x28 */
-static anon_ll_fileh_4c **_NewPlayer(void)
+static tPlayerProfile **_NewPlayer(void)
 {
-    return (anon_ll_fileh_4c **)AllocateHandleHeap(0, sizeof(anon_ll_fileh_4c));
+    return (tPlayerProfile **)AllocateHandleHeap(0, sizeof(tPlayerProfile));
 }
 
 /* 0x800399b0, size 0x20 */
-static void _FreePlayer(anon_ll_fileh_4c **player)
+static void _FreePlayer(tPlayerProfile **player)
 {
     DeallocateMemory(player);
 }
@@ -810,19 +810,19 @@ static void _FreePlayer(anon_ll_fileh_4c **player)
 /* 0x800399d0, size 0x3c */
 static int _AlreadyReadPlayer(tPS_File **fileh)
 {
-    anon_ll_fileh_4c **player;
-    for (player = (anon_ll_fileh_4c **)gPlayerFiles.head; player; player = (anon_ll_fileh_4c **)(*player)->ll.next) {
+    tPlayerProfile **player;
+    for (player = (tPlayerProfile **)gPlayerFiles.head; player; player = (tPlayerProfile **)(*player)->ll.next) {
         if ((*player)->fileh == fileh) return 1;
     }
     return 0;
 }
 
 /* 0x80039a0c, size 0x2a0 */
-static anon_ll_fileh_4c **_ReadPlayer(tPS_File **fileh)
+static tPlayerProfile **_ReadPlayer(tPS_File **fileh)
 {
-    anon_ll_fileh_4c **player;
-    anon_ll_fileh_4c *p;
-    anon_ll_fileh_4c **before;
+    tPlayerProfile **player;
+    tPlayerProfile *p;
+    tPlayerProfile **before;
     int i;
     int pak = (*fileh)->pak;
     signed char choice1;
@@ -831,13 +831,13 @@ static anon_ll_fileh_4c **_ReadPlayer(tPS_File **fileh)
     if (!_VerifyFile(fileh, pak)) return 0;
     if (!(*fileh)->data) return 0;
     /* The original caller supplies pak/id although allocator DWARF omits them. */
-    player = ((anon_ll_fileh_4c **(*)(int, unsigned int))_NewPlayer)((*fileh)->pak, (*fileh)->id);
+    player = ((tPlayerProfile **(*)(int, unsigned int))_NewPlayer)((*fileh)->pak, (*fileh)->id);
     p = *player;
     p->fileh = fileh;
     (*p->fileh)->RemoveFile = _RemovePlayerFile;
     (*p->fileh)->MoveFile = _MovePlayerFile;
     strcpy(p->filename, (*p->fileh)->filename);
-    p->datah = (anon_nameChecksum_id_814 **)(*p->fileh)->data;
+    p->datah = (tSaveData **)(*p->fileh)->data;
     if (_CheckAndRepairPlayer(player, 0)) {
         if (!_CheckAndRepairPlayer(player, 1)) {
             PS_ErrorFunc(pak, 12, p->filename, 0, &choice1, &choice2, 0);
@@ -866,9 +866,9 @@ static anon_ll_fileh_4c **_ReadPlayer(tPS_File **fileh)
 }
 
 /* 0x80039cac, size 0x104 */
-int ReadPlayerData(anon_ll_fileh_4c **playerh)
+int ReadPlayerData(tPlayerProfile **playerh)
 {
-    anon_ll_fileh_4c *player = *playerh;
+    tPlayerProfile *player = *playerh;
     int pak;
     signed char choice1;
     signed char choice2;
@@ -877,7 +877,7 @@ int ReadPlayerData(anon_ll_fileh_4c **playerh)
     PS_ReadFile(player->fileh);
     if (!_VerifyPlayer(playerh, pak)) return 0;
     if (!(*player->fileh)->data) return 0;
-    player->datah = (anon_nameChecksum_id_814 **)(*player->fileh)->data;
+    player->datah = (tSaveData **)(*player->fileh)->data;
     if (_CheckAndRepairPlayer(playerh, 0)) {
         if (!_CheckAndRepairPlayer(playerh, 1)) {
             PS_ErrorFunc((*player->fileh)->pak, 12, player->filename, 0, &choice1, &choice2, 0);
@@ -895,13 +895,13 @@ void PurgePlayerData(void)
 }
 
 /* 0x80039db4, size 0x618 */
-static int _CheckAndRepairPlayer(anon_ll_fileh_4c **player, int repair)
+static int _CheckAndRepairPlayer(tPlayerProfile **player, int repair)
 {
     int result = 0;
     int i;
     int j;
     int oldTracknum;
-    anon_nameChecksum_id_814 *data = *(*player)->datah;
+    tSaveData *data = *(*player)->datah;
     if ((data->revision & 63) != 19) {
         if (repair) return 0;
         result = 1;
@@ -1036,7 +1036,7 @@ static int _CheckAndRepairPlayer(anon_ll_fileh_4c **player, int repair)
 }
 
 /* 0x8003a3cc, size 0x2ec */
-anon_ll_fileh_4c **CreatePlayer(int pak, unsigned char *name)
+tPlayerProfile **CreatePlayer(int pak, unsigned char *name)
 {
     signed char gDreamcastId[32] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1048,18 +1048,18 @@ anon_ll_fileh_4c **CreatePlayer(int pak, unsigned char *name)
     char playerPixels[512] = {
 #include "generated/playerPixels.inc"
 };
-    anon_ll_fileh_4c **player;
-    anon_ll_fileh_4c **before;
-    anon_ll_fileh_4c *p;
-    anon_nameChecksum_id_814 *data;
+    tPlayerProfile **player;
+    tPlayerProfile **before;
+    tPlayerProfile *p;
+    tSaveData *data;
     tPS_File **fileh;
     char ext[4];
     _GetUniqueExtension(pak, "RUSH2049", "P", ext);
     fileh = PS_CreateFile(pak, "RUSH2049", ext, sizeof(*data), "RUSH 2049", "RUSH 2049 PLAYER DATA", (char *)name, playerPalette, playerPixels);
     if (!fileh) return 0;
-    player = ((anon_ll_fileh_4c **(*)(int, unsigned int))_NewPlayer)((*fileh)->pak, (*fileh)->id);
+    player = ((tPlayerProfile **(*)(int, unsigned int))_NewPlayer)((*fileh)->pak, (*fileh)->id);
     p = *player;
-    p->datah = (anon_nameChecksum_id_814 **)(*fileh)->data;
+    p->datah = (tSaveData **)(*fileh)->data;
     data = *p->datah;
     _InitPlayer(player);
     p->fileh = fileh;
@@ -1089,7 +1089,7 @@ anon_ll_fileh_4c **CreatePlayer(int pak, unsigned char *name)
 }
 
 /* 0x8003a6b8, size 0x58 */
-void DeletePlayer(anon_ll_fileh_4c **player)
+void DeletePlayer(tPlayerProfile **player)
 {
     if ((*player)->fileh) {
         if (ReadPlayerData(player)) PS_DeleteFile((*player)->fileh);
@@ -1099,13 +1099,13 @@ void DeletePlayer(anon_ll_fileh_4c **player)
 }
 
 /* 0x8003a710, size 0x28 */
-anon_ll_fileh_30 **_NewGhost(void)
+tGhostFile **_NewGhost(void)
 {
-    return (anon_ll_fileh_30 **)AllocateHandleHeap(0, sizeof(anon_ll_fileh_30));
+    return (tGhostFile **)AllocateHandleHeap(0, sizeof(tGhostFile));
 }
 
 /* 0x8003a738, size 0x20 */
-void _FreeGhost(anon_ll_fileh_30 **ghost)
+void _FreeGhost(tGhostFile **ghost)
 {
     DeallocateMemory(ghost);
 }
@@ -1113,20 +1113,20 @@ void _FreeGhost(anon_ll_fileh_30 **ghost)
 /* 0x8003a758, size 0x3c */
 static int _AlreadyReadGhost(tPS_File **fileh)
 {
-    anon_ll_fileh_30 **ghost;
-    for (ghost = (anon_ll_fileh_30 **)gGhostFiles.head; ghost; ghost = (anon_ll_fileh_30 **)(*ghost)->ll.next) {
+    tGhostFile **ghost;
+    for (ghost = (tGhostFile **)gGhostFiles.head; ghost; ghost = (tGhostFile **)(*ghost)->ll.next) {
         if ((*ghost)->fileh == fileh) return 1;
     }
     return 0;
 }
 
 /* 0x8003a794, size 0x1d0 */
-static anon_ll_fileh_30 **_ReadGhostHeader(tPS_File **fileh)
+static tGhostFile **_ReadGhostHeader(tPS_File **fileh)
 {
-    anon_ll_fileh_30 **ghosth;
-    anon_ll_fileh_30 *ghost;
-    anon_ll_fileh_30 **before;
-    anon_headerChecksum_revision_54 *header;
+    tGhostFile **ghosth;
+    tGhostFile *ghost;
+    tGhostFile **before;
+    tSaveHeader *header;
     int pak = (*fileh)->pak;
     signed char choice1;
     signed char choice2;
@@ -1140,7 +1140,7 @@ static anon_ll_fileh_30 **_ReadGhostHeader(tPS_File **fileh)
     (*ghost->fileh)->RemoveFile = _RemovePlayerFile;
     (*ghost->fileh)->MoveFile = _MovePlayerFile;
     ghost->datah = 0;
-    ghost->header = (anon_headerChecksum_revision_54 **)(*fileh)->data;
+    ghost->header = (tSaveHeader **)(*fileh)->data;
     header = *ghost->header;
     header->start = 0;
     if (_CheckAndRepairGhost(ghosth, 1, 0)) {
@@ -1165,9 +1165,9 @@ static anon_ll_fileh_30 **_ReadGhostHeader(tPS_File **fileh)
 }
 
 /* 0x8003a964, size 0x158 */
-int _ReadGhostData(anon_ll_fileh_30 **ghosth, int decode)
+int _ReadGhostData(tGhostFile **ghosth, int decode)
 {
-    anon_ll_fileh_30 *ghost = *ghosth;
+    tGhostFile *ghost = *ghosth;
     int pak;
     signed char choice1;
     signed char choice2;
@@ -1179,7 +1179,7 @@ int _ReadGhostData(anon_ll_fileh_30 **ghosth, int decode)
     PS_ReadFile(ghost->fileh);
     if (!_VerifyGhost(ghosth, pak)) return 0;
     if (!(*ghost->fileh)->data) return 0;
-    ghost->header = (anon_headerChecksum_revision_54 **)(*ghost->fileh)->data;
+    ghost->header = (tSaveHeader **)(*ghost->fileh)->data;
     (*ghost->header)->start = 0;
     if (_CheckAndRepairGhost(ghosth, 1, 0)) {
         if (!_CheckAndRepairGhost(ghosth, 1, 1)) {
@@ -1195,16 +1195,16 @@ int _ReadGhostData(anon_ll_fileh_30 **ghosth, int decode)
 }
 
 /* 0x8003aabc, size 0x28 */
-int ReadGhostData(anon_ll_fileh_30 **ghosth)
+int ReadGhostData(tGhostFile **ghosth)
 {
     /* The original caller passes a third argument absent from the callee DWARF. */
     return ((int (*)())_ReadGhostData)(ghosth, 1, 1);
 }
 
 /* 0x8003aae4, size 0x4c */
-void PurgeGhostData(anon_ll_fileh_30 **ghosth)
+void PurgeGhostData(tGhostFile **ghosth)
 {
-    anon_ll_fileh_30 *ghost = *ghosth;
+    tGhostFile *ghost = *ghosth;
     if (ghost->datah) {
         DeallocateMemory(ghost->datah);
         ghost->datah = 0;
@@ -1213,10 +1213,10 @@ void PurgeGhostData(anon_ll_fileh_30 **ghosth)
 }
 
 /* 0x8003ab30, size 0xa8 */
-static void _DecodeGhost(anon_ll_fileh_30 **ghosth)
+static void _DecodeGhost(tGhostFile **ghosth)
 {
     int size;
-    anon_headerChecksum_revision_54 *header = *(*ghosth)->header;
+    tSaveHeader *header = *(*ghosth)->header;
     if (!header->start) {
         (*ghosth)->datah = AllocateHandleHeap(0, header->unzippedSize);
         header->start = *(*ghosth)->datah;
@@ -1228,10 +1228,10 @@ static void _DecodeGhost(anon_ll_fileh_30 **ghosth)
 }
 
 /* 0x8003abd8, size 0xec */
-static int _CheckAndRepairGhost(anon_ll_fileh_30 **ghosth, int data, int repair)
+static int _CheckAndRepairGhost(tGhostFile **ghosth, int data, int repair)
 {
     int result = 0;
-    anon_headerChecksum_revision_54 *header = *(*ghosth)->header;
+    tSaveHeader *header = *(*ghosth)->header;
     if ((header->revision & 63) != 20) {
         if (repair) return 0;
         result = 1;
@@ -1250,10 +1250,10 @@ static int _CheckAndRepairGhost(anon_ll_fileh_30 **ghosth, int data, int repair)
 }
 
 /* 0x8003acc4, size 0x27c */
-anon_ll_fileh_30 **CompressGhost(anon_headerChecksum_revision_54 *header, unsigned char *blocks)
+tGhostFile **CompressGhost(tSaveHeader *header, unsigned char *blocks)
 {
-    anon_ll_fileh_30 *ghost;
-    anon_ll_fileh_30 **ghosth;
+    tGhostFile *ghost;
+    tGhostFile **ghosth;
     unsigned int maxsize;
     unsigned char *sorted;
     unsigned char *gdata;
@@ -1274,7 +1274,7 @@ anon_ll_fileh_30 **CompressGhost(anon_headerChecksum_revision_54 *header, unsign
     ghosth = _NewGhost();
     ghost = *ghosth;
     memset(ghost, 0, sizeof(*ghost));
-    ghost->header = (anon_headerChecksum_revision_54 **)AllocateHandleHeap(0, num + sizeof(*header));
+    ghost->header = (tSaveHeader **)AllocateHandleHeap(0, num + sizeof(*header));
     memcpy(*ghost->header, header, sizeof(*header));
     (*ghost->header)->revision = 20;
     (*ghost->header)->start = 0;
@@ -1299,7 +1299,7 @@ anon_ll_fileh_30 **CompressGhost(anon_headerChecksum_revision_54 *header, unsign
 
 /* 0x8003af40, size 0x2dc */
 /* GC code consumes r5/r6; r4 is an unused parameter omitted from DWARF. */
-int SaveGhost(int pak, void *unused, anon_ll_fileh_30 **saveGhosth, int limbo)
+int SaveGhost(int pak, void *unused, tGhostFile **saveGhosth, int limbo)
 {
     signed short ghostPalette[16] = {
         -4096, -2495, -879, -47, -1696, -3823, -4095, -4093, -4091, -3293, -4071, -3820, -3256, -3003, -1915, -4084,
@@ -1307,10 +1307,10 @@ int SaveGhost(int pak, void *unused, anon_ll_fileh_30 **saveGhosth, int limbo)
     char ghostPixels[512] = {
 #include "generated/ghostPixels.inc"
 };
-    anon_ll_fileh_30 *ghost;
-    anon_ll_fileh_30 **before;
-    anon_headerChecksum_revision_54 *header;
-    anon_headerChecksum_revision_54 **oldHeader;
+    tGhostFile *ghost;
+    tGhostFile **before;
+    tSaveHeader *header;
+    tSaveHeader **oldHeader;
     tPS_File **fileh;
     unsigned int size;
     char str[32];
@@ -1330,7 +1330,7 @@ int SaveGhost(int pak, void *unused, anon_ll_fileh_30 **saveGhosth, int limbo)
     if (!fileh) return 0;
     memcpy(*(void **)(*fileh)->data, *ghost->header, size);
     oldHeader = ghost->header;
-    ghost->header = (anon_headerChecksum_revision_54 **)(*fileh)->data;
+    ghost->header = (tSaveHeader **)(*fileh)->data;
     PS_WriteFile(fileh, *ghost->header, size);
     if (!PS_FlushFile(fileh, 0)) {
         if (_VerifyFile(fileh, pak)) PS_DeleteFile(fileh);
@@ -1351,17 +1351,17 @@ int SaveGhost(int pak, void *unused, anon_ll_fileh_30 **saveGhosth, int limbo)
 }
 
 /* 0x8003b21c, size 0x30 */
-void DeleteGhost(anon_ll_fileh_30 **ghosth)
+void DeleteGhost(tGhostFile **ghosth)
 {
     if ((*ghosth)->fileh) PS_DeleteFile((*ghosth)->fileh);
 }
 
 /* 0x8003b24c, size 0x1e4 */
-void SaveGhostInLimbo(anon_headerChecksum_revision_54 *header, void * data)
+void SaveGhostInLimbo(tSaveHeader *header, void * data)
 {
 int i;
-    anon_headerChecksum_revision_54 *limbo;
-    anon_ll_fileh_30 **limboGhosts;
+    tSaveHeader *limbo;
+    tGhostFile **limboGhosts;
     limboGhosts = gLimboGhosts + (header->track + (header->backward ? 6 : 0)) * 3;
     for (i = 0; i < gNumLimbo; i++) {
         if (limboGhosts[i]->header) {
@@ -1380,7 +1380,7 @@ int i;
         memcpy(limboGhosts[i]->name, header->name, sizeof(limboGhosts[i]->name));
         memcpy(limboGhosts[i]->playerId, header->playerId, sizeof(limboGhosts[i]->playerId));
         limboGhosts[i]->finish = header->finish;
-        limboGhosts[i]->header = (anon_headerChecksum_revision_54 **)AllocateHandleHeap(0, sizeof(*header) + header->zippedSize);
+        limboGhosts[i]->header = (tSaveHeader **)AllocateHandleHeap(0, sizeof(*header) + header->zippedSize);
         memcpy(*limboGhosts[i]->header, header, sizeof(*header));
         memcpy(*limboGhosts[i]->header + 1, data, header->zippedSize);
         (*limboGhosts[i]->header)->start = 0;
@@ -1390,7 +1390,7 @@ int i;
 }
 
 /* 0x8003b430, size 0xa4 */
-int GhostFileAvailable(anon_ll_fileh_4c **player, int pak, int track, int backward)
+int GhostFileAvailable(tPlayerProfile **player, int pak, int track, int backward)
 {
     char filename[64];
     tPS_File **psfileh;
@@ -1435,9 +1435,9 @@ static int _Pow(int num, int exp)
 }
 
 /* 0x8003b69c, size 0x58 */
-static int _VerifyPlayer(anon_ll_fileh_4c **playerh, int pak)
+static int _VerifyPlayer(tPlayerProfile **playerh, int pak)
 {
-    anon_ll_fileh_4c **h;
+    tPlayerProfile **h;
     for (h = gPlayerFiles.head; h; h = (*h)->ll.next) {
         if (h == playerh) return _VerifyFile((*h)->fileh, pak);
     }
@@ -1445,9 +1445,9 @@ static int _VerifyPlayer(anon_ll_fileh_4c **playerh, int pak)
 }
 
 /* 0x8003b6f4, size 0x58 */
-static int _VerifyGhost(anon_ll_fileh_30 **ghosth, int pak)
+static int _VerifyGhost(tGhostFile **ghosth, int pak)
 {
-    anon_ll_fileh_30 **h;
+    tGhostFile **h;
     for (h = gGhostFiles.head; h; h = (*h)->ll.next) {
         if (h == ghosth) return _VerifyFile((*h)->fileh, pak);
     }

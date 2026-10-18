@@ -20,7 +20,7 @@ unsigned char gFogColors[27][3] = {
     0, 255, 255, 255, 150, 100, 0, 180, 0, 100
 };
 int playerTextColor[4] = { 7, 5, 14, 12 };
-anon_c_rgba_4 flashColors[2] = { 224, 224, 0, 255, 0, 0, 0, 255 };
+tRGBA flashColors[2] = { 224, 224, 0, 255, 0, 0, 0, 255 };
 enum_kNumRaceTypes_8 gRace;
 enum_kNumStuntModes gStuntMode;
 enum_kNumStuntFlows gStuntFlow;
@@ -684,7 +684,7 @@ static int _animScrollText(void)
 /* 0x80015b90, size 0xb8 */
 static void _DrawNoControllers(void)
 {
-    static const anon_texname_dulx_24 scrollMultiBlit[1] = {
+    static const tBlitDef scrollMultiBlit[1] = {
         (const char *)-1, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0,
         (int (*)(_tBlit *))_animScrollText, 0
     };

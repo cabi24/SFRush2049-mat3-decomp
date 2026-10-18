@@ -31,7 +31,7 @@ static void showGridMap(int visible);
 static void initButtons(signed char p);
 static void uninitButtons(signed char p);
 static void updateButtons(signed char p);
-static anon_ll_fileh_30 **getNextGhost(anon_ll_fileh_30 **currGhost, signed char whichWay);
+static tGhostFile **getNextGhost(tGhostFile **currGhost, signed char whichWay);
 
 
 
@@ -44,7 +44,7 @@ static char *buttonNames[9] = {
     "BUTTON_S2G1", "BUTTON_S2G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1", "ARROW_BGG1",
     "ARROW_FGG1", "BAR_BGG1", "BAR_FGG1"
 };
-static anon_buttonType_objIdx_40 buttonInfo[4][40] = {
+static tMenuButton buttonInfo[4][40] = {
     {
         { 0, -1, 0.0f, { { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } }, 0 },
         { 0, -1, 0.0f, { { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } }, 0 },
@@ -224,7 +224,7 @@ static anon_x_y_18 gPlayerRects[4][4] = {
 int gTurntableIdx[4][2] = { -1, -1, -1, -1, -1, -1, -1, -1 };
 static char *carComponentNames[5] = { "ENGINE%02dG1", "FRAME%02dG1", "SHOCK%02dG1", "TIRE%02dG1", "TRANS%02dG1" };
 static signed short componentToName[11] = { 0, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4 };
-static const anon_texname_dulx_24 mb[26] = {
+static const tBlitDef mb[26] = {
     "SLIDER", 0, 0, -1, -1, -1, -1, -1, -1, 0, 0xfe, (void *)&animNewSlider, 0xb0000, "SLIDER", 0,
     0, -1, -1, -1, -1, -1, -1, 0, 0xfe, (void *)&animNewSlider, 0xb0001, "SLIDER", 0, 0, -1, -1,
     -1, -1, -1, -1, 0, 0xfe, (void *)&animNewSlider, 0xc0000, "SLIDER", 0, 0, -1, -1, -1, -1, -1,
@@ -309,7 +309,7 @@ static signed short gCarSheen[4] = { 0 }; /* explicit `= { 0 }`: the target keep
 static signed char gThisCar[4];
 static signed char gThisCarIndex[4];
 static signed char gNumGhosts;
-static anon_ll_fileh_30 **limboGhosts;
+static tGhostFile **limboGhosts;
 static signed short gLastCar[4];
 static signed short gNumCarsActive[4];
 static signed char gCarLocked[4];
@@ -325,8 +325,8 @@ static anon_texidx_flags_c savedLOD;
 static anon_texidx_flags_c gridLOD;
 static int buttonsInited[4];
 static float gStats[4][4];
-anon_mat3_mat4_30 *gCarMatrices[48];
-anon_mat3_mat4_30 gTurntableMat[4][2];
+tUVMatrix *gCarMatrices[48];
+tUVMatrix gTurntableMat[4][2];
 static anon_alpha_angle_c cars[4][13];
 static int gFirstOption[4];
 static int gHornSnd[4];
@@ -334,7 +334,7 @@ static int buttonsJustInited[4];
 static signed char gCars[4][13];
 static int gOpts[4][17];
 static int gNumOptions[4];
-static anon_used_perm_20 *pane[4];
+static tBlitSet *pane[4];
 
 /* 0x8008d384, size 0x1a58 */
 void updateCarScreen(void)
@@ -342,10 +342,10 @@ void updateCarScreen(void)
     signed short i;
     signed short p;
     int sound = 1;
-    anon_ll_fileh_30 **ghosth;
-    anon_ll_fileh_4c **player;
-    anon_ll_fileh_30 *ghost;
-    anon_ll_fileh_30 **nextGhost;
+    tGhostFile **ghosth;
+    tPlayerProfile **player;
+    tGhostFile *ghost;
+    tGhostFile **nextGhost;
     limboGhosts = gLimboGhosts + (gTrackNum + (gBackwards ? 6 : 0)) * 3;
     if (gSkipToGameState != 1) {
         if (gSkipToGameState != gGameState) { setGhosts(); setGameState(0x40000); return; }
@@ -983,12 +983,12 @@ static void _UninitScreen(void)
 /* 0x80090638, size 0xac0 */
 static void setGhosts(void)
 {
-    anon_ll_fileh_30 **nearGhosts[5];
-    anon_ll_fileh_30 **ghosth;
-    anon_ll_fileh_30 *ghost;
-    anon_ll_fileh_30 **best = 0;
-    anon_ll_fileh_30 **nextGhost;
-    anon_ll_fileh_4c *player;
+    tGhostFile **nearGhosts[5];
+    tGhostFile **ghosth;
+    tGhostFile *ghost;
+    tGhostFile **best = 0;
+    tGhostFile **nextGhost;
+    tPlayerProfile *player;
     int ghostCount;
     int i;
     int j;
@@ -1145,7 +1145,7 @@ static void updateCarComponents(int p)
     int i;
     float lightVec[3] = {-0.57f, 0.57f, -0.57f};
     CarParts *car;
-    anon_c_rgba_4 buttonColor = { {255,255,255,255} };
+    tRGBA buttonColor = { {255,255,255,255} };
     signed short currentLevel;
     int whichLight;
     float compScale;
@@ -1393,7 +1393,7 @@ static int animStatText(void)
     int p;
     int stat;
     unsigned short texIdx;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     int y;
     HAL_SetTextDepth(0.0f);
     HAL_SetFont(12);
@@ -1418,7 +1418,7 @@ static int animStatText(void)
 static int animText(void)
 {
     int i;
-    anon_ll_fileh_4c **player;
+    tPlayerProfile **player;
     for (i = 0; i < gNumPlayers; i++) {
         if (gPlayers[i].save != &gJustPlayers[i]) {
             player = gPlayerFiles.head;
@@ -1436,7 +1436,7 @@ static int animText(void)
 
 
 /* inline helper taking both flash colours by value (as videoscr.c's flashText): the copies stay out of the DWARF locals and give the original stack use */
-static inline void carFlashColors(anon_c_rgba_4 c1, anon_c_rgba_4 c2)
+static inline void carFlashColors(tRGBA c1, tRGBA c2)
 {
     TB_FlashTextColors(&c1, &c2);
 }
@@ -1699,8 +1699,8 @@ static void createGridMap(void)
     unsigned int size;
     char carName[32];
     int carMBIdx;
-    anon_name_radius_48 *carRomObjDef;
-    anon_name_width_30 *gridTexDef;
+    tModelDef *carRomObjDef;
+    tTexture *gridTexDef;
     int endGeo;
     unsigned int header;
     unsigned int command;
@@ -1831,7 +1831,7 @@ static void showGridMap(int visible)
 {
     char carName[32];
     int carMBIdx;
-    anon_name_radius_48 *carRomObjDef;
+    tModelDef *carRomObjDef;
     if (gridVisible != visible && gridCarIdx != -1) {
         sprintf(carName, "%sFRAME1", CarNames[gThisCar[0]]);
         carMBIdx = MBOX_FindObject_WORK(carName, 0, gNumModels - 1, 1);
@@ -1847,7 +1847,7 @@ static void showGridMap(int visible)
         gridVisible = visible;
     }
     if (visible == 1) {
-        anon_c_rgba_4 solidColor = { { 255, 255, 255, 64 } };
+        tRGBA solidColor = { { 255, 255, 255, 64 } };
         if (gCarParts[gThisCar[0]].frame) ZOID_SetColor((signed short)gCarParts[gThisCar[0]].frame, &solidColor);
     }
 }
@@ -1856,8 +1856,8 @@ static void showGridMap(int visible)
 /* 0x80093b10, size 0x564 */
 static void initButtons(signed char p)
 {
-    anon_c_rgba_4 buttonColor = { {255, 255, 255, 255} };
-    anon_name_width_30 *tex;
+    tRGBA buttonColor = { {255, 255, 255, 255} };
+    tTexture *tex;
     unsigned short texIdx;
     int buttonIdx;
     static float zoom = 1.0f;
@@ -1950,9 +1950,9 @@ static void updateButtons(signed char p)
     float buttonY;
     float selectedPos;
     signed char clearScrollSpeed = 1;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
-    anon_c_rgba_4 buttonColor = { {255,255,255,255} };
+    tRGBA buttonColor = { {255,255,255,255} };
     if (!buttonsInited[p]) return;
     if (gButtonScale * (gButtonSpace * (gNumOptions[p] - 1)) > maxY - minY)
         selectedPos = maxY - gActiveOption[p] * (maxY - minY) / (gNumOptions[p] - 1);
@@ -2061,9 +2061,9 @@ static void updateButtons(signed char p)
 
 
 /* 0x800949c0, size 0x1ac */
-static anon_ll_fileh_30 **getNextGhost(anon_ll_fileh_30 **currGhost, signed char whichWay)
+static tGhostFile **getNextGhost(tGhostFile **currGhost, signed char whichWay)
 {
-    anon_ll_fileh_30 **nextGhost;
+    tGhostFile **nextGhost;
     if (!currGhost) {
         if (whichWay > 0) {
             currGhost = gGhostFiles.head;

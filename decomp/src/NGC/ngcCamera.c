@@ -108,9 +108,9 @@ void SetViewScreenClipMatrix(float (*m)[4], float (*mc)[4], float (*mcs)[4], flo
 void MySetCameraPos(float (*mtx)[3])
 {
     float rot[4][4]; /* stack */
-    anon_x_y_c_2 camPos; /* stack */
-    anon_x_y_c_2 camTar; /* stack */
-    anon_x_y_c_2 camUp; /* stack */
+    tVec3 camPos; /* stack */
+    tVec3 camTar; /* stack */
+    tVec3 camUp; /* stack */
 
     static int update = 1;
 
@@ -192,7 +192,7 @@ void PS2CameraStart(void)
 }
 
 /* 0x800a5b70, size 0x130 */
-void PS2UpdateCameraMatrix(anon_vp_s_48 *win)
+void PS2UpdateCameraMatrix(tWindowInfo *win)
 {
     static float vu1env[0x1d0 / 4];
     static float nearz = 0.4f;

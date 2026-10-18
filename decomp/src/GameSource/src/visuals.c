@@ -16,7 +16,7 @@ static void InitWheelDynamicObjs(void);
 static void InitDynamicTextures(void);
 static void RemoveVisuals(signed short slot);
 static void AnimateRocketFlame(signed short slot, int hulk);
-static anon_c_rgba_4 GetCarsIRColor(tCarData *car, tModelData *m);
+static tRGBA GetCarsIRColor(tCarData *car, tModelData *m);
 static void AnimateFrame(tVisual *v, signed short op);
 static void StartWing(signed short slot, signed short side);
 static void AnimateWing(tVisual *v, signed short op);
@@ -51,7 +51,7 @@ signed char gDriveHulk[4];
 signed char gInvisibleCar;
 signed char gFrameScale;
 signed char gEnableTireScaling;
-static anon_name_width_30 *gGameCarShadowTexDef;
+static tTexture *gGameCarShadowTexDef;
 signed char gCarTeam[4];
 signed char gCarTeamColor[4];
 signed char gGoodFrameRate;
@@ -61,19 +61,19 @@ static signed short gBlastMatCnt;
 static int numShadowObjToDraw;
 static float gCameraMatrix[4][4];
 static signed char gFadePlayerArrow[4][4];
-static anon_numPack_name_2c *ShadowObjList[12];
+static tPackedObject *ShadowObjList[12];
 static int gGameCarShadowIdx[6];
 static tBlastStruct gBlastObjs[6];
 static tBlastRingStruct gBlastRingObjs[6];
 static tBlastMat gBlastMats[50];
-static anon_numPack_name_2c gGameCarShadow[18];
+static tPackedObject gGameCarShadow[18];
 static unsigned int *gGameCarShadowPack[18];
 signed char gCarPaintJobInited[52];
 signed short gCarModelNums[52];
 CarParts gCarParts[52];
 static tVisual gEnvirons[100];
 unsigned short gTexList[19];
-anon_name_width_30 *gWheelTextures[48];
+tTexture *gWheelTextures[48];
 unsigned short gObjList[701];
 
 /* 0x80053c30, size 0x224 */
@@ -149,7 +149,7 @@ const char gWheelBlur[24] = {
 };
 
 float gDummyVtx[4][3] = { 1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f, -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f };
-anon_c_rgba_4 SheenColors[19][2] = {
+tRGBA SheenColors[19][2] = {
     126, 221, 252, 255, 53, 91, 255, 255, 255, 255, 255, 255, 253, 175, 128, 255, 112, 179, 253,
     255, 113, 223, 254, 255, 255, 150, 202, 255, 255, 199, 144, 255, 255, 150, 202, 255, 158, 253,
     228, 255, 100, 166, 254, 255, 113, 240, 254, 255, 255, 255, 255, 255, 255, 246, 164, 255, 128,
@@ -159,7 +159,7 @@ anon_c_rgba_4 SheenColors[19][2] = {
     128, 255, 128, 128, 128, 255, 94, 142, 170, 255, 255, 207, 172, 255, 200, 200, 200, 255, 255,
     207, 159, 255, 242, 195, 103, 255, 242, 195, 103, 255, 255, 255, 255, 255, 255, 255, 255, 255
 };
-anon_c_rgba_4 Track1Colors[26] = {
+tRGBA Track1Colors[26] = {
     255, 255, 255, 255, 150, 150, 150, 255, 125, 125, 125, 255, 100, 100, 100, 255, 75, 75, 75,
     255, 50, 50, 50, 255, 40, 40, 40, 255, 30, 30, 30, 255, 20, 20, 20, 255, 215, 255, 252, 255,
     175, 223, 255, 255, 179, 253, 248, 255, 179, 216, 253, 255, 200, 200, 255, 255, 170, 170, 255,
@@ -167,7 +167,7 @@ anon_c_rgba_4 Track1Colors[26] = {
     147, 255, 255, 245, 200, 255, 251, 254, 137, 255, 240, 255, 193, 255, 228, 255, 143, 255, 190,
     254, 190, 255, 148, 254, 154, 255
 };
-anon_c_rgba_4 Track4Colors[26] = {
+tRGBA Track4Colors[26] = {
     200, 200, 200, 255, 180, 180, 180, 255, 160, 160, 160, 255, 140, 140, 140, 255, 120, 120, 120,
     255, 100, 100, 100, 255, 75, 75, 75, 255, 50, 50, 50, 255, 25, 25, 25, 255, 215, 255, 252, 255,
     82, 127, 172, 255, 179, 253, 248, 255, 179, 216, 253, 255, 200, 200, 255, 255, 170, 170, 255,
@@ -175,7 +175,7 @@ anon_c_rgba_4 Track4Colors[26] = {
     147, 255, 255, 245, 200, 255, 251, 254, 137, 255, 190, 200, 103, 255, 228, 255, 143, 255, 190,
     254, 190, 255, 148, 254, 154, 255
 };
-anon_c_rgba_4 Track5Colors[26] = {
+tRGBA Track5Colors[26] = {
     255, 255, 255, 255, 200, 200, 200, 255, 175, 175, 175, 255, 150, 150, 150, 255, 125, 125, 125,
     255, 100, 100, 100, 255, 75, 75, 75, 255, 50, 50, 50, 255, 25, 25, 25, 255, 215, 255, 252, 255,
     175, 223, 255, 255, 179, 253, 248, 255, 179, 216, 253, 255, 200, 200, 255, 255, 170, 170, 255,
@@ -183,7 +183,7 @@ anon_c_rgba_4 Track5Colors[26] = {
     147, 255, 255, 245, 200, 255, 251, 254, 137, 255, 240, 255, 193, 255, 228, 255, 143, 255, 190,
     254, 190, 255, 148, 254, 154, 255
 };
-anon_c_rgba_4 *gTrackColors[19] = {
+tRGBA *gTrackColors[19] = {
     (void *)&Track1Colors, (void *)&Track1Colors, (void *)&Track1Colors, (void *)&Track4Colors,
     (void *)&Track5Colors, (void *)&Track1Colors, (void *)&Track1Colors, (void *)&Track1Colors,
     (void *)&Track1Colors, (void *)&Track1Colors, (void *)&Track1Colors, (void *)&Track1Colors,
@@ -198,7 +198,7 @@ static char *gWheelNames[48] = {
     "RIM06", "RIM07", "RIM08", "RIM09", "RIM10", "RIM11", "RIM12", "RIM13", "RIM14", "RIM15",
     "RIM16", "RIM17", "RIM18", "RIM19", "RIM20", "RIM21", "RIM22", "RIM23", "RIM24"
 };
-anon_c_rgba_4 gShadowColor = { 0, 0, 0, 192 };
+tRGBA gShadowColor = { 0, 0, 0, 192 };
 
 
 /* 0x80053e54, size 0xd4 */
@@ -305,7 +305,7 @@ void InitCarVisuals(tCarData *gc)
 /* 0x80054364, size 0x118 */
 void SetSheen(signed short slot, signed short player, signed short sheenIdx)
 {
-    anon_name_width_30 *tex; /* r3 */
+    tTexture *tex; /* r3 */
     CarParts *car; /* r30 */
     unsigned short texidx; /* stack */
     signed short cam; /* r31 */
@@ -327,7 +327,7 @@ void SetSheen(signed short slot, signed short player, signed short sheenIdx)
 }
 
 /* 0x8005447c, size 0xa0 */
-void SetFrameColor(signed short slot, anon_c_rgba_4 *col)
+void SetFrameColor(signed short slot, tRGBA *col)
 {
     CarParts *car; /* r31 */
     car = &gCarParts[slot];
@@ -340,7 +340,7 @@ void SetFrameColor(signed short slot, anon_c_rgba_4 *col)
 }
 
 /* 0x8005451c, size 0x60 */
-void SetSheenColor(signed short slot, anon_c_rgba_4 *col, anon_c_rgba_4 *env)
+void SetSheenColor(signed short slot, tRGBA *col, tRGBA *env)
 {
     CarParts *car; /* r31 */
     car = &gCarParts[slot];
@@ -351,12 +351,12 @@ void SetSheenColor(signed short slot, anon_c_rgba_4 *col, anon_c_rgba_4 *env)
 /* 0x8005457c, size 0xcc */
 int InitCarObj(int objnum, signed short camlink, int parent, unsigned int flags, signed short slot, signed short carObjNum, int forGame)
 {
-    anon_mat3_mat4_30 *mat; /* r4 */
+    tUVMatrix *mat; /* r4 */
     if (forGame) mat = ZOID_NewMatrix();
     else if (carObjNum == -1) {
         flags |= 128;
-        mat = (anon_mat3_mat4_30 *)unitmatrix;
-    } else mat = ((anon_mat3_mat4_30 **)gCarMatrices)[slot / 13 * 12 + carObjNum];
+        mat = (tUVMatrix *)unitmatrix;
+    } else mat = ((tUVMatrix **)gCarMatrices)[slot / 13 * 12 + carObjNum];
     return (signed short)MBOX_NewObjectCam(objnum, mat, camlink, parent, flags);
 }
 
@@ -541,7 +541,7 @@ char **texnames;
     char name[16];
     char **extnames;
     int numtexs;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short idx;
     int i;
     numtexs = gNumCarPaintTexs[car];
@@ -765,9 +765,9 @@ static void RemoveVisuals(signed short slot)
 {
     tVisual *v; /* r29 */
     signed short i; /* r28 */
-    anon_numPack_name_2c *shadow1[1]; /* r0 */
-    anon_numPack_name_2c *shadow2; /* r27 */
-    anon_numPack_name_2c *shadow3; /* r26 */
+    tPackedObject *shadow1[1]; /* r0 */
+    tPackedObject *shadow2; /* r27 */
+    tPackedObject *shadow3; /* r26 */
     v = gGameCar[slot].visuals;
     shadow1[0] = &gGameCarShadow[slot * 3];
     shadow2 = shadow1[0] + 1;
@@ -823,9 +823,9 @@ static void AnimateRocketFlame(signed short slot, int hulk)
 {
     tModelData *m;
     tCarData *car;
-    anon_mat3_mat4_30 *mat;
-    anon_mat3_mat4_30 *flames[3];
-    anon_c_rgba_4 clr = { {255,255,255,255} };
+    tUVMatrix *mat;
+    tUVMatrix *flames[3];
+    tRGBA clr = { {255,255,255,255} };
     float scale1;
     float r;
     float pos[3];
@@ -946,10 +946,10 @@ static void AnimateRocketFlame(signed short slot, int hulk)
 }
 
 /* 0x800563b0, size 0x2cc */
-static anon_c_rgba_4 GetCarsIRColor(tCarData *car, tModelData *m)
+static tRGBA GetCarsIRColor(tCarData *car, tModelData *m)
 {
-anon_c_rgba_4 clr;
-    anon_c_rgba_4 sclr2;
+tRGBA clr;
+    tRGBA sclr2;
     float d1;
     float d2;
     float weights[2];
@@ -965,9 +965,9 @@ anon_c_rgba_4 clr;
     column[0]=(unsigned char *)gTrackColors[gTrackNum];
     column[2]=column[0]+2;
     column[1]=column[0]+1;
-    rgb[0] = (unsigned int)(column[0][(a) * (int)sizeof(anon_c_rgba_4)] + column[0][(b) * (int)sizeof(anon_c_rgba_4)] + column[0][(hobj) * (int)sizeof(anon_c_rgba_4)] + column[0][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(anon_c_rgba_4)]) >> 2;
-    rgb[1] = (unsigned int)(((column[1][(a) * (int)sizeof(anon_c_rgba_4)] + column[1][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(anon_c_rgba_4)]) + (column[1][(hobj) * (int)sizeof(anon_c_rgba_4)] + column[1][(b) * (int)sizeof(anon_c_rgba_4)]))) >> 2;
-    rgb[2] = (unsigned int)(column[2][(a) * (int)sizeof(anon_c_rgba_4)] + column[2][(b) * (int)sizeof(anon_c_rgba_4)] + column[2][(hobj) * (int)sizeof(anon_c_rgba_4)] + column[2][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(anon_c_rgba_4)]) >> 2;
+    rgb[0] = (unsigned int)(column[0][(a) * (int)sizeof(tRGBA)] + column[0][(b) * (int)sizeof(tRGBA)] + column[0][(hobj) * (int)sizeof(tRGBA)] + column[0][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)]) >> 2;
+    rgb[1] = (unsigned int)(((column[1][(a) * (int)sizeof(tRGBA)] + column[1][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)]) + (column[1][(hobj) * (int)sizeof(tRGBA)] + column[1][(b) * (int)sizeof(tRGBA)]))) >> 2;
+    rgb[2] = (unsigned int)(column[2][(a) * (int)sizeof(tRGBA)] + column[2][(b) * (int)sizeof(tRGBA)] + column[2][(hobj) * (int)sizeof(tRGBA)] + column[2][((car->sound_flags[3]&0xf800)>>11) * (int)sizeof(tRGBA)]) >> 2;
     if (m->airdist[2] >= 20.0f) {
         d1 = 0.025f * (m->airdist[2] - 20.0f);
         if (d1 > 1.0f) return gTrackColors[gTrackNum][gTrackBaseColors[gTrackNum]];
@@ -1003,10 +1003,10 @@ static void AnimateFrame(tVisual *v, signed short op)
     int rear;
     unsigned int tobj;
     unsigned int eobj;
-    anon_c_rgba_4 clr;
-    anon_c_rgba_4 sclr1;
-    anon_c_rgba_4 sclr2;
-    anon_c_rgba_4 nextclr;
+    tRGBA clr;
+    tRGBA sclr1;
+    tRGBA sclr2;
+    tRGBA nextclr;
     slot=v->slot;
     m=&model[slot];
     car=&gGameCar[slot];
@@ -1268,7 +1268,7 @@ deploy:
 static void StartWingFlame(signed short slot, signed short side)
 {
     tVisual *v; /* r31 */
-    anon_mat3_mat4_30 *mat; /* r0 */
+    tUVMatrix *mat; /* r0 */
     v = &gGameCar[slot].visuals[19 + side];
     if (gRace == 2 || gRace == 6 || model[slot].we_control) {
         v->func = 0;
@@ -1292,7 +1292,7 @@ static void StartWingFlame(signed short slot, signed short side)
 static void AnimateWingFlame(tVisual *v, signed short op)
 {
     int hulk; /* r4 */
-    anon_mat3_mat4_30 *mat; /* r28 */
+    tUVMatrix *mat; /* r28 */
     tCarData *car; /* r31 */
     float scale; /* f1 */
     int index;
@@ -1346,7 +1346,7 @@ static void StartNewBlast(signed short slot)
 {
 tVisual *v;
     int i;
-    anon_c_rgba_4 clr = { 255, 255, 255, 255 };
+    tRGBA clr = { 255, 255, 255, 255 };
     v = GrabEnvEntry();
     if (v) {
         v->func = AnimateNewBlast;
@@ -1402,7 +1402,7 @@ static void AnimateNewBlast(tVisual *v, signed short op)
 {
 int i;
     tBlastObj *b;
-    anon_c_rgba_4 clr;
+    tRGBA clr;
     float x;
     float y;
     if (gPauseState) return;
@@ -1491,7 +1491,7 @@ release:
 static void StartNewBlastRing(signed short slot)
 {
     tVisual *v; /* r29 */
-    anon_c_rgba_4 clr = { 255, 255, 255, 255 }; /* stack */
+    tRGBA clr = { 255, 255, 255, 255 }; /* stack */
     v = GrabEnvEntry();
     if (!v) return;
     v->func = AnimateNewBlastRing;
@@ -1513,7 +1513,7 @@ static void StartNewBlastRing(signed short slot)
 /* 0x8005838c, size 0x258 */
 static void AnimateNewBlastRing(tVisual *v, signed short op)
 {
-    anon_c_rgba_4 clr; /* stack */
+    tRGBA clr; /* stack */
     if (gPauseState) return;
     if (!model[v->slot].crashflag) {
 remove:
@@ -1560,7 +1560,7 @@ release:
 void StartBlast(void * data, int linkToCar, float scale, int playSound)
 {
     tVisual *v; /* r31 */
-    anon_mat3_mat4_30 *mat; /* r30 */
+    tUVMatrix *mat; /* r30 */
     if (linkToCar) StartNewBlastRing(*(signed short *)data);
     v = GrabEnvEntry();
     if (!v) return;
@@ -1719,9 +1719,9 @@ static void StartShadow(signed short slot)
     int i;
     _tdstVertext vert[4];
     anon_ob_tc_18 *vv;
-    anon_numPack_name_2c *shadow1[1];
-    anon_numPack_name_2c *shadow2;
-    anon_numPack_name_2c *shadow3;
+    tPackedObject *shadow1[1];
+    tPackedObject *shadow2;
+    tPackedObject *shadow3;
     v=&gGameCar[slot].visuals[11];
     v->func=AnimateShadow;
     v->slot=slot;
@@ -1747,7 +1747,7 @@ static void StartShadow(signed short slot)
     shadow3->pPack=&gGameCarShadowPack[slot*3+2];
     shadow3->displaylist=0;
     gGameCarShadowTexDef=&gTexDefPtrs[gTexList[8]>>10].texDefs[gTexList[8]&1023];
-    gGameCarShadowTexDef=(anon_name_width_30 *)gGameCarShadowTexDef->strip;
+    gGameCarShadowTexDef=(tTexture *)gGameCarShadowTexDef->strip;
     if(shadow1[0]->strips) {
         DeallocateMemory(shadow1[0]->strips->vertexs);
         DeallocateMemory(shadow1[0]->strips);
@@ -1859,7 +1859,7 @@ static void AnimateShadow(tVisual *v, signed short op)
     float fscale,bscale,len;
     float scalePair[2];
     anon_ob_tc_18 *vv;
-    anon_numPack_name_2c *shadow1;
+    tPackedObject *shadow1;
     car=&gGameCar[v->slot];
     m=&model[v->slot];
     shadow1=&gGameCarShadow[v->slot*3];
@@ -2035,8 +2035,8 @@ static void AnimateShadow(tVisual *v, signed short op)
 void SendCarShadows(void)
 {
     int i; /* r30 */
-    anon_c_rgba_4 tt; /* stack */
-    anon_c_rgba_4 tt1; /* stack */
+    tRGBA tt; /* stack */
+    tRGBA tt1; /* stack */
     tt = MyGetAmbientColor();
     tt1.rgba = 0xffffffff;
     MySetAmbientColor(tt1);
@@ -2052,7 +2052,7 @@ void ClearCarShadows(void)
     numShadowObjToDraw = 0;
 }
 
-static anon_c_rgba_4 arrowColors[5] = {
+static tRGBA arrowColors[5] = {
     0, 0, 224, 255, 224, 0, 0, 255, 224, 224, 0, 255, 0, 224, 0, 255, 224, 224, 224, 255
 };
 unsigned char arrowinvsColor[7] = { 32, 48, 80, 128, 160, 192, 239 };
@@ -2091,8 +2091,8 @@ static void StartArrow(signed short slot)
 {
     tVisual *v = &gGameCar[slot].visuals[12];
     int i;
-    anon_c_rgba_4 clr = { 255, 255, 255, 255 };
-    anon_nverts_flags_68 *poly;
+    tRGBA clr = { 255, 255, 255, 255 };
+    tPoly *poly;
     if (gRace == 6) {
         clr.c[0] = arrowColors[gCarTeam[slot]].c[0];
         clr.c[1] = arrowColors[gCarTeam[slot]].c[1];
@@ -2134,7 +2134,7 @@ static void AnimateArrow(tVisual *v)
     int oslot;
     int i;
     float vec[3];
-    anon_vp_s_48 *window;
+    tWindowInfo *window;
     float x,y,z;
     float widthTerm;
     float border=19.0f;
@@ -2144,7 +2144,7 @@ static void AnimateArrow(tVisual *v)
     m=&model[v->slot];
     oslot=v->index;
     {
-    anon_c_rgba_4 clr = {{255,255,255,255}};
+    tRGBA clr = {{255,255,255,255}};
     if(!gShowPlayerArrows || !(gGameState&0x400000) ||
         ((car->crash_state || m->resurrect.moving_state>=0) && gRace==6)) {
         ZOID_HidePoly(&PolyInstanceList[v->objnum]);
@@ -2354,7 +2354,7 @@ static void AnimateBSpark(tVisual *v, signed short op)
 static void HandleASpark(tVisual *v, int on, float x, float y, float z, int spark, signed short op)
 {
     tCarData *car; /* r29 */
-    anon_mat3_mat4_30 *mat; /* r4 */
+    tUVMatrix *mat; /* r4 */
     signed short mph; /* r29 */
     car = &gGameCar[v->slot];
     if (op && !(gGameState & 8) && on) {
@@ -2379,7 +2379,7 @@ static void HandleASpark(tVisual *v, int on, float x, float y, float z, int spar
 /* 0x8005b204, size 0x7c */
 static void PositionObject(int objnum, float x, float y, float z, float u, float v, float w)
 {
-    anon_mat3_mat4_30 *mat; /* r31 */
+    tUVMatrix *mat; /* r31 */
     mat = ZOID_FindMatrix(objnum);
     mat->mat3.pos[0] = u;
     mat->mat3.pos[1] = v;

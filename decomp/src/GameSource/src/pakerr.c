@@ -385,13 +385,13 @@ restore:
 /* 0x8002ecf4, size 0x238 */
 void PS_ErrorFunc(int pak, enum_kPS_ErrUnknown error, void * name, int data, signed char *choice1, signed char *choice2, int (*cancelFunc)(int))
 {
-    static const anon_texname_dulx_24 dimMultiBlit[1] = {
+    static const tBlitDef dimMultiBlit[1] = {
         { 0, 0, 0, 320, 224, -1, -1, -1, -1, 0, 192, (int (*)(_tBlit *))_AnimDim, 0 }
     };
-    static const anon_texname_dulx_24 noPakBlit[1] = {
+    static const tBlitDef noPakBlit[1] = {
         { (const char *)-1, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (int (*)(_tBlit *))_animNoPakText, 0 }
     };
-    static const anon_texname_dulx_24 newPakBlit[1] = {
+    static const tBlitDef newPakBlit[1] = {
         { (const char *)-1, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (int (*)(_tBlit *))_animNewPakText, 0 }
     };
     signed char done = 0;

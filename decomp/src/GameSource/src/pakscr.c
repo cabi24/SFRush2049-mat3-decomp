@@ -52,7 +52,7 @@ void updatePakScreen(void)
     signed char choice1;
     signed char choice2;
     if (!gInited) {
-        anon_texname_dulx_24 mblit[1] = {
+        tBlitDef mblit[1] = {
             (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)_AnimText, 0
         };
         _SetState(0);
@@ -223,8 +223,8 @@ static void _ControlDamaged(void)
 /* 0x80076eec, size 0x228 */
 static void _GetPakStatusStr(int pak, unsigned char *str)
 {
-    anon_ll_fileh_4c **player;
-    anon_ll_fileh_30 **ghost;
+    tPlayerProfile **player;
+    tGhostFile **ghost;
     if (!gControllerData[pak / 2].attached)
         TB_Sprintf(str, "(%s)", gText.single[0x2bc / 4]);
     else if (!PS_PakInserted(pak))

@@ -148,7 +148,7 @@ void SetCameraView(signed short camera)
 /* 0x800062ac, size 0x4b4 */
 void CheckCameraView(void)
 {
-    anon_slot_controller_50 *player;
+    tPadState *player;
     tCarData *car;
     tModelData *m;
     int view;
@@ -477,7 +477,7 @@ void update_camera(tCarData *car)
 /* 0x8000787c, size 0xd0 */
 static void _UpdateDroneObjects(void)
 {
-    anon_mat3_mat4_30 *mat;
+    tUVMatrix *mat;
     signed short i;
     for (i = 0; i < 6; i++) {
         if (model[i].in_game && gGameCar[i].objnum >= 0 && model[i].drone_type != 2 && !model[i].hide_car) {
@@ -932,7 +932,7 @@ void point_at_car(tCarData *car, float *pos, float (*uvs)[3], float *res)
 }
 
 /* 0x80009038, size 0x180 */
-void LookInDir(float *lookdir, anon_mat3_mat4_30 *mat)
+void LookInDir(float *lookdir, tUVMatrix *mat)
 {
     float length;
     mat->uvs[2][0] = lookdir[0];

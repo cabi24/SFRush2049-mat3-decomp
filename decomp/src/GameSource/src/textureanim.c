@@ -3,9 +3,9 @@
 #include "rush/rush_protos.h"
 
 #define FRAME_TIME 0.0333333f
-#define TEX(p) ((anon_name_width_30 *)(p))
+#define TEX(p) ((tTexture *)(p))
 /* a texture's strip field holds the texture definition the animation writes to */
-#define STRIP(t) ((anon_name_width_30 *)TEX(t)->strip)
+#define STRIP(t) ((tTexture *)TEX(t)->strip)
 
 tTextureBase al_barrier1Swap[3] = { "AL_BARRIER1", 0, 0, "AL_BARRIER1B", 0, 0, "AL_BARRIER1C", 0, 0 };
 tTextureBase al_barrier1nSwap[4] = {
@@ -335,7 +335,7 @@ void InitTextureAnimation(void)
 {
     tPaletteAnim *plist; /* r31 */
     tTextureSwap *tlist; /* r30 */
-    anon_name_width_30 *ttDef; /* r0 */
+    tTexture *ttDef; /* r0 */
     unsigned short index; /* stack */
     int i; /* r29 */
     plist = PaletteLists[gTrackNum];

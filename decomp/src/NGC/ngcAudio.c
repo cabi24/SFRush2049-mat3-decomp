@@ -392,7 +392,7 @@ static void ax_drop_voice_callback(void * p)
 /* 0x800ad950, size 0x100 */
 void ngcLoopSfx(void * snd, void *unused_table, unsigned long unused_sfx, float volume)
 {
-    anon_used_started_4c *sfxSnd;
+    tSfxVoice *sfxSnd;
     _AXVPB *axVPB;
     float fSampleRatioCovert;
     if (snd) {
@@ -446,7 +446,7 @@ void ngcPlaySfx(void * snd, void * _sp_table, unsigned long sfx, float volume)
                 case 3: _zero_base = zero_base >> 1; looped = 1; break;
             }
             if (snd) {
-                if (!((anon_used_started_4c *)snd)->loop) {
+                if (!((tSfxVoice *)snd)->loop) {
                     if (looped) {
                         v->sp_entry->type &= ~1;
                         v->sp_entry->loopAddr = _zero_base;
@@ -470,8 +470,8 @@ void ngcPlaySfx(void * snd, void * _sp_table, unsigned long sfx, float volume)
             axPBVE.currentDelta = 0;
             AXSetVoiceVe(v->ax_voice, &axPBVE);
             if (snd) {
-                ((anon_used_started_4c *)snd)->ngcEffect = v->ax_voice;
-                ((anon_used_started_4c *)snd)->sampleRate = v->sp_entry->sampleRate;
+                ((tSfxVoice *)snd)->ngcEffect = v->ax_voice;
+                ((tSfxVoice *)snd)->sampleRate = v->sp_entry->sampleRate;
             } else s_MusicAxVpb = v->ax_voice;
             AXSetVoiceState(v->ax_voice, 1);
             OSRestoreInterrupts(old);
@@ -490,7 +490,7 @@ void ngcStopSfx(void * snd, void *unused_table, unsigned long unused_sfx)
 {
     int old;
     _AXVPB *axVPB;
-    axVPB = ((anon_used_started_4c *)snd)->ngcEffect;
+    axVPB = ((tSfxVoice *)snd)->ngcEffect;
     old = OSDisableInterrupts();
     if (axVPB) AXSetVoiceState(axVPB, 0);
     OSRestoreInterrupts(old);

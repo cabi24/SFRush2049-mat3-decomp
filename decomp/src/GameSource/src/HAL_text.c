@@ -30,7 +30,7 @@ static signed char gFontIndex;
 static int gBufLen;
 static void *gFontHeap = 0;
 static signed char gBufferInited = 0;
-static anon_name_width_30 *gFontTextures[16];
+static tTexture *gFontTextures[16];
 static signed short gCharMap[256];
 static unsigned char gBuffer[800];
 

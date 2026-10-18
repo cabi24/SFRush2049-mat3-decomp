@@ -3,7 +3,7 @@
 
 static int animText(void);
 
-static const anon_texname_dulx_24 blits[2] = {
+static const tBlitDef blits[2] = {
     "MIDWAY", 32, 24, -1, -1, -1, -1, -1, -1, 0, 0xff, 0, 0, (void *)0xffffffff, 0, 0, 0, 0, -1,
     -1, -1, -1, 0, 0, (void *)&animText, 0
 };

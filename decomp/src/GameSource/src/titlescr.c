@@ -3,7 +3,7 @@
 
 static int animText(void);
 
-static const anon_texname_dulx_24 blits[4] = {
+static const tBlitDef blits[4] = {
     "RUSH_SPLASH_A", 0, 0, -1, -1, -1, -1, -1, -1, 0, 0xff, 0, 0, "RUSH_SPLASH_B", 255, 0, -1, -1,
     -1, -1, -1, -1, 0, 0xff, 0, 1, "B2", 10, 175, -1, -1, -1, -1, -1, -1, 0, 0x80, 0, 2,
     (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0

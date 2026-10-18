@@ -5,7 +5,7 @@
 #include "msl_math_inline.h"
 
 static float dummyVtx[4][3] = { 1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f, -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f };
-static anon_c_rgba_4 damColor[5] = {
+static tRGBA damColor[5] = {
     255, 255, 255, 255, 255, 255, 255, 51, 255, 255, 255, 102, 255, 255, 255, 153, 255, 255, 255,
     204
 };

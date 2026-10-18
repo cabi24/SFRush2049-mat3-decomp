@@ -4,12 +4,12 @@
 #include "msl_math_inline.h"
 
 static int FindResPtRecurse(int inPath, int inIdx, int *outPath, int *outIdx, int honorAltRes, int depth);
-static void IntervalPosChange(tModelData *m, anon_xrel_yrel_2c *cp, int change_flag);
-static void IntervalPos(tModelData *m, anon_xrel_yrel_2c *cp);
+static void IntervalPosChange(tModelData *m, tPathPoint *cp, int change_flag);
+static void IntervalPos(tModelData *m, tPathPoint *cp);
 static signed short FindClosestDronePathPtEfficiently(signed short *, signed short, signed short, signed short, signed short);
-static void FindInterval(tModelData *m, anon_xrel_yrel_2c *cp);
-static void TargetSpeed(anon_xrel_yrel_2c *cp);
-static void TargetSteerPos(tModelData *m, anon_xrel_yrel_2c *cp);
+static void FindInterval(tModelData *m, tPathPoint *cp);
+static void TargetSpeed(tPathPoint *cp);
+static void TargetSteerPos(tModelData *m, tPathPoint *cp);
 static void AdjustSpeed(tModelData *m, float tspd);
 static void AdjustSteer(tModelData *m, float *pos);
 static void AvoidAreas(signed short drone_index);
@@ -87,7 +87,7 @@ void MaxPathControls(tModelData *m)
     static float gravitySpeedIncrease[4] = {0.8f, 1.0f, 1.25f, 1.5f};
     static float gravitySpeedMin[4] = {75.0f, 90.0f, 135.0f, 180.0f};
     float tspd;
-    anon_xrel_yrel_2c *cp = &gGameCar[m->slot].mpctl;
+    tPathPoint *cp = &gGameCar[m->slot].mpctl;
     FindInterval(m, cp);
     TargetSpeed(cp);
     TargetSteerPos(m, cp);
@@ -106,7 +106,7 @@ void MaxPathControls(tModelData *m)
 }
 
 /* 0x800258e4, 0xa8 bytes */
-static void FindInterval(tModelData *m, anon_xrel_yrel_2c *cp)
+static void FindInterval(tModelData *m, tPathPoint *cp)
 {
     IntervalPosChange(m, cp, 1);
     if (cp->xrel >= cp->len) {
@@ -120,7 +120,7 @@ static void FindInterval(tModelData *m, anon_xrel_yrel_2c *cp)
 }
 
 /* 0x8002598c, 0x774 bytes */
-static void IntervalPosChange(tModelData *m, anon_xrel_yrel_2c *cp, int change_flag)
+static void IntervalPosChange(tModelData *m, tPathPoint *cp, int change_flag)
 {
     signed short j;
     signed short highIndex;
@@ -235,7 +235,7 @@ static void IntervalPosChange(tModelData *m, anon_xrel_yrel_2c *cp, int change_f
 
 
 /* 0x80026100, 0x1c0 bytes */
-static void IntervalPos(tModelData *m, anon_xrel_yrel_2c *cp)
+static void IntervalPos(tModelData *m, tPathPoint *cp)
 {
     anon_pos_mph_8 *pt = &gDronePaths[cp->path].pts[cp->idx];
     anon_pos_mph_8 *npt;
@@ -425,7 +425,7 @@ void FindMaxpathIntervals(void)
 }
 
 /* 0x80026c50, 0x144 bytes */
-static void TargetSpeed(anon_xrel_yrel_2c *cp)
+static void TargetSpeed(tPathPoint *cp)
 {
     signed short nextIdx = NextPathPt(cp->idx, cp->path);
     float interp = cp->xrel / cp->len;
@@ -447,7 +447,7 @@ static void TargetSpeed(anon_xrel_yrel_2c *cp)
 }
 
 /* 0x80026d94, 0x350 bytes */
-static void TargetSteerPos(tModelData *m, anon_xrel_yrel_2c *cp)
+static void TargetSteerPos(tModelData *m, tPathPoint *cp)
 {
     anon_pos_mph_8 *pt = &gDronePaths[cp->path].pts[cp->idx];
     anon_pos_mph_8 *npt;
@@ -546,7 +546,7 @@ static void AvoidAreas(signed short drone_index)
     float scale2;
     float rpos[3];
     float pos[3];
-    anon_xrel_yrel_2c *cp;
+    tPathPoint *cp;
     tModelData *m;
     float dir[3], save_dir[3];
     float mpos0, mpos1, mpos2;
@@ -678,7 +678,7 @@ static void AvoidAreas(signed short drone_index)
 
 void SetDroneResPathIndex(tModelData *m, signed short path, signed short idx)
 {
-    anon_xrel_yrel_2c *cp;
+    tPathPoint *cp;
     float min = 1.0e20f;
     float x, y, z, dx, dy, dz, dist;
     int p;
@@ -713,7 +713,7 @@ void SetDroneResPathIndex(tModelData *m, signed short path, signed short idx)
 /* 0x80027d24, 0x40 bytes */
 void SetNewPathIndex(tModelData *m, signed short idx)
 {
-    anon_xrel_yrel_2c *cp = &gGameCar[m->slot].mpctl;
+    tPathPoint *cp = &gGameCar[m->slot].mpctl;
     cp->idx = idx;
     cp->interval_time = gModelTime;
     cp->newIdx = -1;

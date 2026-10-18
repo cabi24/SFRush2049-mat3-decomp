@@ -83,7 +83,7 @@ extern signed char gEndGame,gCoastFlag,gNumActiveCars;
 
 extern signed short gNumPlayers;
 
-extern anon_slot_controller_50 gPlayers[4];
+extern tPadState gPlayers[4];
 
 extern void NextResPathPt(int path,int idx,int *outPath,int *outIdx);
 

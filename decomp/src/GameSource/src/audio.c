@@ -388,7 +388,7 @@ void StartCarSounds(struct tModelData *model)
 void UpdateCarSounds(struct tModelData *model)
 {
     int p = model->slot;
-    anon_slot_controller_50 *player = &gPlayers[p];
+    tPadState *player = &gPlayers[p];
     static float sLastHornTime[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
     if (gGameSoundsEnabled && gCarActive[p]) {
         _UpdateEngineSound(model);

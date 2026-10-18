@@ -7,7 +7,7 @@ signed char gNoBrakes;
 signed char gNewControls[4][11];
 signed char gDefaultControls[11];
 
-static void _ReadShifter(tModelData *m, anon_slot_controller_50 *player)
+static void _ReadShifter(tModelData *m, tPadState *player)
 {
     int mph;
     if (m->crashflag) return;
@@ -30,7 +30,7 @@ static void _ReadShifter(tModelData *m, anon_slot_controller_50 *player)
     }
 }
 
-static void _ReadGasAndBrake(tModelData *m, anon_slot_controller_50 *player)
+static void _ReadGasAndBrake(tModelData *m, tPadState *player)
 {
     if (gCoastFlag) {
         m->mainin.throttle = 0.0f;
@@ -61,7 +61,7 @@ static void _ReadGasAndBrake(tModelData *m, anon_slot_controller_50 *player)
         : 15.0f * m->mainin.brake + 0.5f) / 15.0f;
 }
 
-static void _ReadSteeringWheel(tModelData *m, anon_slot_controller_50 *player)
+static void _ReadSteeringWheel(tModelData *m, tPadState *player)
 {
     float playpos;
     float diff;
@@ -110,7 +110,7 @@ void SetDefaultControls2(signed char *controls)
 
 void ClearRushControls(void)
 {
-    anon_slot_controller_50 *player;
+    tPadState *player;
     int i;
     ClearControls();
     player = gPlayers;
@@ -126,7 +126,7 @@ void UpdateRushControls(void)
     ReadInPS2GamePad();
     UpdateControls();
     for (i = 0; i < 4; i++) {
-        anon_slot_controller_50 *player = &gPlayers[i];
+        tPadState *player = &gPlayers[i];
         if (player->controller == 5 || i >= gNumPlayers) {
             player->autoEdges = player->edges = player->levels = 0;
             player->analog[1] = player->analog[0] = 0.0f;
@@ -142,7 +142,7 @@ void UpdateRushControls(void)
 
 void UpdateModelControls(void)
 {
-    anon_slot_controller_50 *player;
+    tPadState *player;
     int i;
     tModelData *m;
     player = gPlayers;
@@ -162,7 +162,7 @@ void UpdateModelControls(void)
 
 void FindPlayerNum(int num, int force)
 {
-    anon_slot_controller_50 *player;
+    tPadState *player;
     player = &gPlayers[num];
     if (force || (player->controller == 5 && (gContEdges[num] & 1))) {
         player->controller = num;

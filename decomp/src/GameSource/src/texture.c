@@ -15,7 +15,7 @@ void MirrorTextures(void)
 }
 
 /* 0x800507fc */
-void AddTexture(anon_name_width_30 *tex)
+void AddTexture(tTexture *tex)
 {
     LinkWithPS2Texture(g_MyPacketName, tex);
 }

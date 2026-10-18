@@ -421,7 +421,7 @@ void model_iteration(void)
 
 static void _UpdatePlayerModel(void)
 {
-    anon_slot_controller_50 *player;
+    tPadState *player;
     tModelData *m;
     int i;
     int pass;
@@ -495,7 +495,7 @@ static void _UpdateDroneModels(void)
 static void _UpdateModel(int slot)
 {
     tModelData *m = &model[slot];
-    anon_slot_controller_50 *player = gGameCar[slot].player;
+    tPadState *player = gGameCar[slot].player;
     if (gGameCar[slot].dead == 1 && (m->magvel < 5.0f || !m->fastin.modelrun)) {
         int i;
         gGameCar[slot].dead = 2;

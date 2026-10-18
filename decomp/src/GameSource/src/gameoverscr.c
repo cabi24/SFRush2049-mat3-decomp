@@ -23,7 +23,7 @@ static void drawBattleScore(void);
 static int animText(void);
 static void drawRect(int x, int y, int w, int h, unsigned char *color);
 
-static const anon_texname_dulx_24 multiblit[1] = {
+static const tBlitDef multiblit[1] = {
     (void *)-1, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0
 };
 static unsigned char titlePos[2] = { 160, 10 };

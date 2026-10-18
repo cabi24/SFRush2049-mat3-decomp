@@ -342,8 +342,8 @@ static void _SetupWaveModel(int idx, int first, int loadTextures)
     int TXLDcnt; /* stack */
     unsigned int IMAGptr; /* stack */
     int offset; /* r30 */
-    anon_name_width_30 *ptTexDef; /* r21 */
-    anon_name_radius_48 *ptRomObjDef; /* r21 */
+    tTexture *ptTexDef; /* r21 */
+    tModelDef *ptRomObjDef; /* r21 */
     tBasicTargetPath *ptBasicTargetPath; /* r18 */
     anon_name_start_18 *ptPalDef; /* r18 */
     int i; /* r18 */

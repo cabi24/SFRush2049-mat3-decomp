@@ -38,8 +38,8 @@ static char *buttonNames[14] = {
     "BAR_BGG1", "BAR_FGG1"
 };
 /* declared after buttonNames on purpose: its 14 string literals occupy the first 144 .rodata bytes, before mblit */
-static const anon_texname_dulx_24 mblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
-static anon_buttonType_objIdx_40 buttonInfo[23] = {
+static const tBlitDef mblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
+static tMenuButton buttonInfo[23] = {
     { 0, -1, 0.0f, { 0 }, 0 },
     { 9, -1, 0.0f, { 0 }, 0 },
     { 11, -1, 0.0f, { 0 }, 0 },
@@ -85,7 +85,7 @@ static float cursorSpeed;
 static float scrollSpeed;
 static signed char gViewMenuValid[2];
 static signed char gViewMenuVisible[2];
-anon_ll_fileh_4c **gStatPlayer;
+tPlayerProfile **gStatPlayer;
 static enum_kRecordStateCount gRecordState;
 static enum_kSelectMenuCount_2 gSelectMenuSelect;
 static signed char gSelectMenuClear;
@@ -98,7 +98,7 @@ static signed char gRecordCircuit;
 static enum_kTrackTypeCount gTrackType;
 static float gDefTime;
 static signed char gSelectPakIdx;
-static anon_used_perm_20 *viewPane;
+static tBlitSet *viewPane;
 static _tBlit *blit;
 static signed char inited;
 static float buttonX;
@@ -287,7 +287,7 @@ static void controlSelect(void)
                     setRecordState(kRecordStateView);
                 }
             } else {
-                anon_ll_fileh_4c **p;
+                tPlayerProfile **p;
                 ClearTotalStats();
                 for (i = 0; i < 4; i++) {
                     AddPlayerStats(&gJustPlayers[i]);
@@ -446,12 +446,12 @@ static void drawSelect(void)
             (buttonInfo[13].angle < 0.6981317f || buttonInfo[13].angle > 2.443461f) && buttonInfo[13].alpha) {
             HAL_SetTextTranslucency(buttonInfo[13].alpha);
             if (buttonInfo[13].angle < 1.5707964f) {
-        anon_c_rgba_4 c1, c2;
+        tRGBA c1, c2;
         c2 = flashColors[1]; c1 = flashColors[0];
         TB_FlashTextColors(&c1, &c2);
         TB_SetTextColor(1);
     } else {
-        anon_c_rgba_4 c1, c2;
+        tRGBA c1, c2;
         c2 = flashColors[1]; c1 = flashColors[0];
         TB_FlashTextColors(&c1, &c2);
         TB_SetTextColor(22);
@@ -465,12 +465,12 @@ static void drawSelect(void)
         if (!buttonInfo[i].alpha) continue;
         HAL_SetTextTranslucency(buttonInfo[i].alpha);
         if (buttonInfo[i].angle < 1.5707964f) {
-        anon_c_rgba_4 c1, c2;
+        tRGBA c1, c2;
         c2 = flashColors[1]; c1 = flashColors[0];
         TB_FlashTextColors(&c1, &c2);
         TB_SetTextColor(1);
     } else {
-        anon_c_rgba_4 c1, c2;
+        tRGBA c1, c2;
         c2 = flashColors[1]; c1 = flashColors[0];
         TB_FlashTextColors(&c1, &c2);
         TB_SetTextColor(22);
@@ -488,7 +488,7 @@ static void drawSelect(void)
             str = gText.single[158];
             TB_DrawText(TB_CenterText(str, x), y, str);
         } else if (i >= 3 && i < 11) {
-            anon_ll_fileh_4c **player;
+            tPlayerProfile **player;
             int playerIdx;
             if (!gStatPlayer) {
                 for (playerIdx = 0, player = gPlayerFiles.head; player; player = (*player)->ll.next) {
@@ -541,12 +541,12 @@ static void drawView(void)
         if (!buttonInfo[i + 11].alpha) continue;
         HAL_SetTextTranslucency(buttonInfo[i + 11].alpha);
         if (buttonInfo[i + 11].angle < 1.5707964f) {
-            anon_c_rgba_4 c1, c2;
+            tRGBA c1, c2;
             c2 = flashColors[1]; c1 = flashColors[0];
             TB_FlashTextColors(&c1, &c2);
             TB_SetTextColor(1);
         } else {
-            anon_c_rgba_4 c1, c2;
+            tRGBA c1, c2;
             c2 = flashColors[1]; c1 = flashColors[0];
             TB_FlashTextColors(&c1, &c2);
             TB_SetTextColor(22);
@@ -906,7 +906,7 @@ static void drawTotalStats(void)
 /* 0x80083488, size 0x9b8 */
 static void drawUnlockedTracks(void)
 {
-    anon_ll_fileh_4c **tempPlayer;
+    tPlayerProfile **tempPlayer;
     int tempNumPlayers;
     signed short i, x, y, w, b;
     int noRaceTracksUnlocked = 1;
@@ -1062,7 +1062,7 @@ static void drawUnlockedTracks(void)
 /* 0x80083e40, size 0x1d0 */
 static void drawUnlockedCars(void)
 {
-    anon_ll_fileh_4c **tempPlayer;
+    tPlayerProfile **tempPlayer;
     int tempNumPlayers;
     signed short i;
     signed short y;
@@ -1098,7 +1098,7 @@ static void drawUnlockedCars(void)
 /* 0x80084010, size 0x50c */
 static void drawUnlockedParts(void)
 {
-    anon_ll_fileh_4c **tempPlayer;
+    tPlayerProfile **tempPlayer;
     int tempNumPlayers;
     signed short i, y, b;
     int noneUnlocked;
@@ -1281,7 +1281,7 @@ static void updateViewInfo(void)
 static void updatePakInfo(void)
 {
     int pak;
-    anon_ll_fileh_4c **player;
+    tPlayerProfile **player;
     for (pak = 0; pak < 4; pak++) {
         gNumPakPlayers[pak] = 0;
         for (player = gPlayerFiles.head; player; player = (*player)->ll.next) {
@@ -1305,8 +1305,8 @@ static void getScoreStr(float score, unsigned char *str, int unused)
 /* 0x80084a5c, size 0x418 */
 static void initButtons(void)
 {
-    anon_c_rgba_4 buttonColor = { { 255, 255, 255, 255 } };
-    anon_name_width_30 *tex;
+    tRGBA buttonColor = { { 255, 255, 255, 255 } };
+    tTexture *tex;
     unsigned short texIdx;
     int buttonIdx;
     for (buttonIdx = 0; buttonIdx < 23; buttonIdx++) {
@@ -1403,9 +1403,9 @@ static void updateSelectButtons(void)
         int gSelectMenuCount;
         int whichItem;
         float buttonY, selectedPos;
-        anon_name_width_30 *tex;
+        tTexture *tex;
         unsigned short texIdx;
-        anon_c_rgba_4 buttonColor = { { 255, 255, 255, 255 } };
+        tRGBA buttonColor = { { 255, 255, 255, 255 } };
     
         if (gDeleteConfirm == 1 || gDeleteNotify == 1) {
             for (buttonIdx = 0; buttonIdx < 23; buttonIdx++) {
@@ -1562,9 +1562,9 @@ static void updateViewButtons(void)
     int gViewMenuCount = 0;
     int whichItem = 0;
     float buttonY, selectedPos;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
-    anon_c_rgba_4 buttonColor = { { 255, 255, 255, 255 } };
+    tRGBA buttonColor = { { 255, 255, 255, 255 } };
     for (i = 0; i < 2; i++) {
         if (gViewMenuVisible[i]) {
             gViewMenuCount++;

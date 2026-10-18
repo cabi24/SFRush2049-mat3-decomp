@@ -7,7 +7,7 @@ int gMaxBlitInsts;
 anon_palette_texture_20 gBlitInstanceList[200];
 
 /* 0x8006274c, size 0x30 */
-void ZOID_UpdateBlit(int bl_idx, int texIndex, anon_name_width_30 *texture, anon_name_start_18 *palette, int x, int y, int width, int height)
+void ZOID_UpdateBlit(int bl_idx, int texIndex, tTexture *texture, anon_name_start_18 *palette, int x, int y, int width, int height)
 {
     anon_palette_texture_20 *blit; /* r3 */
     blit = &gBlitInstanceList[bl_idx];
@@ -65,7 +65,7 @@ void ZOID_SetBlitData(int bl_idx, int hide, int alpha, unsigned short z)
 }
 
 /* 0x80062844, size 0x114 */
-int ZOID_AddBlit(int texIndex, anon_name_width_30 *texture, anon_name_start_18 *palette, int x, int y, int width, int height)
+int ZOID_AddBlit(int texIndex, tTexture *texture, anon_name_start_18 *palette, int x, int y, int width, int height)
 {
     int newblit; /* r31 */
     anon_palette_texture_20 *blit; /* r7 */

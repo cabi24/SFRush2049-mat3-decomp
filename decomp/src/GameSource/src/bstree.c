@@ -6,31 +6,31 @@ typedef struct BSTNode {
     void *right;
 } BSTNode;
 
-static void _InsertBSTE(anon_OrderFunc_numElements_c *tree, void *root, void *element);
-static void _WalkBST(anon_OrderFunc_numElements_c *tree, void *root, int *num, void (*WalkFunc)(void *, int));
+static void _InsertBSTE(tOrderedList *tree, void *root, void *element);
+static void _WalkBST(tOrderedList *tree, void *root, int *num, void (*WalkFunc)(void *, int));
 
 /* 0x8009ccd0 */
-void InitBST(anon_OrderFunc_numElements_c *tree, int (*OrderFunc)(void *, void *))
+void InitBST(tOrderedList *tree, int (*OrderFunc)(void *, void *))
 {
     ClearBST(tree);
     tree->OrderFunc = OrderFunc;
 }
 
 /* 0x8009cd0c */
-void ClearBST(anon_OrderFunc_numElements_c *tree)
+void ClearBST(tOrderedList *tree)
 {
     tree->root = NULL;
     tree->numElements = 0;
 }
 
 /* 0x8009cd1c */
-void InsertBSTE(anon_OrderFunc_numElements_c *tree, void *element)
+void InsertBSTE(tOrderedList *tree, void *element)
 {
     _InsertBSTE(tree, &tree->root, element);
 }
 
 /* 0x8009cd44 */
-static void _InsertBSTE(anon_OrderFunc_numElements_c *tree, void *root, void *element)
+static void _InsertBSTE(tOrderedList *tree, void *root, void *element)
 {
     int x;
 
@@ -49,7 +49,7 @@ static void _InsertBSTE(anon_OrderFunc_numElements_c *tree, void *root, void *el
 }
 
 /* 0x8009cdf8 */
-void WalkBST(anon_OrderFunc_numElements_c *tree, void (*WalkFunc)(void *, int))
+void WalkBST(tOrderedList *tree, void (*WalkFunc)(void *, int))
 {
     int num = 0;
 
@@ -57,7 +57,7 @@ void WalkBST(anon_OrderFunc_numElements_c *tree, void (*WalkFunc)(void *, int))
 }
 
 /* 0x8009ce2c */
-static void _WalkBST(anon_OrderFunc_numElements_c *tree, void *root, int *num, void (*WalkFunc)(void *, int))
+static void _WalkBST(tOrderedList *tree, void *root, int *num, void (*WalkFunc)(void *, int))
 {
     if (root) {
         _WalkBST(tree, ((BSTNode *)root)->left, num, WalkFunc);

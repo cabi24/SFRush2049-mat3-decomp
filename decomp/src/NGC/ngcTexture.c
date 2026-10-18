@@ -11,9 +11,9 @@
 #undef FindPs2Texture
 #undef FindPs2Texture2
 #undef NGCDC_SendBlit_MENU_RGBA
-void MakeResident(anon_name_width_38 *tex);
-anon_name_width_38 *FindPs2Texture(void *unused, char *name);
-anon_name_width_38 *FindPs2Texture2(void *unused, char *name);
+void MakeResident(tTextureEx *tex);
+tTextureEx *FindPs2Texture(void *unused, char *name);
+tTextureEx *FindPs2Texture2(void *unused, char *name);
 void NGCDC_SendBlit_MENU_RGBA(void *tex, void *tex_a, int count, void *vertices,
                             unsigned int c1, unsigned int c2, unsigned int c3, unsigned int c4);
 
@@ -118,7 +118,7 @@ _PS2TexGroup g_TexGroups[500];
 int stat_tex_swap[900];
 
 /* 0x80099bfc, size 0x4 */
-void MakeResident(anon_name_width_38 *tex)
+void MakeResident(tTextureEx *tex)
 {
 
 }
@@ -138,7 +138,7 @@ void ReleaseTexID(int id)
 }
 
 /* 0x80099c44, size 0xaa0 */
-void LinkWithPS2Texture(char *packet, anon_name_width_30 *tex)
+void LinkWithPS2Texture(char *packet, tTexture *tex)
 {
     char tt[64]; /* stack */
     int i; /* r21 */
@@ -330,7 +330,7 @@ void LinkWithPS2Texture(char *packet, anon_name_width_30 *tex)
 }
 
 /* 0x8009a6e4, size 0x134 */
-void LinkWithAnotherTexture(anon_name_width_30 *tex, char *name)
+void LinkWithAnotherTexture(tTexture *tex, char *name)
 {
     int i; /* r23 */
     int j; /* r22 */
@@ -356,7 +356,7 @@ found:
                 group = &g_TexGroups[j];
                 for (i = 0; i < group->_NumTex; i++) {
                     if (!strcmp(group->_Tex[i].name, tex->name)) {
-                        ((anon_name_width_38 *)tex->strip)->texBase = texBase;
+                        ((tTextureEx *)tex->strip)->texBase = texBase;
                         return;
                     }
                 }
@@ -366,7 +366,7 @@ found:
 }
 
 /* 0x8009a818, size 0x124 */
-anon_name_width_38 *FindPs2Texture(void *unused, char *name)
+tTextureEx *FindPs2Texture(void *unused, char *name)
 {
     char tt[64]; /* stack */
     int i; /* r28 */
@@ -391,7 +391,7 @@ anon_name_width_38 *FindPs2Texture(void *unused, char *name)
 }
 
 /* 0x8009a93c, size 0x124 */
-anon_name_width_38 *FindPs2Texture2(void *unused, char *name)
+tTextureEx *FindPs2Texture2(void *unused, char *name)
 {
     char tt[64]; /* stack */
     int i; /* r28 */
@@ -416,7 +416,7 @@ anon_name_width_38 *FindPs2Texture2(void *unused, char *name)
 }
 
 /* 0x8009aa60, size 0x24 */
-int CheckAlpha(anon_name_width_38 *tex)
+int CheckAlpha(tTextureEx *tex)
 {
     int usealpha;
     if (tex == 0) return 0;
@@ -455,8 +455,8 @@ void LoadTextureBinFile(int waveNum, char *groupname)
             JustLoadedTextureGroup = groupid;
             group = &g_TexGroups[groupid];
             appFileRead4(fd2, group, 4);
-            group->_Tex = AllocateMemoryHeap(0, group->_NumTex * sizeof(anon_name_width_38));
-            appFileReadTex(fd2, group->_Tex, sizeof(anon_name_width_38), group->_NumTex);
+            group->_Tex = AllocateMemoryHeap(0, group->_NumTex * sizeof(tTextureEx));
+            appFileReadTex(fd2, group->_Tex, sizeof(tTextureEx), group->_NumTex);
             appFileClose(fd2);
             totalsize = 0;
             for (i = 0; i < group->_NumTex; i++) {
@@ -474,7 +474,7 @@ void LoadTextureBinFile(int waveNum, char *groupname)
             group->_TexObjs = texObjs;
             sprintf(name, "rush2049_data/ngctex_info/%s/NGCTexFile.tpl", groupname);
             group->_TexTpl = 0;
-            NGCTEXGetPalette((anon_versionNumber_numDescriptors_c **)&group->_TexTpl, name);
+            NGCTEXGetPalette((tTPLHeader **)&group->_TexTpl, name);
             for (i = 0; i < group->_NumTex; i++) {
                 NGCTEXGetGXTexObjFromPalette(name, group->_TexTpl, &texObjs[i], i);
                 group->_Tex[i].texBase = (char *)&texObjs[i];
@@ -501,7 +501,7 @@ void LoadTextureBinFile(int waveNum, char *groupname)
                 group->_TexObjs_a = texObjs_a;
                 sprintf(name_alpha, "rush2049_data/ngctex_info/%s/NGCTexFile_a.tpl", groupname);
                 group->_TexTpl_a = 0;
-                NGCTEXGetPalette((anon_versionNumber_numDescriptors_c **)&group->_TexTpl_a, name_alpha);
+                NGCTEXGetPalette((tTPLHeader **)&group->_TexTpl_a, name_alpha);
                 for (i = 0; i < group->_NumTex; i++) {
                     if (group->_Tex[i].psm != 0xffff) {
                         NGCTEXGetGXTexObjFromPalette(name_alpha, group->_TexTpl_a, &texObjs_a[n], n);
@@ -530,10 +530,10 @@ void ReleaseTextureBinFile(int waveNum)
             g_GroupUsed[group - g_TexGroups] = 0;
             for (i = 0; i < group->_NumTex; i++)
                 ReleaseTexID(group->_Tex[i].palIndex);
-            NGCTEXReleasePalette((anon_versionNumber_numDescriptors_c **)&group->_TexTpl);
+            NGCTEXReleasePalette((tTPLHeader **)&group->_TexTpl);
             AddWaveDel((unsigned int)group->_TexObjs);
             if (group->_TexTpl_a)
-                NGCTEXReleasePalette((anon_versionNumber_numDescriptors_c **)&group->_TexTpl_a);
+                NGCTEXReleasePalette((tTPLHeader **)&group->_TexTpl_a);
             if (group->_TexObjs_a)
                 AddWaveDel((unsigned int)group->_TexObjs_a);
             DeallocateMemory(group->_Tex);
@@ -622,12 +622,12 @@ int LoadMenuTexData(void)
     if (!g_bMenuLoaded) {
         sprintf(name, "rush2049_data/ngctex_info/rush_pau.tpl");
         g_MenuTex._TexTpl = 0;
-        NGCTEXGetPalette((anon_versionNumber_numDescriptors_c **)&g_MenuTex._TexTpl, name);
+        NGCTEXGetPalette((tTPLHeader **)&g_MenuTex._TexTpl, name);
         for (i = 0; i < 5; i++)
             NGCTEXGetGXTexObjFromPalette(name, g_MenuTex._TexTpl, &g_MenuTex._TexObjs[i], i);
         sprintf(name, "rush2049_data/ngctex_info/rush_pau_a.tpl");
         g_MenuTex_a._TexTpl = 0;
-        NGCTEXGetPalette((anon_versionNumber_numDescriptors_c **)&g_MenuTex_a._TexTpl, name);
+        NGCTEXGetPalette((tTPLHeader **)&g_MenuTex_a._TexTpl, name);
         for (i = 0; i < 5; i++)
             NGCTEXGetGXTexObjFromPalette(name, g_MenuTex_a._TexTpl, &g_MenuTex_a._TexObjs[i], i);
         g_bMenuLoaded = 1;

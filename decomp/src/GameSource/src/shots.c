@@ -14,7 +14,7 @@ static int sWeaponFx[10] = { 28, 25, 24, 26, 27, 29, 30, 31, 20, -1 };
 static float gShieldSizes[13] = {
     0.85f, 0.8f, 0.75f, 0.77f, 0.83f, 0.85f, 0.75f, 0.75f, 0.65f, 0.85f, 1.1f, 0.8f, 0.73f
 };
-static anon_c_rgba_4 hitColor = { 255, 255, 255, 255 };
+static tRGBA hitColor = { 255, 255, 255, 255 };
 static unsigned short wallTidx;
 static float gCameraMatrix[4][4];
 static tShieldStruct gCarShield[4];
@@ -23,13 +23,13 @@ unsigned short gMineTextures[5];
 int gWfxObjList[7];
 int gWprObjList[10];
 static anon_ll_mbIdx_48 gShotCase[30];
-static anon_ll_mbIdx_3c gShotObjs[24];
-anon_dbl_numElements_18 gShotObjList;
+static tShot gShotObjs[24];
+tStatList gShotObjList;
 static anon_ll_poly_8 gHitPolys[24];
-anon_dbl_numElements_18 gHitPolyList;
-static anon_ll_slot_68 gShots[24];
-anon_dbl_numElements_18 gShotList;
-anon_dbl_numElements_18 gShotCaseList;
+tStatList gHitPolyList;
+static tShotInfo gShots[24];
+tStatList gShotList;
+tStatList gShotCaseList;
 
 /* 0x8003c5c0, 248 bytes */
 static void AnimateCase(void)
@@ -178,7 +178,7 @@ void ElevateGun(tCarData *car)
 }
 
 /* 0x8003ce3c, 716 bytes */
-void MissileLock(anon_ll_slot_68 *shot)
+void MissileLock(tShotInfo *shot)
 {
     tCarData *hit;
     float vec[3];
@@ -218,7 +218,7 @@ void MissileLock(anon_ll_slot_68 *shot)
 }
 
 /* 0x8003d108, 956 bytes */
-static tCarData *ShotToCarCollision(anon_ll_slot_68 *shot, float *old)
+static tCarData *ShotToCarCollision(tShotInfo *shot, float *old)
 {
     tCarData *car;
     tCarData *hit;
@@ -287,7 +287,7 @@ static tCarData *ShotToCarCollision(anon_ll_slot_68 *shot, float *old)
 
 
 /* 0x8003d4c4, 936 bytes */
-static void SonicCarCollision(anon_ll_slot_68 *shot)
+static void SonicCarCollision(tShotInfo *shot)
 {
     tCarData *car;
     tCarData *our;
@@ -301,7 +301,7 @@ static void SonicCarCollision(anon_ll_slot_68 *shot)
     float radsq;
     float mul;
     float scale;
-    anon_ll_mbIdx_3c *o = shot->obj;
+    tShot *o = shot->obj;
     float pos[3];
 
     our = &gGameCar[shot->slot];
@@ -391,9 +391,9 @@ void ShotInit(void)
 }
 
 /* 0x8003da24, 172 bytes */
-static void ShotDone(anon_ll_slot_68 *shot)
+static void ShotDone(tShotInfo *shot)
 {
-    anon_ll_mbIdx_3c *o;
+    tShot *o;
     switch (shot->type) {
     case 3:
         o = shot->obj2;
@@ -414,10 +414,10 @@ static void ShotDone(anon_ll_slot_68 *shot)
 }
 
 /* 0x8003dad0, 176 bytes */
-static anon_ll_mbIdx_3c *_CreateShotObject(int idx, int parent, unsigned int flags, int o2)
+static tShot *_CreateShotObject(int idx, int parent, unsigned int flags, int o2)
 {
-    anon_ll_mbIdx_3c *o;
-    anon_mat3_mat4_30 *mat = (anon_mat3_mat4_30 *)unitmatrix;
+    tShot *o;
+    tUVMatrix *mat = (tUVMatrix *)unitmatrix;
     o = GetStatLLE(&gShotObjList);
     if (o2)
         o->mbIdx = MBOX_NewObject(gWprObjList[idx], mat, parent, flags);
@@ -427,9 +427,9 @@ static anon_ll_mbIdx_3c *_CreateShotObject(int idx, int parent, unsigned int fla
 }
 
 /* 0x8003db80, 308 bytes */
-static void _UpdateShotObject(anon_ll_slot_68 *shot, int unt)
+static void _UpdateShotObject(tShotInfo *shot, int unt)
 {
-    anon_ll_mbIdx_3c *o = shot->obj;
+    tShot *o = shot->obj;
     o->mat.mat3.pos[0] = shot->pos[0];
     o->mat.mat3.pos[1] = shot->pos[1];
     o->mat.mat3.pos[2] = shot->pos[2];
@@ -460,7 +460,7 @@ reduceScale:
 }
 
 /* 0x8003dcb4, 152 bytes */
-static void _InitNewShot(anon_ll_slot_68 *shot, tCarData *car)
+static void _InitNewShot(tShotInfo *shot, tCarData *car)
 {
     shot->slotDamaged = 0;
     shot->obj = 0;
@@ -484,10 +484,10 @@ static void _InitNewShot(anon_ll_slot_68 *shot, tCarData *car)
 /* 0x8003dd4c, 812 bytes */
 static void UpdateDefense(tCarData *car, tModelData *m, anon_active_invsTime_10 *defense, int i)
 {
-    anon_c_rgba_4 clr = { 255, 255, 255, 255 };
+    tRGBA clr = { 255, 255, 255, 255 };
     int j;
     tShieldStruct *shield;
-    anon_mat3_mat4_30 *mat;
+    tUVMatrix *mat;
 
     if ((defense->active & 1) && car->battle.fadeState != 2) {
         defense->invsTime -= gFrameSeconds;
@@ -560,14 +560,14 @@ removeShield:
 /* 0x8003e078, 4220 bytes */
 static void UpdateShots(void)
 {
-    anon_ll_slot_68 *shot, *nexts;
+    tShotInfo *shot, *nexts;
     anon_ll_poly_8 *h;
-    anon_ll_mbIdx_3c *o;
+    tShot *o;
     tCarData *car, *hit;
     tModelData *m;
     float old[3];
     float vel;
-    anon_c_rgba_4 clr = {255,255,255,255};
+    tRGBA clr = {255,255,255,255};
     float verts[4][3];
     float scale;
     float radius;
@@ -576,7 +576,7 @@ static void UpdateShots(void)
     float v1[3];
 
     for (shot = gShotList.head; shot; shot = nexts) {
-        nexts = (anon_ll_slot_68 *)shot->ll.next;
+        nexts = (tShotInfo *)shot->ll.next;
         if (shot->type == 3) {
             car = &gGameCar[shot->slot];
             m = &model[shot->slot];
@@ -614,12 +614,12 @@ static void UpdateShots(void)
                                 clr.c[3] = 48;
                         }
                         shot->obj = _CreateShotObject(4, -1, 0x2000, 0);
-                        ZOID_SetColor(((anon_ll_mbIdx_3c *)shot->obj)->mbIdx, &clr);
-                        shot->obj2 = _CreateShotObject(5, ((anon_ll_mbIdx_3c *)shot->obj)->mbIdx, 0x2080, 1);
+                        ZOID_SetColor(((tShot *)shot->obj)->mbIdx, &clr);
+                        shot->obj2 = _CreateShotObject(5, ((tShot *)shot->obj)->mbIdx, 0x2080, 1);
                         h = shot->obj2;
-                        ZOID_SetColor(((anon_ll_mbIdx_3c *)h)->mbIdx, &clr);
-                        ZOID_SetTexture(((anon_ll_mbIdx_3c *)h)->mbIdx,
-                            (anon_name_width_30 *)&gTexDefPtrs[gMineTextures[gCarTeam[shot->slot]] >> 10].texDefs[gMineTextures[gCarTeam[shot->slot]] & 1023], -1);
+                        ZOID_SetColor(((tShot *)h)->mbIdx, &clr);
+                        ZOID_SetTexture(((tShot *)h)->mbIdx,
+                            (tTexture *)&gTexDefPtrs[gMineTextures[gCarTeam[shot->slot]] >> 10].texDefs[gMineTextures[gCarTeam[shot->slot]] & 1023], -1);
                     }
                     shot->radius = 0.0f;
                 }
@@ -641,12 +641,12 @@ static void UpdateShots(void)
                         if (clr.c[3] < 48)
                             clr.c[3] = 48;
                     }
-                    ZOID_SetColor(((anon_ll_mbIdx_3c *)shot->obj)->mbIdx, &clr);
-                    ZOID_SetColor(((anon_ll_mbIdx_3c *)shot->obj2)->mbIdx, &clr);
+                    ZOID_SetColor(((tShot *)shot->obj)->mbIdx, &clr);
+                    ZOID_SetColor(((tShot *)shot->obj2)->mbIdx, &clr);
                     if (car->player && (car->player->edges & car->player->controls[7])) {
                         clr.c[3] = 255;
-                        ZOID_SetColor(((anon_ll_mbIdx_3c *)shot->obj)->mbIdx, &clr);
-                        ZOID_SetColor(((anon_ll_mbIdx_3c *)shot->obj2)->mbIdx, &clr);
+                        ZOID_SetColor(((tShot *)shot->obj)->mbIdx, &clr);
+                        ZOID_SetColor(((tShot *)shot->obj2)->mbIdx, &clr);
                         if (car->battle.weapon.ammoCnt > 0)
                             car->battle.weapon.ammoCnt--;
                         car->battle.shoot = 6;
@@ -862,15 +862,15 @@ carHit:
             }
         } else if (shot->obj) {
             SonicCarCollision(shot);
-            ((anon_ll_mbIdx_3c *)shot->obj)->mat.mat3.pos[0] = car->dr_pos[0];
-            ((anon_ll_mbIdx_3c *)shot->obj)->mat.mat3.pos[1] = car->dr_pos[1];
-            ((anon_ll_mbIdx_3c *)shot->obj)->mat.mat3.pos[2] = car->dr_pos[2];
+            ((tShot *)shot->obj)->mat.mat3.pos[0] = car->dr_pos[0];
+            ((tShot *)shot->obj)->mat.mat3.pos[1] = car->dr_pos[1];
+            ((tShot *)shot->obj)->mat.mat3.pos[2] = car->dr_pos[2];
             if (shot->incTime >= 0.0333333f) {
                 shot->incTime -= 0.0333333f;
-                ObjInstanceList[((anon_ll_mbIdx_3c *)shot->obj)->mbIdx].scale += 1.0f;
-                ((anon_ll_mbIdx_3c *)shot->obj)->mat.mat3.uvs[0][0] = ObjInstanceList[((anon_ll_mbIdx_3c *)shot->obj)->mbIdx].scale;
-                ((anon_ll_mbIdx_3c *)shot->obj)->mat.mat3.uvs[1][1] = ObjInstanceList[((anon_ll_mbIdx_3c *)shot->obj)->mbIdx].scale;
-                ((anon_ll_mbIdx_3c *)shot->obj)->mat.mat3.uvs[2][2] = ObjInstanceList[((anon_ll_mbIdx_3c *)shot->obj)->mbIdx].scale;
+                ObjInstanceList[((tShot *)shot->obj)->mbIdx].scale += 1.0f;
+                ((tShot *)shot->obj)->mat.mat3.uvs[0][0] = ObjInstanceList[((tShot *)shot->obj)->mbIdx].scale;
+                ((tShot *)shot->obj)->mat.mat3.uvs[1][1] = ObjInstanceList[((tShot *)shot->obj)->mbIdx].scale;
+                ((tShot *)shot->obj)->mat.mat3.uvs[2][2] = ObjInstanceList[((tShot *)shot->obj)->mbIdx].scale;
             }
         }
         if (!(shot->flags & 0x70)) {
@@ -932,7 +932,7 @@ void ShotUpdate(void)
     int i;
     int StartStreak;
     int streaktype;
-    anon_ll_slot_68 *shot;
+    tShotInfo *shot;
     anon_ll_mbIdx_48 *h;
     anon_ll_poly_8 *hp, *nexth;
     anon_active_invsTime_10 *defense;

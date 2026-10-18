@@ -33,8 +33,8 @@ static int backFace[4] = { 0, 3, 1, 2 };
 static unsigned int ps2_screen_center_x = 0x140;
 static unsigned int ps2_screen_center_y = 0xe0;
 int drawWindowBorders = 1;
-static anon_c_rgba_4 gWhite = { 255, 255, 255, 255 };
-static anon_c_rgba_4 gYellow = { 255, 255, 0, 255 };
+static tRGBA gWhite = { 255, 255, 255, 255 };
+static tRGBA gYellow = { 255, 255, 0, 255 };
 static int g_DrawFace = 1;
 int objsDrawn;
 int stripsDrawn;
@@ -77,10 +77,10 @@ void EnableDrawFace(void)
 }
 
 /* 0x800a5cbc, size 0x790 */
-int *DrawFace(anon_name_width_30 *tex, int *pdw, anon_x_y_28 *v, int nverts, int *face)
+int *DrawFace(tTexture *tex, int *pdw, anon_x_y_28 *v, int nverts, int *face)
 {
     int i; /* r16 */
-    anon_name_width_38 *pTexDef; /* r30 */
+    tTextureEx *pTexDef; /* r30 */
     float Vert_f32[12]; /* stack */
     unsigned long Colors_u32[4]; /* stack */
     float TexCoords_f32[8]; /* stack */
@@ -88,7 +88,7 @@ int *DrawFace(anon_name_width_30 *tex, int *pdw, anon_x_y_28 *v, int nverts, int
 
 {
     int i; /* r16 */
-    anon_name_width_38 *pTexDef; /* r30 */
+    tTextureEx *pTexDef; /* r30 */
     float Vert_f32[12] ATTRIBUTE_ALIGN(32) = { 0.0f, 480.0f, 0.0f, 640.0f, 480.0f, 0.0f, 640.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }; /* stack */
     unsigned long Colors_u32[4] ATTRIBUTE_ALIGN(32) = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff }; /* stack */
     float TexCoords_f32[8] ATTRIBUTE_ALIGN(32) = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f }; /* stack */
@@ -96,7 +96,7 @@ int *DrawFace(anon_name_width_30 *tex, int *pdw, anon_x_y_28 *v, int nverts, int
 
     pTexDef = 0;
     if (tex)
-        pTexDef = (anon_name_width_38 *)tex->strip;
+        pTexDef = (tTextureEx *)tex->strip;
     if (!tex)
         return 0;
     if (strcmp(tex->name, "SKID04") == 0)
@@ -213,7 +213,7 @@ int *DrawFace(anon_name_width_30 *tex, int *pdw, anon_x_y_28 *v, int nverts, int
 }
 
 /* 0x800a644c, size 0x20 */
-void DC_SendBlit(anon_name_width_30 *tex, int nNumVertex, KMVERTICES *Vertices, unsigned int color)
+void DC_SendBlit(tTexture *tex, int nNumVertex, KMVERTICES *Vertices, unsigned int color)
 {
 {
     NGCDC_SendBlit(tex, nNumVertex, Vertices, color);
@@ -304,7 +304,7 @@ void LoadLights()
 static void Blits_First(void)
 {
     anon_palette_texture_20 *b; /* r26 */
-    anon_name_width_30 *tex; /* r25 */
+    tTexture *tex; /* r25 */
     int h; /* r25 */
     int w; /* r27 */
     int hh; /* r0 */
@@ -316,7 +316,7 @@ static void Blits_First(void)
 
 {
     anon_palette_texture_20 *b; /* r26 */
-    anon_name_width_30 *tex; /* r25 */
+    tTexture *tex; /* r25 */
     int h; /* r25 */
     int w; /* r27 */
     int x; /* r28 */
@@ -401,7 +401,7 @@ static void Blits_First(void)
 static void Blits(void)
 {
     anon_palette_texture_20 *b; /* r25 */
-    anon_name_width_30 *tex; /* r0 */
+    tTexture *tex; /* r0 */
     int h; /* r26 */
     int w; /* r27 */
     int hh; /* r0 */
@@ -413,7 +413,7 @@ static void Blits(void)
 
 {
     anon_palette_texture_20 *b; /* r25 */
-    anon_name_width_30 *tex; /* r0 */
+    tTexture *tex; /* r0 */
     int h; /* r26 */
     int w; /* r27 */
     int x; /* r28 */
@@ -531,12 +531,12 @@ void PS2DrawObjectWithEnvMap(unsigned int *dlist, int normals, int texgen, float
     float texs; /* f29 */
     float text; /* f28 */
     float texgenuvs[3][3]; /* stack */
-    anon_numPack_name_2c *obj; /* r0 */
+    tPackedObject *obj; /* r0 */
     int i; /* r6 */
     int j; /* r7 */
     float vec[3]; /* stack */
     float new[3]; /* stack */
-    obj = (anon_numPack_name_2c *)dlist;
+    obj = (tPackedObject *)dlist;
     if (normals && numLights > 0) {
         MtxTranspose3x3();
         MtxMulVec3(camNormals[0], bodyLights.l[0].dir);
@@ -554,7 +554,7 @@ void PS2DrawObjectWithEnvMap(unsigned int *dlist, int normals, int texgen, float
         vec[2] = dz * north[2] + dx * north[0];
         BodyVector(vec, new, mat);
         NormalVector(vec);
-        LookInDir(new, (anon_mat3_mat4_30 *)texgenuvs);
+        LookInDir(new, (tUVMatrix *)texgenuvs);
         {
             float zero = 0.0f; /* a local zero: `0.0f - x*k` folds to a negate, the target's fnmsub needs a freshly loaded 0.0f */
             texs = zero - fatan2(vec[0], vec[2]) * 0.15915493866300567;
@@ -594,12 +594,12 @@ void Polys(int winidx, int delay)
 {
     char text[64]; /* stack */
     anon_x_y_28 gVlistp[4]; /* stack */
-    anon_nverts_flags_68 *poly; /* r25 */
+    tPoly *poly; /* r25 */
     int *pdw; /* r21 */
     int polyMatrix; /* r24 */
     int i; /* r23 */
     int j; /* r17 */
-    anon_name_width_30 *tex; /* r20 */
+    tTexture *tex; /* r20 */
     float x; /* stack */
     float y; /* stack */
     float z; /* stack */
@@ -761,7 +761,7 @@ void poppush(void)
 void Traverse(anon_flags_culling_60 *parent, anon_flags_culling_60 *hier, int winidx, int lvl, int useZDist, float gZDist)
 {
     float dx, dy, dz;
-    anon_name_radius_48 *ptr; /* r15 */
+    tModelDef *ptr; /* r15 */
     float pos[3]; /* stack */
     float newmtx[3]; /* stack */
     float *mat; /* r28 */
@@ -778,7 +778,7 @@ void Traverse(anon_flags_culling_60 *parent, anon_flags_culling_60 *hier, int wi
     float objz; /* f28 */
     float uls; /* f27 */
     float ult; /* f26 */
-    anon_name_width_30 *texid; /* r28 */
+    tTexture *texid; /* r28 */
     int modelindex; /* r28 */
     int wave; /* r0 */
     int count; /* r27 */
@@ -1016,12 +1016,12 @@ void Traverse(anon_flags_culling_60 *parent, anon_flags_culling_60 *hier, int wi
 void ZOID_EndFrame(void)
 {
     int winidx; /* r25 */
-    anon_vp_s_48 *win; /* r24 */
+    tWindowInfo *win; /* r24 */
     int numwin; /* r25 */
 
 {
     int winidx; /* r25 */
-    anon_vp_s_48 *win; /* r24 */
+    tWindowInfo *win; /* r24 */
 #define OC ((float *)OCRamData)
 
     transformTime = MyGetTime();
@@ -1030,7 +1030,7 @@ void ZOID_EndFrame(void)
         gLastMirrorWaves = gMirrorWaves;
     }
     PS2CameraStart();
-    for (winidx = 0, win = (anon_vp_s_48 *)(int)ZoidWinInfo; winidx < gNumWindows; winidx++, win++) {
+    for (winidx = 0, win = (tWindowInfo *)(int)ZoidWinInfo; winidx < gNumWindows; winidx++, win++) {
         PS2SetRenderTarget(win);
         MySetCameraPos(gCamera[winidx].mat.uvs);
         PS2UpdateCameraMatrix(win);
@@ -1096,7 +1096,7 @@ void ZOID_EndFrame(void)
         numwin = gNumWindows;
         if (gNumWindows == 3)
             numwin = 4;
-        for (winidx = 0, win = (anon_vp_s_48 *)(int)ZoidWinInfo; winidx < numwin; winidx++, win++) {
+        for (winidx = 0, win = (tWindowInfo *)(int)ZoidWinInfo; winidx < numwin; winidx++, win++) {
             PS2SetRenderTarget(win);
             ps2_screen_center_x = win->whcenter;
             ps2_screen_center_y = win->wvcenter;
@@ -1130,11 +1130,11 @@ void ZOID_EndFrame(void)
 void Fake_EndFrame(void)
 {
     int winidx; /* r30 */
-    anon_vp_s_48 *win; /* r29 */
+    tWindowInfo *win; /* r29 */
 
 {
     int winidx; /* r30 */
-    anon_vp_s_48 *win; /* r29 */
+    tWindowInfo *win; /* r29 */
     transformTime = MyGetTime();
     PS2CameraStart();
     for (winidx = 0, win = ZoidWinInfo; winidx < gNumWindows; winidx++, win++) {

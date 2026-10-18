@@ -2,7 +2,7 @@
    Original: D:\rush_ngc\Rush_NGC\GameSource\src\zoidwindow.c; assembly: build/2049LE/asm/GameSource/src/zoidwindow.s */
 #include "rush/rush_protos.h"
 /* inline angle-field initialiser (no DWARF entry): its argument temporaries preserve the original float registers in ZOID_SetWindow */
-static inline void _WindowSetAngles(anon_vp_s_48 *winfo, float hang, float vang) {
+static inline void _WindowSetAngles(tWindowInfo *winfo, float hang, float vang) {
     winfo->whviewang = hang;
     winfo->wvviewang = vang;
     winfo->whvangtan = ftan(winfo->whviewang / 2.0f);
@@ -12,27 +12,27 @@ static inline void _WindowSetAngles(anon_vp_s_48 *winfo, float hang, float vang)
 }
 
 
-static anon_vp_20 vp0 = { 1280.0f, 896.0f, 0.0f, 0.0f, 1280.0f, 896.0f, 0.0f, 0.0f };
-static anon_vp_20 vp1 = { 960.0f, 448.0f, 0.0f, 0.0f, 960.0f, 448.0f, 0.0f, 0.0f };
-static anon_vp_20 vp2 = { 960.0f, 448.0f, 0.0f, 0.0f, 1600.0f, 1344.0f, 0.0f, 0.0f };
-static anon_vp_20 vpul = { 640.0f, 448.0f, 0.0f, 0.0f, 640.0f, 448.0f, 0.0f, 0.0f };
-static anon_vp_20 vpur = { 640.0f, 448.0f, 0.0f, 0.0f, 1920.0f, 448.0f, 0.0f, 0.0f };
-static anon_vp_20 vpll = { 640.0f, 448.0f, 0.0f, 0.0f, 640.0f, 1344.0f, 0.0f, 0.0f };
-static anon_vp_20 vplr = { 640.0f, 448.0f, 0.0f, 0.0f, 1920.0f, 1344.0f, 0.0f, 0.0f };
+static tViewport vp0 = { 1280.0f, 896.0f, 0.0f, 0.0f, 1280.0f, 896.0f, 0.0f, 0.0f };
+static tViewport vp1 = { 960.0f, 448.0f, 0.0f, 0.0f, 960.0f, 448.0f, 0.0f, 0.0f };
+static tViewport vp2 = { 960.0f, 448.0f, 0.0f, 0.0f, 1600.0f, 1344.0f, 0.0f, 0.0f };
+static tViewport vpul = { 640.0f, 448.0f, 0.0f, 0.0f, 640.0f, 448.0f, 0.0f, 0.0f };
+static tViewport vpur = { 640.0f, 448.0f, 0.0f, 0.0f, 1920.0f, 448.0f, 0.0f, 0.0f };
+static tViewport vpll = { 640.0f, 448.0f, 0.0f, 0.0f, 640.0f, 1344.0f, 0.0f, 0.0f };
+static tViewport vplr = { 640.0f, 448.0f, 0.0f, 0.0f, 1920.0f, 1344.0f, 0.0f, 0.0f };
 float HFOV = 90.0f;
 unsigned int gBgColor;
 float gViewableDistance;
 float gGlobalCameraFacingScale;
 unsigned char gNumZoidWindows;
 signed char gSplitScreen;
-static anon_ulx_uly_8 scissor0;
-static anon_ulx_uly_8 scissor1;
-static anon_ulx_uly_8 scissor2;
-static anon_ulx_uly_8 scissorul;
-static anon_ulx_uly_8 scissorur;
-static anon_ulx_uly_8 scissorll;
-static anon_ulx_uly_8 scissorlr;
-anon_vp_s_48 ZoidWinInfo[4];
+static tScissor scissor0;
+static tScissor scissor1;
+static tScissor scissor2;
+static tScissor scissorul;
+static tScissor scissorur;
+static tScissor scissorll;
+static tScissor scissorlr;
+tWindowInfo ZoidWinInfo[4];
 
 /* 0x80062f34, size 0x84 */
 void ZOID_ResetWindows(void)
@@ -45,9 +45,9 @@ void ZOID_ResetWindows(void)
 }
 
 /* 0x80062fb8, size 0xdc */
-anon_vp_s_48 *ZOID_InitializeWindow(int idx, anon_vp_20 *vp, anon_ulx_uly_8 *s, float hang, float vang, float width, float height, float hcenter, float vcenter)
+tWindowInfo *ZOID_InitializeWindow(int idx, tViewport *vp, tScissor *s, float hang, float vang, float width, float height, float hcenter, float vcenter)
 {
-    anon_vp_s_48 *winfo; /* r31 */
+    tWindowInfo *winfo; /* r31 */
     winfo = &ZoidWinInfo[idx];
     winfo->vp = vp;
     winfo->s = s;
@@ -70,9 +70,9 @@ anon_vp_s_48 *ZOID_InitializeWindow(int idx, anon_vp_20 *vp, anon_ulx_uly_8 *s, 
 }
 
 /* 0x80063094, size 0x150 */
-anon_vp_s_48 *ZOID_SetWindow(unsigned int winidx, float hangle, float vangle, float width, float height, float hcenter, float vcenter)
+tWindowInfo *ZOID_SetWindow(unsigned int winidx, float hangle, float vangle, float width, float height, float hcenter, float vcenter)
 {
-    anon_vp_s_48 *winfo; /* r31 */
+    tWindowInfo *winfo; /* r31 */
     float hang; /* f31 */
     float vang; /* f1 */
     winfo = &ZoidWinInfo[winidx];
@@ -95,9 +95,9 @@ anon_vp_s_48 *ZOID_SetWindow(unsigned int winidx, float hangle, float vangle, fl
 }
 
 /* 0x800631e4, size 0x6c */
-anon_vp_s_48 *ZOID_SetFog(signed short min, signed short max, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha, unsigned int winidx)
+tWindowInfo *ZOID_SetFog(signed short min, signed short max, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha, unsigned int winidx)
 {
-    anon_vp_s_48 *win; /* r31 */
+    tWindowInfo *win; /* r31 */
     win = &ZoidWinInfo[winidx];
     win->fogmin = min;
     win->fogmax = max;
@@ -110,9 +110,9 @@ anon_vp_s_48 *ZOID_SetFog(signed short min, signed short max, unsigned char red,
 }
 
 /* 0x80063250, size 0x48 */
-anon_vp_s_48 *ZOID_GetFog(signed short *min, signed short *max, unsigned char *red, unsigned char *green, unsigned char *blue, unsigned char *alpha, unsigned int winidx)
+tWindowInfo *ZOID_GetFog(signed short *min, signed short *max, unsigned char *red, unsigned char *green, unsigned char *blue, unsigned char *alpha, unsigned int winidx)
 {
-    anon_vp_s_48 *win; /* r9 */
+    tWindowInfo *win; /* r9 */
     win = &ZoidWinInfo[winidx];
     *min = win->fogmin;
     *max = win->fogmax;
@@ -124,15 +124,15 @@ anon_vp_s_48 *ZOID_GetFog(signed short *min, signed short *max, unsigned char *r
 }
 
 /* 0x80063298, size 0x14 */
-anon_vp_s_48 *ZOID_GetWindow(int winidx)
+tWindowInfo *ZOID_GetWindow(int winidx)
 {
     return &ZoidWinInfo[winidx];
 }
 
 /* 0x800632ac, size 0x1c */
-anon_vp_s_48 *ZOID_SetViewport(int winidx, anon_vp_20 *vp, anon_ulx_uly_8 *s)
+tWindowInfo *ZOID_SetViewport(int winidx, tViewport *vp, tScissor *s)
 {
-    anon_vp_s_48 *win; /* r3 */
+    tWindowInfo *win; /* r3 */
     win = &ZoidWinInfo[winidx];
     win->vp = vp;
     win->s = s;
@@ -140,7 +140,7 @@ anon_vp_s_48 *ZOID_SetViewport(int winidx, anon_vp_20 *vp, anon_ulx_uly_8 *s)
 }
 
 /* 0x800632c8, size 0x14 */
-void ZOID_SetScissor(anon_ulx_uly_8 *s, unsigned short ulx, unsigned short uly, unsigned short lrx, unsigned short lry)
+void ZOID_SetScissor(tScissor *s, unsigned short ulx, unsigned short uly, unsigned short lrx, unsigned short lry)
 {
     s->ulx = ulx;
     s->uly = uly;
@@ -223,13 +223,13 @@ int ZOID_SplitMenuScreen(int num)
 }
 
 /* 0x8006385c, size 0x184 */
-void ZOID_ProjectWindow(int widx, float *point, anon_mat3_mat4_30 *mat, float *body, signed short *screen)
+void ZOID_ProjectWindow(int widx, float *point, tUVMatrix *mat, float *body, signed short *screen)
 {
     float tmp[3]; /* stack */
     float sx, sy;
     float invz; /* f4 */
     float bdy[3]; /* stack */
-    anon_vp_s_48 *wd; /* r0 */
+    tWindowInfo *wd; /* r0 */
     tmp[0] = point[0] - mat->uvs[3][0];
     tmp[1] = point[1] - mat->uvs[3][1];
     tmp[2] = point[2] - mat->uvs[3][2];
@@ -253,11 +253,11 @@ void ZOID_ProjectWindow(int widx, float *point, anon_mat3_mat4_30 *mat, float *b
 }
 
 /* 0x800639e0, size 0x14c */
-void ZOID_WindowTo3D(int widx, signed short *screen, anon_mat3_mat4_30 *mat, float zdist, float *point)
+void ZOID_WindowTo3D(int widx, signed short *screen, tUVMatrix *mat, float zdist, float *point)
 {
     float tmp[3]; /* stack */
     float bvec[3]; /* stack */
-    anon_vp_s_48 *wd; /* r0 */
+    tWindowInfo *wd; /* r0 */
     wd = ZOID_GetWindow(widx);
     bvec[0] = zdist * (screen[0] - wd->whcenter) / (wd->wihvangtan * wd->wwidth);
     bvec[1] = zdist * (wd->wvcenter - screen[1]) / (wd->wivvangtan * wd->wheight);

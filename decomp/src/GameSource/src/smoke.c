@@ -13,7 +13,7 @@ static float gCarWingSmokePos[6][2][3];
 static unsigned short gFireTexs[6];
 static unsigned int gCarSmokeDir[6];
 static anon_ll_mat_58 gSmokeObjs[100];
-anon_dbl_numElements_18 gSmokeList;
+tStatList gSmokeList;
 static unsigned char gCarBlastSmokeClr[6];
 
 void InitSmoke(void)
@@ -55,7 +55,7 @@ void StartWater(signed short slot, unsigned int tire)
     signed short mph2 = fabs(mph);
     int j;
     anon_ll_mat_58 *smk;
-    anon_mat3_mat4_30 mat;
+    tUVMatrix mat;
 
     switch (tire) {
     case 0:
@@ -158,12 +158,12 @@ void StartSmoke(signed short slot, unsigned int tire, int water, float *smkoffse
     int howmany = 1;
     int howmanydone = 0;
     anon_ll_mat_58 *smk;
-    anon_c_rgba_4 wht = { {255,255,255,255} };
-    anon_c_rgba_4 wg1 = { {180,255,180,160} };
-    anon_c_rgba_4 wg2 = { {185,180,255,160} };
-    anon_c_rgba_4 wg3 = { {255,192,187,160} };
-    anon_c_rgba_4 rdClr = { {117,125,133,255} };
-    anon_c_rgba_4 dtClr = { {157,108,71,255} };
+    tRGBA wht = { {255,255,255,255} };
+    tRGBA wg1 = { {180,255,180,160} };
+    tRGBA wg2 = { {185,180,255,160} };
+    tRGBA wg3 = { {255,192,187,160} };
+    tRGBA rdClr = { {117,125,133,255} };
+    tRGBA dtClr = { {157,108,71,255} };
     float pos[3];
     float prevPos[3];
 
@@ -402,7 +402,7 @@ void UpdateSmoke(void)
     signed short mph;
     signed short mph2;
     float fmph;
-    anon_mat3_mat4_30 mat;
+    tUVMatrix mat;
 
     for (smk = gSmokeList.head; smk; smk = next) {
         signed short slot = smk->slot;

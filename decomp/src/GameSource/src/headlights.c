@@ -17,8 +17,8 @@ static float gHeadlightOffsets[13][3] = {
 void StartHeadLights(signed short slot)
 {
     tVisual *v = &gGameCar[slot].visuals[1]; /* r6 */
-    anon_c_rgba_4 clr = {255,255,255,255}; /* stack */
-    anon_mat3_mat4_30 *mat; /* r4 */
+    tRGBA clr = {255,255,255,255}; /* stack */
+    tUVMatrix *mat; /* r4 */
 
     if (gTrackNum == 3 || gTrackNum == 5) {
         v->func = AnimateHeadLights;
@@ -54,13 +54,13 @@ static void AnimateForwardLights(int idx, int slot, float *backpos, float *front
 {
     signed short roadflag; /* r0 */
     tCarData *car; /* r26 */
-    anon_mat3_mat4_30 *mat; /* r30 */
+    tUVMatrix *mat; /* r30 */
     float dotx; /* f31 */
     float dx; /* f4 */
     float dx3; /* f3 */
     float uvs[3][3]; /* stack */
     surftyp *surf; /* r0 */
-    anon_c_rgba_4 clr = {255,255,255,243}; /* stack */
+    tRGBA clr = {255,255,255,243}; /* stack */
 
     car = &gGameCar[slot];
     surf = ShotToWorldCollision(backpos, frontpos, uvs, 0.5f, 1, 65535);
@@ -113,7 +113,7 @@ static void AnimateForwardLights(int idx, int slot, float *backpos, float *front
 static void AnimateDownwardLights(int idx, int slot, float *backpos, float *frontpos)
 {
     tCarData *car; /* r30 */
-    anon_mat3_mat4_30 *mat; /* r29 */
+    tUVMatrix *mat; /* r29 */
     float dotx; /* f31 */
     float dx; /* f1 */
     float dx3; /* f4 */
@@ -121,7 +121,7 @@ static void AnimateDownwardLights(int idx, int slot, float *backpos, float *fron
     float scf; /* f30 */
     float scl; /* f29 */
     surftyp *surf; /* r0 */
-    anon_c_rgba_4 clr = {255,255,255,243}; /* stack */
+    tRGBA clr = {255,255,255,243}; /* stack */
 
     car = &gGameCar[slot];
     surf = ShotToWorldCollision(backpos, frontpos, uvs, 1.0f, 1, 65535);

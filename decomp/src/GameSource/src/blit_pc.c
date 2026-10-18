@@ -102,7 +102,7 @@ void BlitColors(void * address)
 }
 
 /* 0x800058e8, size 0x428 */
-void BlitDraw(anon_name_width_30 *tex, int x0, int y0, int x1, int y1, int s, int t)
+void BlitDraw(tTexture *tex, int x0, int y0, int x1, int y1, int s, int t)
 {
     KMVERTICES verts[4]; /* stack */
     float sf; /* f0 */

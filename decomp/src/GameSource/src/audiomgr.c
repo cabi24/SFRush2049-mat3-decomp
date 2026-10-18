@@ -23,16 +23,16 @@ extern void AudioInitSys(int maxVoices, int maxSfx, int maxMusic);
 
 static void update_reverb(void);
 static void _PeriodicMaintenance(void);
-static void _ProcessCommand(anon_hdr_playSong_18 *cmd);
-static anon_hdr_playSong_18 *_GetCmd(void);
-static void _FreeCmd(anon_hdr_playSong_18 *cmd);
-static anon_ll_list_44 *_GetFxTag(void);
-static void _FreeFxTag(anon_ll_list_44 *tag);
-static void _PlayFxTag(anon_ll_list_44 *tag);
-static void _InterruptFxTag(anon_ll_list_44 *tag);
-static anon_ll_list_44 *_ConvertTag(int tag);
+static void _ProcessCommand(tAudioMsg *cmd);
+static tAudioMsg *_GetCmd(void);
+static void _FreeCmd(tAudioMsg *cmd);
+static tFxSequence *_GetFxTag(void);
+static void _FreeFxTag(tFxSequence *tag);
+static void _PlayFxTag(tFxSequence *tag);
+static void _InterruptFxTag(tFxSequence *tag);
+static tFxSequence *_ConvertTag(int tag);
 static void _AudChangeEffect(int tag, float volume, float lrpan, float fbpan, float pitch);
-static void _InsertSorted(anon_ll_list_44 *tag);
+static void _InsertSorted(tFxSequence *tag);
 static int _OrderFx(void * el1, void * el2);
 static void _UpdateFx(void * element, int elNum);
 static void _ProcessPriorities(void);
@@ -40,10 +40,10 @@ static void _AudSetMasterVol(float volume, float time, int music, int sfx);
 static void _ActivateListener(anon_ll_free_3c *lis);
 static void _FreeListener(anon_ll_free_3c *lis);
 static void _ValidateListener(void);
-static void _ActivateEmitter(anon_ll_free_2c *em);
-static void _FreeEmitter(anon_ll_free_2c *em);
+static void _ActivateEmitter(tSfxEmitter *em);
+static void _FreeEmitter(tSfxEmitter *em);
 static void _ValidateEmitter();
-static void _UpdateEmitter(anon_ll_free_2c *em, float *vol, float *lrpan, float *fbpan, float *pitch);
+static void _UpdateEmitter(tSfxEmitter *em, float *vol, float *lrpan, float *fbpan, float *pitch);
 static void _ActivateSequence(anon_ll_id_3c *s);
 static void _FreeSequence(anon_ll_id_3c *s);
 static void _StopAllSequences(void);
@@ -98,26 +98,26 @@ static anon_ll_id_3c *gSequences;
 static int gNumEmitters;
 static int gNumListeners;
 static int gNumFxTags;
-static anon_ll_free_2c *gEmitters;
+static tSfxEmitter *gEmitters;
 static anon_ll_free_3c *gListeners;
 static int gNumStopCmds;
 static int gNumStartCmds;
 static anon_te_tag_c *gSortedFxTags;
-static anon_ll_list_44 *gFxTags;
+static tFxSequence *gFxTags;
 static signed char gInited;
-static anon_handle_dbl_10 gActiveEmitters;
-static anon_handle_dbl_10 gFreeEmitters;
-static anon_handle_dbl_10 gActiveListeners;
-static anon_handle_dbl_10 gFreeListeners;
-static anon_hdr_playSong_18 *gStartCmds[128];
-static anon_hdr_playSong_18 *gStopCmds[128];
-static anon_handle_dbl_10 gActiveSequences;
-static anon_handle_dbl_10 gFreeSequences;
-static anon_OrderFunc_numElements_c gSortedFxTagTree;
-static anon_handle_dbl_10 gInterruptedFxTags;
-static anon_handle_dbl_10 gPlayingFxTags;
-static anon_handle_dbl_10 gFreeFxTags;
-static anon_hdr_playSong_18 gCmds[128];
+static tDLList gActiveEmitters;
+static tDLList gFreeEmitters;
+static tDLList gActiveListeners;
+static tDLList gFreeListeners;
+static tAudioMsg *gStartCmds[128];
+static tAudioMsg *gStopCmds[128];
+static tDLList gActiveSequences;
+static tDLList gFreeSequences;
+static tOrderedList gSortedFxTagTree;
+static tDLList gInterruptedFxTags;
+static tDLList gPlayingFxTags;
+static tDLList gFreeFxTags;
+static tAudioMsg gCmds[128];
 
 /* 0x800a1ab8, size 0x34c */
 void AudioInit(unsigned char numVoices, unsigned char maxSfx, unsigned char maxMusic, int numListeners, int numEmitters, float footUnits, float frontDistance, int doppler)
@@ -220,11 +220,11 @@ static void _PeriodicMaintenance(void)
 
 
 /* 0x800a1f38, size 0x630 */
-static void _ProcessCommand(anon_hdr_playSong_18 *cmd)
+static void _ProcessCommand(tAudioMsg *cmd)
 {
     unsigned int timer;
-    anon_ll_list_44 *tag;
-    anon_ll_list_44 *next;
+    tFxSequence *tag;
+    tFxSequence *next;
     timer = MyGetTime();
     switch (cmd->hdr.cmd) {
     case 0:
@@ -394,23 +394,23 @@ static void _ProcessCommand(anon_hdr_playSong_18 *cmd)
 
 
 /* 0x800a2568, size 0x58 */
-static anon_hdr_playSong_18 *_GetCmd(void)
+static tAudioMsg *_GetCmd(void)
 {
 int i; for (i=0;i<128;i++) { if (!gCmds[i].hdr.used) { gCmds[i].hdr.used=1; *(signed short *)((char *)gCmds+i*sizeof(gCmds[0]))=-1; return &gCmds[i]; } } return 0;
 }
 
 
 /* 0x800a25c0, size 0xc */
-static void _FreeCmd(anon_hdr_playSong_18 *cmd)
+static void _FreeCmd(tAudioMsg *cmd)
 {
     cmd->hdr.used = 0;
 }
 
 
 /* 0x800a25cc, size 0xd8 */
-static anon_ll_list_44 *_GetFxTag(void)
+static tFxSequence *_GetFxTag(void)
 {
-    anon_ll_list_44 *tag = gFreeFxTags.head;
+    tFxSequence *tag = gFreeFxTags.head;
     tag->id = (gNextFxId << gTagShift) | (tag->id & gTagMask);
     if (gNextFxId < (~gTagMask >> (gTagShift + 1))) gNextFxId = gNextFxId + 1;
     else gNextFxId = 1;
@@ -428,7 +428,7 @@ static anon_ll_list_44 *_GetFxTag(void)
 
 
 /* 0x800a26a4, size 0x9c */
-static void _FreeFxTag(anon_ll_list_44 *tag)
+static void _FreeFxTag(tFxSequence *tag)
 {
     tag->id &= gTagMask;
     tag->state = 0;
@@ -445,7 +445,7 @@ static void _FreeFxTag(anon_ll_list_44 *tag)
 
 
 /* 0x800a2740, size 0x54 */
-static void _PlayFxTag(anon_ll_list_44 *tag)
+static void _PlayFxTag(tFxSequence *tag)
 {
     RemoveLLE(tag->list, tag);
     InsertLLE(&gPlayingFxTags, tag, gPlayingFxTags.head);
@@ -454,7 +454,7 @@ static void _PlayFxTag(anon_ll_list_44 *tag)
 
 
 /* 0x800a2794, size 0x5c */
-static void _InterruptFxTag(anon_ll_list_44 *tag)
+static void _InterruptFxTag(tFxSequence *tag)
 {
     tag->state = 3;
     RemoveLLE(tag->list, tag);
@@ -464,7 +464,7 @@ static void _InterruptFxTag(anon_ll_list_44 *tag)
 
 
 /* 0x800a27f0, size 0x40 */
-static anon_ll_list_44 *_ConvertTag(int tag)
+static tFxSequence *_ConvertTag(int tag)
 {
     if (tag == -1) return 0;
     if (gFxTags[tag & gTagMask].id != tag) return 0;
@@ -475,7 +475,7 @@ static anon_ll_list_44 *_ConvertTag(int tag)
 /* 0x800a2830, size 0x58 */
 void AudPlaySong(int song, int loop)
 {
-    anon_hdr_playSong_18 *cmd;
+    tAudioMsg *cmd;
     if (gNoAudio) return;
     cmd = _GetCmd();
     cmd->hdr.cmd = 0;
@@ -488,7 +488,7 @@ void AudPlaySong(int song, int loop)
 /* 0x800a2888, size 0x38 */
 void AudKillSong(void)
 {
-    anon_hdr_playSong_18 *cmd;
+    tAudioMsg *cmd;
     if (gNoAudio) return;
     cmd = _GetCmd();
     cmd->hdr.cmd = 1;
@@ -499,7 +499,7 @@ void AudKillSong(void)
 /* 0x800a28c0, size 0xdc */
 int AudPlayEffect(int fxid, int subId, enum_kFxNoReplace_4 replace, unsigned char priority)
 {
-    anon_hdr_playSong_18 *cmd;
+    tAudioMsg *cmd;
     int tag;
     if (gNoAudio) return;
     cmd = _GetCmd();
@@ -526,7 +526,7 @@ int AudPlayEffect(int fxid, int subId, enum_kFxNoReplace_4 replace, unsigned cha
 /* 0x800a299c, size 0x180 */
 int AudPlayEffectVP(int fxid, int subId, enum_kFxNoReplace_4 replace, unsigned char priority, float volume, float lrpan, float fbpan)
 {
-    anon_hdr_playSong_18 *cmd;
+    tAudioMsg *cmd;
     int tag;
     if (gNoAudio) return 1;
     cmd = _GetCmd();
@@ -554,7 +554,7 @@ int AudPlayEffectVP(int fxid, int subId, enum_kFxNoReplace_4 replace, unsigned c
 int AudEffectPlaying(int tag)
 {
     int playing;
-    anon_ll_list_44 *t;
+    tFxSequence *t;
     if (gNoAudio) return 1;
     t = _ConvertTag(tag);
     if (t) {
@@ -569,8 +569,8 @@ int AudEffectPlaying(int tag)
 /* 0x800a2b94, size 0x200 */
 static void _AudChangeEffect(int tag, float volume, float lrpan, float fbpan, float pitch)
 {
-    anon_hdr_playSong_18 *cmd = 0;
-    anon_ll_list_44 *t = _ConvertTag(tag);
+    tAudioMsg *cmd = 0;
+    tFxSequence *t = _ConvertTag(tag);
     if (t && ((-2.0f != volume && volume != t->vol) ||
               (-2.0f != lrpan && lrpan != t->lrpan) ||
               (-2.0f != fbpan && fbpan != t->fbpan) ||
@@ -609,8 +609,8 @@ void AudChangeEffectPitch(int tag, float pitch)
 /* 0x800a2e2c, size 0x7c */
 void AudStopEffect(int tag)
 {
-    anon_hdr_playSong_18 *cmd = 0;
-    anon_ll_list_44 *t;
+    tAudioMsg *cmd = 0;
+    tFxSequence *t;
     if (gNoAudio) return;
     t = _ConvertTag(tag);
     if (t) {
@@ -626,7 +626,7 @@ void AudStopEffect(int tag)
 /* 0x800a2ea8, size 0x38 */
 void AudStopAllEffects(void)
 {
-    anon_hdr_playSong_18 *cmd;
+    tAudioMsg *cmd;
     if (gNoAudio) return;
     cmd = _GetCmd();
     cmd->hdr.cmd = 7;
@@ -637,7 +637,7 @@ void AudStopAllEffects(void)
 /* 0x800a2ee0, size 0x38 */
 void AudPauseAllEffects(void)
 {
-    anon_hdr_playSong_18 *cmd;
+    tAudioMsg *cmd;
     if (gNoAudio) return;
     cmd = _GetCmd();
     cmd->hdr.cmd = 7;
@@ -648,7 +648,7 @@ void AudPauseAllEffects(void)
 /* 0x800a2f18, size 0x38 */
 void AudResumeAllEffects(void)
 {
-    anon_hdr_playSong_18 *cmd;
+    tAudioMsg *cmd;
     if (gNoAudio) return;
     cmd = _GetCmd();
     cmd->hdr.cmd = 9;
@@ -657,7 +657,7 @@ void AudResumeAllEffects(void)
 
 
 /* 0x800a2f50, size 0xd8 */
-int _WeightedPriority(anon_ll_list_44 *tag)
+int _WeightedPriority(tFxSequence *tag)
 {
     int priority;
     priority = (int)tag->priority + 80.0f * (1.0f - tag->vol);
@@ -669,7 +669,7 @@ int _WeightedPriority(anon_ll_list_44 *tag)
 
 
 /* 0x800a3028, size 0x40 */
-static void _InsertSorted(anon_ll_list_44 *tag)
+static void _InsertSorted(tFxSequence *tag)
 {
     anon_te_tag_c *stag;
     stag = &gSortedFxTags[gSortedFxTagTree.numElements];
@@ -690,8 +690,8 @@ static void _UpdateFx(void * element, int elNum)
 {
 
     anon_te_tag_c *stag = element;
-    anon_hdr_playSong_18 *cmd;
-    anon_ll_list_44 *tag = stag->tag;
+    tAudioMsg *cmd;
+    tFxSequence *tag = stag->tag;
     if (tag->state != 1) {
         if (elNum >= 0.75f * gMaxSfx ||
             (tag->loop && tag->state == 2 && tag->vol <= 0.0f &&
@@ -718,7 +718,7 @@ static void _UpdateFx(void * element, int elNum)
 /* 0x800a3208, size 0x1c4 */
 static void _ProcessPriorities(void)
 {
-    anon_ll_list_44 *tag, *next;
+    tFxSequence *tag, *next;
     int i;
     ClearBST(&gSortedFxTagTree);
     gNumStopCmds = 0;
@@ -759,7 +759,7 @@ static void _ProcessPriorities(void)
 /* 0x800a33cc, size 0xb4 */
 static void _AudSetMasterVol(float volume, float time, int music, int sfx)
 {
-    anon_hdr_playSong_18 *cmd = _GetCmd();
+    tAudioMsg *cmd = _GetCmd();
     cmd->hdr.cmd = 10;
     cmd->setMasterVol.vol = volume < 0.0f ? 0.0f : volume > 1.0f ? 1.0f : volume;
     cmd->setMasterVol.time = time < 0.0f ? 0.0f : time;
@@ -788,7 +788,7 @@ void AudSetMusicVol(float volume, float time)
 /* 0x800a34e8, size 0x50 */
 void AudMono(int mono)
 {
-    anon_hdr_playSong_18 *cmd;
+    tAudioMsg *cmd;
     if (gNoAudio) return;
     cmd = _GetCmd();
     cmd->hdr.cmd = 11;
@@ -836,9 +836,9 @@ static void _ValidateListener(void)
 
 
 /* 0x800a362c, size 0x54 */
-anon_ll_free_2c *_NewEmitter(void)
+tSfxEmitter *_NewEmitter(void)
 {
-    anon_ll_free_2c *em = gFreeEmitters.head;
+    tSfxEmitter *em = gFreeEmitters.head;
     if (!em) return 0;
     RemoveLLE(&gFreeEmitters, em);
     em->free = 0;
@@ -847,7 +847,7 @@ anon_ll_free_2c *_NewEmitter(void)
 
 
 /* 0x800a3680, size 0x44 */
-static void _ActivateEmitter(anon_ll_free_2c *em)
+static void _ActivateEmitter(tSfxEmitter *em)
 {
     InsertLLE(&gActiveEmitters, em, gActiveEmitters.head);
     em->active = 1;
@@ -855,7 +855,7 @@ static void _ActivateEmitter(anon_ll_free_2c *em)
 
 
 /* 0x800a36c4, size 0x68 */
-static void _FreeEmitter(anon_ll_free_2c *em)
+static void _FreeEmitter(tSfxEmitter *em)
 {
     if (em->active) {
         RemoveLLE(&gActiveEmitters, em);
@@ -949,8 +949,8 @@ void AudUpdateListener(int lis, float *pos, float *dir, float *look, float *up)
 /* 0x800a3ab0, size 0x1e0 */
 int AudEmitEffect(float *pos, float *dir, float fadeDistance, float fadeCompression, float maxVol, float minVol, int fxid, int subId, enum_kFxNoReplace_4 replace, unsigned char priority)
 {
-    anon_ll_free_2c *em;
-    anon_hdr_playSong_18 *cmd;
+    tSfxEmitter *em;
+    tAudioMsg *cmd;
     int tag;
     if (gNoAudio) return 1;
     if (!gEmitters) return -1;
@@ -987,7 +987,7 @@ int AudEmitEffect(float *pos, float *dir, float fadeDistance, float fadeCompress
 /* 0x800a3c90, size 0x50 */
 void AudStopEmitter(int tag)
 {
-    anon_ll_list_44 *t;
+    tFxSequence *t;
     if (gNoAudio) return;
     t = _ConvertTag(tag);
     if (t) {
@@ -1000,7 +1000,7 @@ void AudStopEmitter(int tag)
 /* 0x800a3ce0, size 0x60 */
 int AudEmitterPlaying(int tag)
 {
-    anon_ll_list_44 *t;
+    tFxSequence *t;
     if (gNoAudio) return 1;
     t = _ConvertTag(tag);
     if (!t) return 0;
@@ -1012,8 +1012,8 @@ int AudEmitterPlaying(int tag)
 /* 0x800a3d40, size 0xc0 */
 void AudUpdateEmitter(int tag, float *pos, float maxVol, float pitch)
 {
-    anon_ll_list_44 *t;
-    anon_ll_free_2c *em;
+    tFxSequence *t;
+    tSfxEmitter *em;
     if (gNoAudio) return;
     t = _ConvertTag(tag);
     if (t) {
@@ -1029,8 +1029,8 @@ void AudUpdateEmitter(int tag, float *pos, float maxVol, float pitch)
 /* 0x800a3e00, size 0xdc */
 void _ProcessEmitters(void)
 {
-    anon_ll_free_2c *em, *next;
-    anon_ll_list_44 *tag;
+    tSfxEmitter *em, *next;
+    tFxSequence *tag;
     float vol, lrpan, fbpan, pitch;
     for (em = gActiveEmitters.head; em; em = next) {
         next = em->ll.next;
@@ -1046,7 +1046,7 @@ void _ProcessEmitters(void)
 
 
 /* 0x800a3edc, size 0x304 */
-static void _UpdateEmitter(anon_ll_free_2c *em, float *vol, float *lrpan, float *fbpan, float *pitch)
+static void _UpdateEmitter(tSfxEmitter *em, float *vol, float *lrpan, float *fbpan, float *pitch)
 {
     anon_ll_free_3c *lis;
     float dir[3];
@@ -1173,7 +1173,7 @@ static void _StopAllSequences(void)
 static void _ProcessSequences(void)
 {
     anon_ll_id_3c *s, *next;
-    anon_ll_list_44 *tag;
+    tFxSequence *tag;
     for (s = gActiveSequences.head; s; s = next) {
         next = s->ll.next;
         if (s->stop || (s->sndTag == -1 && AudioTimeout(s->startTime, s->timeout))) {

@@ -4,13 +4,13 @@
 
 int gNumPolyInsts;
 int gMaxPolyInsts;
-anon_nverts_flags_68 PolyInstanceList[200];
+tPoly PolyInstanceList[200];
 
 /* 0x80062a50, size 0xfc */
-anon_nverts_flags_68 *ZOID_NewPoly(int nverts, float (*xyz)[3], unsigned short texidx, anon_c_rgba_4 *color, unsigned short flags, int useTidx)
+tPoly *ZOID_NewPoly(int nverts, float (*xyz)[3], unsigned short texidx, tRGBA *color, unsigned short flags, int useTidx)
 {
     int i; /* r4 */
-    anon_nverts_flags_68 *poly; /* r31 */
+    tPoly *poly; /* r31 */
     for (i = 0; i < gNumPolyInsts; i++) {
         if (PolyInstanceList[i].nverts == 0) {
             break;
@@ -36,9 +36,9 @@ anon_nverts_flags_68 *ZOID_NewPoly(int nverts, float (*xyz)[3], unsigned short t
 }
 
 /* 0x80062b4c, size 0x21c */
-void ZOID_UpdatePoly(anon_nverts_flags_68 *poly, int nverts, float (*xyz)[3], unsigned short texidx, anon_c_rgba_4 *color, unsigned short flags, int useTidx)
+void ZOID_UpdatePoly(tPoly *poly, int nverts, float (*xyz)[3], unsigned short texidx, tRGBA *color, unsigned short flags, int useTidx)
 {
-    anon_name_width_30 *tex; /* r10 */
+    tTexture *tex; /* r10 */
     int i; /* r11 */
     int ii; /* r12 */
     if (nverts == 0) {
@@ -135,37 +135,37 @@ void ZOID_UpdatePoly(anon_nverts_flags_68 *poly, int nverts, float (*xyz)[3], un
 }
 
 /* 0x80062d68, size 0x8 */
-void ZOID_SetPolyZ(anon_nverts_flags_68 *poly, signed short z)
+void ZOID_SetPolyZ(tPoly *poly, signed short z)
 {
     poly->z = z;
 }
 
 /* 0x80062d70, size 0x10 */
-void ZOID_HidePoly(anon_nverts_flags_68 *poly)
+void ZOID_HidePoly(tPoly *poly)
 {
     poly->flags |= 0x8000;
 }
 
 /* 0x80062d80, size 0x10 */
-void ZOID_ShowPoly(anon_nverts_flags_68 *poly)
+void ZOID_ShowPoly(tPoly *poly)
 {
     poly->flags &= ~0x8000;
 }
 
 /* 0x80062d90, size 0x10 */
-void ZOID_ClearPolyFlags(anon_nverts_flags_68 *poly, unsigned short flags)
+void ZOID_ClearPolyFlags(tPoly *poly, unsigned short flags)
 {
     poly->flags &= ~flags;
 }
 
 /* 0x80062da0, size 0x10 */
-void ZOID_SetPolyFlags(anon_nverts_flags_68 *poly, unsigned short flags)
+void ZOID_SetPolyFlags(tPoly *poly, unsigned short flags)
 {
     poly->flags |= flags;
 }
 
 /* 0x80062db0, size 0x4c */
-void ZOID_RemovePoly(anon_nverts_flags_68 *poly)
+void ZOID_RemovePoly(tPoly *poly)
 {
     poly->nverts = 0;
     if (poly == &PolyInstanceList[gNumPolyInsts - 1]) {

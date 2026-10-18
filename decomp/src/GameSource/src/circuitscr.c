@@ -28,8 +28,8 @@ static char *buttonNames[9] = {
     "BUTTON_S1G1", "BUTTON_S1G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1", "ARROW_BGG1",
     "ARROW_FGG1", "BAR_BGG1", "BAR_FGG1"
 };
-static anon_buttonType_objIdx_40 buttonInfo[12] = { {0,-1}, {0,-1}, {0,-1}, {0,-1}, {1,-1}, {1,-1}, {2,-1}, {3,-1}, {4,-1}, {6,-1}, {4,-1}, {6,-1} };
-static const anon_texname_dulx_24 mblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
+static tMenuButton buttonInfo[12] = { {0,-1}, {0,-1}, {0,-1}, {0,-1}, {1,-1}, {1,-1}, {2,-1}, {3,-1}, {4,-1}, {6,-1}, {4,-1}, {6,-1} };
+static const tBlitDef mblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
 static char *gTrophyNames[3] = { "TGOLDL2_LOD1", "TSILVERL2_LOD1", "TBRONZEL2_LOD1" };
 static char *gTrophySheenNames[3] = { "TGOLDL3_LOD1", "TSILVERL3_LOD1", "TBRONZEL3_LOD1" };
 static float gButtonScale = 1.0f;
@@ -39,11 +39,11 @@ static float buttonZ = 300.0f;
 static float cursorZ = 225.0f;
 static int trophyObjIdx = -1;
 static int trophySheenObjIdx = -1;
-static anon_c_rgba_4 trophySheenColor = { 255, 255, 255, 255 };
-static anon_used_perm_20 *pane;
+static tRGBA trophySheenColor = { 255, 255, 255, 255 };
+static tBlitSet *pane;
 static enum_kCircuitMenuCount gCircuitMenuSelect;
 static enum_kNumCircuitTypes_2 newCircuitType;
-static anon_checksum_active_4c *gCircuit;
+static tCircuit *gCircuit;
 static signed char gYes;
 static signed short gCodeSelect;
 static signed short gCodeLen;
@@ -66,7 +66,7 @@ static signed char gWrongNumPlayers = 0;
 static signed char gContinueEnabled = 0;
 static signed char gStatsEnabled = 0;
 static signed char gShowTrophy = 0;
-static anon_mat3_mat4_30 gTrophyMat;
+static tUVMatrix gTrophyMat;
 static unsigned char gCircuitCode[32];
 
 /* 0x80068024, size 1316 */
@@ -234,7 +234,7 @@ static void initScreen(void)
             place = gCircuitCars[0].totalPlace;
             if (place < 3) {
                 trophyObjIdx = MBOX_NewObject(MBOX_FindObject_WORK(gTrophyNames[place], 0, gNumModels - 1, 1), &gTrophyMat, -1, 0);
-                trophySheenObjIdx = MBOX_NewObject(MBOX_FindObject_WORK(gTrophySheenNames[place], 0, gNumModels - 1, 1), (anon_mat3_mat4_30 *)unitmatrix, trophyObjIdx, 0x2c6084);
+                trophySheenObjIdx = MBOX_NewObject(MBOX_FindObject_WORK(gTrophySheenNames[place], 0, gNumModels - 1, 1), (tUVMatrix *)unitmatrix, trophyObjIdx, 0x2c6084);
                 ZOID_SetTexture(trophySheenObjIdx, MBOX_FindTexture_WORK("SHEEN0", &texIdx, 0, gNumModels - 1, 1), -1);
                 ZOID_SetColor(trophySheenObjIdx, &trophySheenColor);
                 ZOID_SetEnvColor(trophySheenObjIdx, &trophySheenColor);
@@ -370,13 +370,13 @@ static void animButtonText(void)
             x = screenPos[0] / 2 - 35.0f * gButtonScale;
             y = screenPos[1] / 2.0f;
             if (buttonInfo[i].angle < 1.570796327f) {
-                anon_c_rgba_4 c1, c2;
+                tRGBA c1, c2;
                 c2 = flashColors[1];
                 c1 = flashColors[0];
                 TB_FlashTextColors(&c1, &c2);
                 TB_SetTextColor(1);
             } else {
-                anon_c_rgba_4 c1, c2;
+                tRGBA c1, c2;
                 c2 = flashColors[1];
                 c1 = flashColors[0];
                 TB_FlashTextColors(&c1, &c2);
@@ -765,8 +765,8 @@ static void calcProgressSize(void)
 /* 0x8006a2f4, size 940 */
 static void initButtons(void)
 {
-    anon_c_rgba_4 buttonColor = {255, 255, 255, 255};
-    anon_name_width_30 *tex;
+    tRGBA buttonColor = {255, 255, 255, 255};
+    tTexture *tex;
     unsigned short texIdx;
     int buttonIdx;
     for (buttonIdx = 0; buttonIdx < 12; buttonIdx++) {
@@ -843,9 +843,9 @@ static void updateButtons(void)
     float buttonY;
     float selectedPos = 0.0f;
     signed char clearScrollSpeed = 1;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
-    anon_c_rgba_4 buttonColor = {255, 255, 255, 255};
+    tRGBA buttonColor = {255, 255, 255, 255};
 
     if (!buttonsInited)
         return;

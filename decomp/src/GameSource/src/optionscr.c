@@ -25,9 +25,9 @@ static char *buttonNames[9] = {
     "BUTTON_S3G1", "BUTTON_S1G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1", "ARROW_BGG1",
     "ARROW_FGG1", "BAR_BGG1", "BAR_FGG1"
 };
-static const anon_texname_dulx_24 frontEndBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
-static const anon_texname_dulx_24 pauseBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
-static anon_buttonType_objIdx_40 buttonInfo[32] = {
+static const tBlitDef frontEndBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
+static const tBlitDef pauseBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
+static tMenuButton buttonInfo[32] = {
     { 0, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0 },
     { 0, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0 },
     { 0, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0 },
@@ -68,7 +68,7 @@ static signed char inited = 0;
 static _tBlit_2 *blit = 0;
 static signed short gSelectedOption = 0;
 static enum_kNumMenuDir_7 exitOptionScreen = 0;
-static anon_used_perm_20 *gTitlePane = 0;
+static tBlitSet *gTitlePane = 0;
 static signed char gControllerRemoved = 0;
 static signed short gOptionMenuSize;
 static signed short gMenuCount;
@@ -205,12 +205,12 @@ static void printOption(int x, int y, int item, const unsigned char *name, const
 {
     if (buttonsInited == 1) {
         if (buttonInfo[item].angle < 1.5707964f) {
-            anon_c_rgba_4 c1, c2;
+            tRGBA c1, c2;
             c2 = flashColors[1]; c1 = flashColors[0];
             TB_FlashTextColors(&c1, &c2);
             TB_SetTextColor(1);
         } else {
-            anon_c_rgba_4 c1, c2;
+            tRGBA c1, c2;
             c2 = flashColors[1]; c1 = flashColors[0];
             TB_FlashTextColors(&c1, &c2);
             TB_SetTextColor(22);
@@ -267,7 +267,7 @@ static int animText(void)
         }
     }
     HAL_SetTextTranslucency(-1.0f);
-    { anon_c_rgba_4 c1, c2; c2 = flashColors[1]; c1 = flashColors[0]; TB_FlashTextColors(&c1, &c2); }
+    { tRGBA c1, c2; c2 = flashColors[1]; c1 = flashColors[0]; TB_FlashTextColors(&c1, &c2); }
     HAL_SetTextDepth(-1.0f);
     return 1;
 }
@@ -317,7 +317,7 @@ static void animButtonText(void)
     ZeroCameras();
     TB_SetJust(0, 3);
     HAL_SetTextTranslucency(-1.0f);
-    { anon_c_rgba_4 c1, c2; c2 = flashColors[1]; c1 = flashColors[0]; TB_FlashTextColors(&c1, &c2); }
+    { tRGBA c1, c2; c2 = flashColors[1]; c1 = flashColors[0]; TB_FlashTextColors(&c1, &c2); }
     HAL_SetTextDepth(-1.0f);
 }
 
@@ -340,8 +340,8 @@ static void calcOptionMenuMaxSize(void)
 /* 0x80075d00, size 0x2bc */
 static void initButtons(void)
 {
-    anon_c_rgba_4 buttonColor = { 255, 255, 255, 255 };
-    anon_name_width_30 *tex;
+    tRGBA buttonColor = { 255, 255, 255, 255 };
+    tTexture *tex;
     unsigned short texIdx;
     int buttonIdx;
     for (buttonIdx = 0; buttonIdx < 32; buttonIdx++) {
@@ -402,9 +402,9 @@ static void updateButtons(void)
     signed char clearScrollSpeed = 1;
     int whichItem;
     int buttonY;
-    anon_name_width_30 *tex;
+    tTexture *tex;
     unsigned short texIdx;
-    anon_c_rgba_4 buttonColor = {255, 255, 255, 255};
+    tRGBA buttonColor = {255, 255, 255, 255};
     static float cursorSpeed;
     static float scrollSpeed;
     if (buttonsInited) {

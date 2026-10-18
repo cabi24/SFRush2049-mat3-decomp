@@ -216,7 +216,7 @@ int appFileRead4Array(int fd, void * buf, int size)
 int appFileReadTex(int fd, void * buf, int size, int num)
 {
     int i; /* r31 */
-    anon_name_width_38 *pTexDef; /* r30 */
+    tTextureEx *pTexDef; /* r30 */
 
     appFileRead(fd, buf, size * num);
     for (i = 0, pTexDef = buf; i < num; pTexDef++, i++) {
@@ -226,7 +226,7 @@ int appFileReadTex(int fd, void * buf, int size, int num)
 }
 
 /* 0x800a52a4, size 0x80 */
-void _swap_tex(anon_name_width_38 *pTex)
+void _swap_tex(tTextureEx *pTex)
 {
     _swap_x16(&pTex->width);
     _swap_x16(&pTex->height);

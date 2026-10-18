@@ -15,8 +15,8 @@ static char *buttonNames[8] = {
     "BUTTON_S2G1", "BUTTON_S2G1", "CURSORG1", "AB_BUTTONG1", "ARROW_BGG1", "ARROW_FGG1",
     "BAR_BGG1", "BAR_FGG1"
 };
-static const anon_texname_dulx_24 mblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
-static anon_buttonType_objIdx_40 buttonInfo[13] = { {0,-1}, {0,-1}, {0,-1}, {0,-1}, {0,-1}, {0,-1}, {0,-1}, {2,-1}, {3,-1}, {5,-1}, {3,-1}, {5,-1}, {1,-1} };
+static const tBlitDef mblit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animText, 0 };
+static tMenuButton buttonInfo[13] = { {0,-1}, {0,-1}, {0,-1}, {0,-1}, {0,-1}, {0,-1}, {0,-1}, {2,-1}, {3,-1}, {5,-1}, {3,-1}, {5,-1}, {1,-1} };
 static signed char validOption[4][7] = {
     1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1
 };
@@ -145,10 +145,10 @@ static int animText(void)
             if(buttonInfo[i].angle>0.34906584f && buttonInfo[i].angle<2.7925267f) HAL_SetTextTranslucency(128.0f);
             else HAL_SetTextTranslucency(-1.0f);
             if(buttonInfo[i].angle<1.5707964f) {
-                anon_c_rgba_4 c1,c2; c2=flashColors[1]; c1=flashColors[0];
+                tRGBA c1,c2; c2=flashColors[1]; c1=flashColors[0];
                 TB_FlashTextColors(&c1,&c2); TB_SetTextColor(1);
             } else {
-                anon_c_rgba_4 c1,c2; c2=flashColors[1]; c1=flashColors[0];
+                tRGBA c1,c2; c2=flashColors[1]; c1=flashColors[0];
                 TB_FlashTextColors(&c1,&c2); TB_SetTextColor(22);
             }
             ZOID_ProjectWindow(0,buttonInfo[i].mat.uvs[3],&gCamera[0].mat,0,screenPos);
@@ -158,7 +158,7 @@ static int animText(void)
         y+=TB_GetFontLineHeight();
     }
     TB_SetJust(0,3); HAL_SetTextTranslucency(-1.0f);
-    { anon_c_rgba_4 c1,c2; c2=flashColors[1]; c1=flashColors[0]; TB_FlashTextColors(&c1,&c2); }
+    { tRGBA c1,c2; c2=flashColors[1]; c1=flashColors[0]; TB_FlashTextColors(&c1,&c2); }
     HAL_SetTextDepth(-1.0f); return 1;
 }
 
@@ -175,8 +175,8 @@ static signed char optionValid(enum_kModeMenuCount opt)
 /* 0x800741d8, size 0x3a4 */
 static void initButtons(void)
 {
-    anon_c_rgba_4 buttonColor = {255,255,255,255}; /* stack */
-    anon_name_width_30 *tex; /* r3 */
+    tRGBA buttonColor = {255,255,255,255}; /* stack */
+    tTexture *tex; /* r3 */
     unsigned short texIdx; /* stack */
     int buttonIdx; /* r30 */
 
@@ -236,7 +236,7 @@ static void updateButtons(void)
     float prevPos[3]; /* stack */
     float buttonY; /* f31 */
     float selectY; /* f30 */
-    anon_name_width_30 *tex; /* r0 */
+    tTexture *tex; /* r0 */
     unsigned short texIdx; /* stack */
 
     if(!buttonsInited) return;

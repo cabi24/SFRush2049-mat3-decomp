@@ -6,8 +6,8 @@ static int animBG(void);
 
 #define BG_DIST 16777000.0f
 
-static const anon_texname_dulx_24 frontBack[1] = { "BACKGROUND", 0, 0, 640, 448, 16, 463, 0, 639, 0x400, 0xff, (void *)&animBG, 0 };
-static const anon_texname_dulx_24 trackBack[1] = {
+static const tBlitDef frontBack[1] = { "BACKGROUND", 0, 0, 640, 448, 16, 463, 0, 639, 0x400, 0xff, (void *)&animBG, 0 };
+static const tBlitDef trackBack[1] = {
     "BACKGROUND", 0, 0, 640, 448, 560, 1007, 0, 639, 0x7fff94, 0xff, (void *)&animBG, 0
 };
 static anon_minX_maxX_38 gBackRects[4][4] = {
@@ -28,7 +28,7 @@ static anon_minX_maxX_38 gBackRects[4][4] = {
     -1.0f, 1.0f, 1.0f, -1.0f, 0.2f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
 };
 static int gBackCamera[4][4] = { 1, 1, 1, 1, 2, 2, 1, 1, 4, 8, 2, 1, 4, 8, 2, 1 };
-static anon_nverts_flags_68 *backPolys[4] = { 0, 0, 0, 0 };
+static tPoly *backPolys[4] = { 0, 0, 0, 0 };
 static int offsetsValid[4] = { 0, 0, 0, 0 };
 int inmenu;
 static _tBlit_2 *backBlit;
@@ -87,10 +87,10 @@ void createBG(void)
     int polyIdx; /* r23 */
     float polyVerts[4][3]; /* stack */
     unsigned short texIdx; /* stack */
-    anon_nverts_flags_68 *backPoly; /* r6 */
+    tPoly *backPoly; /* r6 */
     int vertIdx; /* r7 */
     for (polyIdx = 0; polyIdx < 4; polyIdx++) {
-        anon_c_rgba_4 backColor = { 0x00, 0x00, 0xc0, 0xff }; /* stack */
+        tRGBA backColor = { 0x00, 0x00, 0xc0, 0xff }; /* stack */
 
         MBOX_FindTexture_WORK("BACKGROUND_SFX", &texIdx, 0, gNumModels - 1, 1);
         polyVerts[0][0] = BG_DIST * gBackRects[gNumWindows - 1][polyIdx].maxX;
@@ -127,7 +127,7 @@ void createBG(void)
 void updateBG(void)
 {
     int polyIdx; /* r10 */
-    anon_nverts_flags_68 *backPoly; /* r11 */
+    tPoly *backPoly; /* r11 */
     int vertIdx; /* r5 */
     for (polyIdx = 0; polyIdx < 4; polyIdx++) {
         backPoly = backPolys[polyIdx];

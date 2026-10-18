@@ -17,8 +17,8 @@ static unsigned char gFontColors[22][2][4] = {
     255, 0, 230, 230, 255, 0, 230, 230, 255, 0, 230, 0, 255
 };
 static anon_h_v_8 gJust = { 0, 3 };
-static anon_c_rgba_4 gFlashColor1 = { 230, 230, 0, 255 };
-static anon_c_rgba_4 gFlashColor2 = { 0, 0, 0, 255 };
+static tRGBA gFlashColor1 = { 230, 230, 0, 255 };
+static tRGBA gFlashColor2 = { 0, 0, 0, 255 };
 static float gColorCycle;
 static float gColorCycleTime;
 static signed char gInited;
@@ -72,7 +72,7 @@ void TB_SetTextColor(enum_kTB_FlashText color)
 }
 
 /* 0x8004f474, size 0x14 */
-void TB_FlashTextColors(anon_c_rgba_4 * __restrict color1, anon_c_rgba_4 * __restrict color2)
+void TB_FlashTextColors(tRGBA * __restrict color1, tRGBA * __restrict color2)
 {
     gFlashColor1.rgba = color1->rgba;
     gFlashColor2.rgba = color2->rgba;

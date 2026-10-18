@@ -17,13 +17,13 @@ static unsigned int gCircuitSeed;
 static unsigned char gCircuitNumTrackRaces[6];
 static unsigned char gTempCircuitFirstTrack[4];
 static unsigned short gTempCircuitPoints[4][6];
-anon_trackNum_backward_5 gCircuitTracks[24];
-anon_name_totalPlace_4c gCircuitCars[6];
+tCircuitTrack gCircuitTracks[24];
+tCircuitCar gCircuitCars[6];
 
 /* 0x8000a3f8, size 0xdc */
 void NewCircuit(enum_kNumCircuitTypes circuitType)
 {
-    anon_checksum_active_4c *circuit; /* r29 */
+    tCircuit *circuit; /* r29 */
     circuit = &(*(*gPlayers[gCircuitPlayer].save)->datah)->circuit;
     memset(circuit, 0, sizeof(*circuit));
     ((void (*)(tPS_File **, void *, int))PS_WriteFile)((*gPlayers[gCircuitPlayer].save)->fileh, circuit,
@@ -71,7 +71,7 @@ void ContinueCircuit(void)
     int sortList[6]; /* stack */
     int numDrones; /* r22 */
     int numCircuitTracks; /* r29 */
-    anon_checksum_active_4c *circuit; /* r28 */
+    tCircuit *circuit; /* r28 */
     int orient; /* r6 */
     static int skills[6][12] = {0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 1, 0, 0, 3,
                                 2, 2, 2, 3, 3, 3, 3, 4, 2, 4, 3, 1, 3, 3, 4, 4, 4, 0, 0, 3, 3, 2, 5, 4,
@@ -203,7 +203,7 @@ void UpdateCircuit(unsigned char *ranks, float time)
     int diff; /* r6 */
     int first; /* r30 */
     int second; /* r29 */
-    anon_checksum_active_4c *circuit; /* r28 */
+    tCircuit *circuit; /* r28 */
     circuit = &(*(*gPlayers[gCircuitPlayer].save)->datah)->circuit;
     n = 6 - (gNumPlayers == 1 ? 0 : 2);
     if (gCircuitPlayer) {
@@ -250,7 +250,7 @@ void UpdateCircuit(unsigned char *ranks, float time)
 void GetCircuitCode(unsigned char *code)
 {
     int i; /* r30 */
-    anon_checksum_active_4c *circuit; /* r0 */
+    tCircuit *circuit; /* r0 */
     circuit = &(*(*gPlayers[gCircuitPlayer].save)->datah)->circuit;
     ContinueCircuit();
     gCircuitTrack--;
@@ -279,7 +279,7 @@ int SetCircuitCode(unsigned char *code)
     int sortList[6]; /* stack */
     int givenPoints; /* r11 */
     int totalPoints; /* r8 */
-    anon_checksum_active_4c *circuit; /* r0 */
+    tCircuit *circuit; /* r0 */
     circuit = &(*(*gPlayers[gCircuitPlayer].save)->datah)->circuit;
     NewPassword(86, 14);
     if (!SetPasswordString((char *)code))

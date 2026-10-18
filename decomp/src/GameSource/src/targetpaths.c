@@ -219,7 +219,7 @@ void _StartPathTarget(tTarget *t)
 {
     tVisual *v;
     float max;
-    anon_name_mboxname_34_2 *tInfo;
+    tTargetInfo *tInfo;
     tBasicTargetPath *pPtr;
     tTargetStructPath *dPtr;
     int i;
@@ -277,7 +277,7 @@ void _AnimatePathTarget(tVisual *v, signed short op)
     tTargetStructPath *dPtr;
     tTargetStructPath *dPtr2;
     int done;
-    anon_name_mboxname_34_2 *tInfo;
+    tTargetInfo *tInfo;
     signed short type;
     signed char moving;
     float vel[3];

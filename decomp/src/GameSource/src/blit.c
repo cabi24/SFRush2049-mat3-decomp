@@ -59,7 +59,7 @@ void DrawBlits(void)
 /* 0x800a47f8, size 0xdc */
 void InitBlit(_tBlit *blit)
 {
-    anon_name_width_30 *ti; /* r0 */
+    tTexture *ti; /* r0 */
 
     if (!blit->name) {
         blit->texIndex = 0;
@@ -134,7 +134,7 @@ _tBlit *NewBlit(const char *name, int x, int y, unsigned int cont)
 /* 0x800a4a90, size 0x68 */
 void RenameBlit(_tBlit *blit, const char *name, int preserve)
 {
-    anon_name_width_30 *ti; /* r0 */
+    tTexture *ti; /* r0 */
 
     blit->name = name;
     if (preserve) {
@@ -181,7 +181,7 @@ void SelectBlit(_tBlit *blt, int index, int hSize, int vSize)
 }
 
 /* 0x800a4c1c, size 0x164 */
-_tBlit *NewMultiBlit(signed short ulx, signed short uly, const anon_texname_dulx_24 *mblit, signed short nblits)
+_tBlit *NewMultiBlit(signed short ulx, signed short uly, const tBlitDef *mblit, signed short nblits)
 {
     _tBlit *rootblit; /* r27 */
     _tBlit *lastblit; /* r26 */

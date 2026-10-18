@@ -5,25 +5,25 @@
 #define COPY_RGBA(dst, src) (*(unsigned int *)&(dst) = *(unsigned int *)(src))
 
 /* 0x80062dfc */
-void ZOID_SetColor(signed short objnum, anon_c_rgba_4 *col)
+void ZOID_SetColor(signed short objnum, tRGBA *col)
 {
     COPY_RGBA(ObjInstanceList[objnum].color, col);
 }
 
 /* 0x80062e1c */
-anon_c_rgba_4 *ZOID_GetColor(signed short objnum)
+tRGBA *ZOID_GetColor(signed short objnum)
 {
     return &ObjInstanceList[objnum].color;
 }
 
 /* 0x80062e38 */
-void ZOID_SetEnvColor(signed short objnum, anon_c_rgba_4 *col)
+void ZOID_SetEnvColor(signed short objnum, tRGBA *col)
 {
     COPY_RGBA(ObjInstanceList[objnum].envcolor, col);
 }
 
 /* 0x80062e58 */
-void ZOID_SetTexture(signed short objnum, anon_name_width_30 *tex, int lod)
+void ZOID_SetTexture(signed short objnum, tTexture *tex, int lod)
 {
     anon_flags_culling_60 *obj = &ObjInstanceList[objnum];
 
@@ -40,7 +40,7 @@ void ZOID_SetTexture(signed short objnum, anon_name_width_30 *tex, int lod)
 /* 0x80062e98 */
 int ZOID_ChangeTexture(unsigned short objidx, signed short lod, unsigned short texidx)
 {
-    anon_name_radius_48 *robj = &gRomObjDefPtrs[objidx >> 10].romObjDefs[objidx & 0x3ff];
+    tModelDef *robj = &gRomObjDefPtrs[objidx >> 10].romObjDefs[objidx & 0x3ff];
     int i;
 
     if (lod >= 0) {

@@ -107,9 +107,9 @@ static void AnimateWeapon(tVisual *v, signed short op)
     int i;
     int r1;
     float r2;
-    anon_c_rgba_4 clr;
-    anon_c_rgba_4 clr2 = { 0, 255, 0, 255 };
-    anon_mat3_mat4_30 *mat;
+    tRGBA clr;
+    tRGBA clr2 = { 0, 255, 0, 255 };
+    tUVMatrix *mat;
 
     if (!op || model[v->slot].crashflag) {
         if (gCurWeaponType[v->slot] == 1)

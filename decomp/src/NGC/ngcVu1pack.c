@@ -27,7 +27,7 @@ float obj_trans[4] = { 0.0f, 1.0f, 0.0f, 0.0f };
 float obj_rot[4] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 float g_FogFarZ = 500.0f;
 static _GXColor gxambient_color;
-static anon_c_rgba_4 ambient_color;
+static tRGBA ambient_color;
 static int JustLoadedGroupIdx;
 float currentz;
 float Fake_EnvMap_uu;
@@ -72,12 +72,12 @@ static int GetAnEmptyGeoGroup(void)
 /* 0x80094be8, size 0x2f8 */
 static anon_dmatag_Local_world_90 *AddVu1ObjPacket_WithLight(unsigned int *obj, float (*rotMTX)[4], int unused, float scale)
 {
-    static anon_x_y_c_2 camPt = { 0.0f, 0.0f, 0.0f }; /* .data */
-    static anon_x_y_c_2 at = { 0.0f, 0.0f, 1.0f }; /* .data */
-    static anon_x_y_c_2 up = { 0.0f, 1.0f, 0.0f }; /* .data */
+    static tVec3 camPt = { 0.0f, 0.0f, 0.0f }; /* .data */
+    static tVec3 at = { 0.0f, 0.0f, 1.0f }; /* .data */
+    static tVec3 up = { 0.0f, 1.0f, 0.0f }; /* .data */
     int j; /* r4 */
     float *pmtx; /* r0 */
-    anon_nVertex_iTex_10 *strips; /* r0 */
+    tMapStrip *strips; /* r0 */
     float p[4][4]; /* stack */
     float v[3][4]; /* stack */
     float w[3][4]; /* stack */
@@ -117,7 +117,7 @@ static anon_dmatag_Local_world_90 *AddVu1ObjPacket_WithLight(unsigned int *obj, 
     GXSetAlphaCompare(7, 0, 0, 7, 0);
     GXSetTevOp(0, 4);
     GXSetBlendMode(0, 4, 5, 0);
-    strips = (anon_nVertex_iTex_10 *)obj;
+    strips = (tMapStrip *)obj;
     GXBegin(strips->iHasAlpha == 0xFECE0EE6 ? 0x98 : 0x90, 0, strips->nVertex);
     for (j = 0; j < strips->nVertex; j++) {
         GXPosition3f32(strips->vertexs[j].pos[0], strips->vertexs[j].pos[1], strips->vertexs[j].pos[2]);
@@ -136,14 +136,14 @@ static anon_dmatag_Local_world_90 *AddVu1ObjPacket_WithLight(unsigned int *obj, 
 }
 
 /* 0x80094ee0, size 0x2b8 */
-anon_dmatag_Local_world_90 *AddVu1ObjPacket_WithLight2(unsigned int *obj, float (*rotMTX)[4], int unused, anon_name_width_38 *pTexDef, float scale)
+anon_dmatag_Local_world_90 *AddVu1ObjPacket_WithLight2(unsigned int *obj, float (*rotMTX)[4], int unused, tTextureEx *pTexDef, float scale)
 {
-    static anon_x_y_c_2 camPt = { 0.0f, 0.0f, 0.0f }; /* .data */
-    static anon_x_y_c_2 at = { 0.0f, 0.0f, 1.0f }; /* .data */
-    static anon_x_y_c_2 up = { 0.0f, 1.0f, 0.0f }; /* .data */
+    static tVec3 camPt = { 0.0f, 0.0f, 0.0f }; /* .data */
+    static tVec3 at = { 0.0f, 0.0f, 1.0f }; /* .data */
+    static tVec3 up = { 0.0f, 1.0f, 0.0f }; /* .data */
     int j; /* r8 */
     float *pmtx; /* r0 */
-    anon_nVertex_iTex_10 *strips; /* r0 */
+    tMapStrip *strips; /* r0 */
     float p[4][4]; /* stack */
     float v[3][4]; /* stack */
     float w[3][4]; /* stack */
@@ -186,7 +186,7 @@ anon_dmatag_Local_world_90 *AddVu1ObjPacket_WithLight2(unsigned int *obj, float 
     GXSetAlphaCompare(7, 0, 0, 7, 0);
     GXSetTevOp(0, 0);
     GXSetBlendMode(1, 4, 5, 0);
-    strips = (anon_nVertex_iTex_10 *)obj;
+    strips = (tMapStrip *)obj;
     GXBegin(strips->iHasAlpha == 0xFECE0EE6 ? 0x98 : 0x90, 0, strips->nVertex);
     for (j = 0; j < strips->nVertex; j++) {
         GXPosition3f32(strips->vertexs[j].pos[0], strips->vertexs[j].pos[1], strips->vertexs[j].pos[2]);
@@ -259,7 +259,7 @@ void MySetObjectPosition(float z)
 }
 
 /* 0x80095318, size 0x34 */
-void MySetAmbientColor(anon_c_rgba_4 c)
+void MySetAmbientColor(tRGBA c)
 {
     ambient_color = c;
     gxambient_color.r = ambient_color.c[0];
@@ -269,13 +269,13 @@ void MySetAmbientColor(anon_c_rgba_4 c)
 }
 
 /* 0x8009534c, size 0x8 */
-anon_c_rgba_4 MyGetAmbientColor(void)
+tRGBA MyGetAmbientColor(void)
 {
     return ambient_color;
 }
 
 /* 0x80095354, size 0x1ec */
-void AddPackToAlphaList(float **mtx, anon_name_width_38 *tex, unsigned int *pack, int cull, int AddColor)
+void AddPackToAlphaList(float **mtx, tTextureEx *tex, unsigned int *pack, int cull, int AddColor)
 {
     _ps2objzsort *next; /* r4 */
     _ps2objzsort *last; /* r3 */
@@ -341,7 +341,7 @@ void AddPackToAlphaList(float **mtx, anon_name_width_38 *tex, unsigned int *pack
 }
 
 /* 0x80095540, size 0x1f4 */
-void AddPackToAlphaList2(float **mtx, anon_name_width_38 *tex, unsigned int *pack, int cull, int AddColor)
+void AddPackToAlphaList2(float **mtx, tTextureEx *tex, unsigned int *pack, int cull, int AddColor)
 {
     _ps2objzsort *next; /* r4 */
     _ps2objzsort *last; /* r3 */
@@ -449,13 +449,13 @@ void PreDrawAlphaList(void)
 /* 0x80095880, size 0x35c */
 void DrawAlphaList(void)
 {
-    static anon_x_y_c_2 camPt = { 0.0f, 0.0f, 0.0f }; /* .data */
-    static anon_x_y_c_2 at = { 0.0f, 0.0f, 1.0f }; /* .data */
-    static anon_x_y_c_2 up = { 0.0f, 1.0f, 0.0f }; /* .data */
+    static tVec3 camPt = { 0.0f, 0.0f, 0.0f }; /* .data */
+    static tVec3 at = { 0.0f, 0.0f, 1.0f }; /* .data */
+    static tVec3 up = { 0.0f, 1.0f, 0.0f }; /* .data */
     int j; /* r6 */
     float *pmtx; /* r6 */
-    anon_name_width_38 *pTexDef; /* r27 */
-    anon_nVertex_iTex_10 *strips; /* r26 */
+    tTextureEx *pTexDef; /* r27 */
+    tMapStrip *strips; /* r26 */
     float v[3][4]; /* stack */
     float w[3][4]; /* stack */
     int iAddColor; /* r0 */
@@ -521,7 +521,7 @@ void DrawAlphaList(void)
         } else {
             GXSetNumTevStages(1);
         }
-        strips = (anon_nVertex_iTex_10 *)obj->_pPack;
+        strips = (tMapStrip *)obj->_pPack;
         GXBegin(strips->iHasAlpha == 0xFECE0EE6 ? 0x98 : 0x90, 0, strips->nVertex);
         for (j = 0; j < strips->nVertex; j++) {
             GXPosition3f32(strips->vertexs[j].pos[0], strips->vertexs[j].pos[1], strips->vertexs[j].pos[2]);
@@ -567,13 +567,13 @@ void PreDrawAlphaList2(void)
 /* 0x80095d0c, size 0x35c */
 void DrawAlphaList2(void)
 {
-    static anon_x_y_c_2 camPt = { 0.0f, 0.0f, 0.0f }; /* .data */
-    static anon_x_y_c_2 at = { 0.0f, 0.0f, 1.0f }; /* .data */
-    static anon_x_y_c_2 up = { 0.0f, 1.0f, 0.0f }; /* .data */
+    static tVec3 camPt = { 0.0f, 0.0f, 0.0f }; /* .data */
+    static tVec3 at = { 0.0f, 0.0f, 1.0f }; /* .data */
+    static tVec3 up = { 0.0f, 1.0f, 0.0f }; /* .data */
     int j; /* r6 */
     float *pmtx; /* r6 */
-    anon_name_width_38 *pTexDef; /* r27 */
-    anon_nVertex_iTex_10 *strips; /* r26 */
+    tTextureEx *pTexDef; /* r27 */
+    tMapStrip *strips; /* r26 */
     float v[3][4]; /* stack */
     float w[3][4]; /* stack */
     int iAddColor; /* r0 */
@@ -639,7 +639,7 @@ void DrawAlphaList2(void)
         } else {
             GXSetNumTevStages(1);
         }
-        strips = (anon_nVertex_iTex_10 *)obj->_pPack;
+        strips = (tMapStrip *)obj->_pPack;
         GXBegin(strips->iHasAlpha == 0xFECE0EE6 ? 0x98 : 0x90, 0, strips->nVertex);
         for (j = 0; j < strips->nVertex; j++) {
             GXPosition3f32(strips->vertexs[j].pos[0], strips->vertexs[j].pos[1], strips->vertexs[j].pos[2]);
@@ -667,7 +667,7 @@ float **SaveOBJMatrix(float (*mtx)[4], int cull)
 }
 
 /* 0x800960cc, size 0x44 */
-void AddPackToTexSortList(float **mtx, anon_name_width_38 *tex, unsigned int *pack, int cull, int AddColor)
+void AddPackToTexSortList(float **mtx, tTextureEx *tex, unsigned int *pack, int cull, int AddColor)
 {
     g_TexSort[s_NumTexSorted]._tex = tex;
     g_TexSort[s_NumTexSorted]._pPack = pack;
@@ -713,14 +713,14 @@ void PreDrawSortedTex(void)
 /* 0x8009624c, size 0x438 */
 void DrawSortedTex(void)
 {
-    static anon_x_y_c_2 camPt = { 0.0f, 0.0f, 0.0f }; /* .data */
-    static anon_x_y_c_2 at = { 0.0f, 0.0f, 1.0f }; /* .data */
-    static anon_x_y_c_2 up = { 0.0f, 1.0f, 0.0f }; /* .data */
+    static tVec3 camPt = { 0.0f, 0.0f, 0.0f }; /* .data */
+    static tVec3 at = { 0.0f, 0.0f, 1.0f }; /* .data */
+    static tVec3 up = { 0.0f, 1.0f, 0.0f }; /* .data */
     static int i; /* .sbss (deferred) */
     static int j; /* .sbss (deferred) */
     static float * pmtx; /* .sbss (deferred) */
-    static anon_name_width_38 *pTexDef; /* .sbss (deferred) */
-    static anon_nVertex_iTex_10 *strips; /* .sbss (deferred) */
+    static tTextureEx *pTexDef; /* .sbss (deferred) */
+    static tMapStrip *strips; /* .sbss (deferred) */
     static float v[3][4]; /* .bss (deferred) */
     static float w[3][4]; /* .bss (deferred) */
     int iAddColor; /* r0 */
@@ -787,7 +787,7 @@ void DrawSortedTex(void)
         } else {
             GXSetNumTevStages(1);
         }
-        strips = (anon_nVertex_iTex_10 *)g_TexSort[i]._pPack;
+        strips = (tMapStrip *)g_TexSort[i]._pPack;
         GXBegin(strips->iHasAlpha == 0xFECE0EE6 ? 0x98 : 0x90, 0, strips->nVertex);
         for (j = 0; j < strips->nVertex; j++) {
             GXPosition3f32(strips->vertexs[j].pos[0], strips->vertexs[j].pos[1], strips->vertexs[j].pos[2]);
@@ -810,7 +810,7 @@ void DrawSortedTex(void)
 /* 0x80096684, size 0xc0 */
 void NGCSetFog(void * pInfo)
 {
-    anon_vp_s_48 *pWinInfo; /* r0 */
+    tWindowInfo *pWinInfo; /* r0 */
     _GXColor color; /* stack */
 
     pWinInfo = pInfo;
@@ -826,10 +826,10 @@ void NGCSetFog(void * pInfo)
 }
 
 /* 0x80096744, size 0x460 */
-void PS2DrawObject(anon_numPack_name_2c *obj, anon_name_width_30 *tex, int cull)
+void PS2DrawObject(tPackedObject *obj, tTexture *tex, int cull)
 {
     int i; /* r24 */
-    anon_name_width_38 *_tex; /* r25 */
+    tTextureEx *_tex; /* r25 */
     int added = 0; /* r31 */
     float **matrix; /* r30 */
 
@@ -838,7 +838,7 @@ void PS2DrawObject(anon_numPack_name_2c *obj, anon_name_width_30 *tex, int cull)
     matrix = SaveOBJMatrix(ObjectMTX, cull);
     for (i = 0; i < (obj->iHaveFWBW ? obj->nStrips / 3 : obj->nStrips); i++) {
         if (tex) {
-            _tex = (anon_name_width_38 *)tex->strip;
+            _tex = (tTextureEx *)tex->strip;
             if (CheckAlpha(_tex)) {
                 if (isdrawingtrack)
                     AddPackToAlphaList2(matrix, _tex, (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
@@ -850,29 +850,29 @@ void PS2DrawObject(anon_numPack_name_2c *obj, anon_name_width_30 *tex, int cull)
                 AddPackToTexSortList(matrix, _tex, (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
             }
             statsCount(3);
-        } else if (obj->strips[i].iTex >= 0 && CheckAlpha((anon_name_width_38 *)obj->tex[obj->strips[i].iTex])) {
+        } else if (obj->strips[i].iTex >= 0 && CheckAlpha((tTextureEx *)obj->tex[obj->strips[i].iTex])) {
             if (isdrawingtrack)
-                AddPackToAlphaList2(matrix, (anon_name_width_38 *)obj->tex[obj->strips[i].iTex], (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
+                AddPackToAlphaList2(matrix, (tTextureEx *)obj->tex[obj->strips[i].iTex], (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
             else
-                AddPackToAlphaList(matrix, (anon_name_width_38 *)obj->tex[obj->strips[i].iTex], (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
+                AddPackToAlphaList(matrix, (tTextureEx *)obj->tex[obj->strips[i].iTex], (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
             added = 1;
         } else if (obj->strips[i].iTex < 0) {
             AddVu1ObjPacket_WithLight((unsigned int *)&obj->strips[i], (float (*)[4])matrix, 0, 1.0f);
         } else {
-            AddPackToTexSortList(matrix, (anon_name_width_38 *)obj->tex[obj->strips[i].iTex], (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
+            AddPackToTexSortList(matrix, (tTextureEx *)obj->tex[obj->strips[i].iTex], (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
             statsCount(3);
         }
     }
     if (obj->iHaveFWBW) {
         if (!gBackwards) {
             for (i = obj->nStrips / 3; i < obj->nStrips * 2 / 3; i++) {
-                if (obj->strips[i].iTex >= 0 && CheckAlpha((anon_name_width_38 *)obj->tex[obj->strips[i].iTex])) {
-                    AddPackToAlphaList2(matrix, (anon_name_width_38 *)obj->tex[obj->strips[i].iTex], (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
+                if (obj->strips[i].iTex >= 0 && CheckAlpha((tTextureEx *)obj->tex[obj->strips[i].iTex])) {
+                    AddPackToAlphaList2(matrix, (tTextureEx *)obj->tex[obj->strips[i].iTex], (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
                     added = 1;
                 } else {
                     if (tex)
-                        _tex = (anon_name_width_38 *)tex->strip;
-                    else if (!(_tex = (anon_name_width_38 *)obj->tex[obj->strips[i].iTex]))
+                        _tex = (tTextureEx *)tex->strip;
+                    else if (!(_tex = (tTextureEx *)obj->tex[obj->strips[i].iTex]))
                         continue;
                     AddPackToTexSortList(matrix, _tex, (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
                     statsCount(3);
@@ -880,13 +880,13 @@ void PS2DrawObject(anon_numPack_name_2c *obj, anon_name_width_30 *tex, int cull)
             }
         } else {
             for (i = obj->nStrips * 2 / 3; i < obj->nStrips * 3 / 3; i++) {
-                if (obj->strips[i].iTex >= 0 && CheckAlpha((anon_name_width_38 *)obj->tex[obj->strips[i].iTex])) {
-                    AddPackToAlphaList2(matrix, (anon_name_width_38 *)obj->tex[obj->strips[i].iTex], (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
+                if (obj->strips[i].iTex >= 0 && CheckAlpha((tTextureEx *)obj->tex[obj->strips[i].iTex])) {
+                    AddPackToAlphaList2(matrix, (tTextureEx *)obj->tex[obj->strips[i].iTex], (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
                     added = 1;
                 } else {
                     if (tex)
-                        _tex = (anon_name_width_38 *)tex->strip;
-                    else if (!(_tex = (anon_name_width_38 *)obj->tex[obj->strips[i].iTex]))
+                        _tex = (tTextureEx *)tex->strip;
+                    else if (!(_tex = (tTextureEx *)obj->tex[obj->strips[i].iTex]))
                         continue;
                     AddPackToTexSortList(matrix, _tex, (unsigned int *)&obj->strips[i], cull, obj->iAddColor);
                     statsCount(3);
@@ -901,11 +901,11 @@ void PS2DrawObject(anon_numPack_name_2c *obj, anon_name_width_30 *tex, int cull)
 }
 
 /* 0x80096ba4, size 0x38 */
-void MyDrawObject(unsigned int *dlist, anon_name_width_30 *tex, int cull, int AddColor)
+void MyDrawObject(unsigned int *dlist, tTexture *tex, int cull, int AddColor)
 {
-    anon_numPack_name_2c *obj; /* r0 */
+    tPackedObject *obj; /* r0 */
 
-    obj = (anon_numPack_name_2c *)dlist;
+    obj = (tPackedObject *)dlist;
     if (!free_camera && obj) {
         obj->iAddColor = AddColor;
         PS2DrawObject(obj, tex, cull);
@@ -913,7 +913,7 @@ void MyDrawObject(unsigned int *dlist, anon_name_width_30 *tex, int cull, int Ad
 }
 
 /* 0x80096bdc, size 0xe4 */
-void ReverseArrow(anon_numPack_name_2c *obj)
+void ReverseArrow(tPackedObject *obj)
 {
     int i; /* r29 */
     int j; /* r5 */
@@ -930,7 +930,7 @@ void ReverseArrow(anon_numPack_name_2c *obj)
 }
 
 /* 0x80096cc0, size 0x194 */
-anon_numPack_name_2c *RegisterObjName(char *name, unsigned int *displaylist)
+tPackedObject *RegisterObjName(char *name, unsigned int *displaylist)
 {
     int i; /* r3 */
     int j; /* r27 */
@@ -961,11 +961,11 @@ anon_numPack_name_2c *RegisterObjName(char *name, unsigned int *displaylist)
 /* 0x80096e54, size 0x98 */
 void EnlargeALittle(unsigned int *displaylist)
 {
-    anon_numPack_name_2c *obj; /* r0 */
+    tPackedObject *obj; /* r0 */
     int i; /* r8 */
     int j; /* r9 */
 
-    obj = (anon_numPack_name_2c *)displaylist;
+    obj = (tPackedObject *)displaylist;
     for (i = 0; i < obj->nStrips; i++) {
         for (j = 0; j < obj->strips[i].nVertex; j++) {
             obj->strips[i].vertexs[j].pos[0] *= 1.01f;
@@ -978,12 +978,12 @@ void EnlargeALittle(unsigned int *displaylist)
 /* 0x80096eec, size 0x1d8 */
 void ReCalculateNormal(unsigned int *displaylist)
 {
-    anon_numPack_name_2c *obj; /* r0 */
+    tPackedObject *obj; /* r0 */
     int i; /* r29 */
     int j; /* r28 */
     float nor[3]; /* stack */
 
-    obj = (anon_numPack_name_2c *)displaylist;
+    obj = (tPackedObject *)displaylist;
     for (i = 0; i < obj->nStrips; i++) {
         for (j = 0; j < obj->strips[i].nVertex; j++) {
             float zero = 0.0f; /* a local zero: `x - 0.0f` is folded away, the target keeps the fsubs with a hoisted 0.0f */
@@ -1027,10 +1027,10 @@ int LoadGeoBinFile(int wavenum, char *groupname, int waveNum)
     int k; /* r20 */
     int fd2; /* r20 */
     char name[256]; /* stack */
-    anon_numPack_name_2c *obj; /* r3 */
+    tPackedObject *obj; /* r3 */
     int texnum; /* stack */
-    anon_name_width_30 **realidx; /* r30 */
-    anon_name_width_30 **pptex; /* r21 */
+    tTexture **realidx; /* r30 */
+    tTexture **pptex; /* r21 */
     int total; /* r19 */
     int *temp_data; /* r22 */
     int *keep_data; /* r23 */
@@ -1053,7 +1053,7 @@ int LoadGeoBinFile(int wavenum, char *groupname, int waveNum)
         group = &g_PS2GeoGroup[groupid];
         appFileRead4(fd2, &group->numObj, 4);
         appFileRead4(fd2, &size_size, 4);
-        group->_objs = AllocateMemoryHeap(0, group->numObj * sizeof(anon_numPack_name_2c));
+        group->_objs = AllocateMemoryHeap(0, group->numObj * sizeof(tPackedObject));
         pptex = AllocateMemoryHeap(0, size_size * 4);
         keep_data = AllocateMemoryHeap(0, size_size * 4 + group->numObj * 16);
         temp_data = AllocateMemoryHeap(0, (group->numObj + size_size) * 4);
@@ -1076,9 +1076,9 @@ int LoadGeoBinFile(int wavenum, char *groupname, int waveNum)
         nn = temp_name;
         for (i = 0; i < texnum; i++) {
             nn[15] = 0;
-            realidx[i] = (anon_name_width_30 *)FindPs2Texture(groupname, nn);
+            realidx[i] = (tTexture *)FindPs2Texture(groupname, nn);
             if (i == 76 && !strcmp(nn, "BRI_LIGHTHOUSE_"))
-                realidx[i] = (anon_name_width_30 *)FindPs2Texture2(groupname, nn);
+                realidx[i] = (tTexture *)FindPs2Texture2(groupname, nn);
             if (i < texnum) {
                 nn[15] = 0;
                 nn += 16;
@@ -1119,7 +1119,7 @@ int LoadGeoBinFile(int wavenum, char *groupname, int waveNum)
             obj->nStrips = cur[0];
             obj->iHaveFWBW = cur[1];
             cur += 2;
-            obj->strips = AllocateMemoryHeap(0, obj->nStrips * sizeof(anon_nVertex_iTex_10));
+            obj->strips = AllocateMemoryHeap(0, obj->nStrips * sizeof(tMapStrip));
             for (j = 0; j < obj->nStrips; j++) {
                 obj->strips[j].nVertex = cur[0];
                 obj->strips[j].iTex = cur[1];
@@ -1186,9 +1186,9 @@ void ReleaseGeoBinFile(int wavenum)
 }
 
 /* 0x80097810, size 0x20 */
-void MyDrawObjectWithEnvmap(unsigned int *dlist, anon_name_width_30 *tex, int cull)
+void MyDrawObjectWithEnvmap(unsigned int *dlist, tTexture *tex, int cull)
 {
-    PS2DrawObject((anon_numPack_name_2c *)dlist, tex, cull);
+    PS2DrawObject((tPackedObject *)dlist, tex, cull);
 }
 
 /* 0x80097830, size 0x58 */

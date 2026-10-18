@@ -26,7 +26,7 @@ anon_checksum_bestStunt_40 gTotalStuntStats[4];
 anon_checksum_scores_60 gTotalRaceStats[12];
 unsigned short gTempNameAges[20];
 unsigned char gTempNames[20][13];
-anon_ll_fileh_4c **gTotalNames[12][3][5];
+tPlayerProfile **gTotalNames[12][3][5];
 
 /* Only reconstructed functions are defined; the remaining bodies are still unmatched. */
 
@@ -38,7 +38,7 @@ void InitRecords(void)
     ClearTotalStats();
     for (i = 0; i < 12; i++) {
         for (j = 0; j < 15; j++)
-            ((anon_ll_fileh_4c ***)gTotalNames[i])[j] = (anon_ll_fileh_4c **)-1;
+            ((tPlayerProfile ***)gTotalNames[i])[j] = (tPlayerProfile **)-1;
     }
     memset(gTempNames, 0, sizeof(gTempNames));
     memset(gTempNameAges, 0, sizeof(gTempNameAges));
@@ -500,12 +500,12 @@ int IsCoinFound(int p, int coin)
 }
 
 /* Coin-address helpers preserve the original indexed field-access evaluation. */
-static inline unsigned short *raceStatsCoins(anon_nameChecksum_id_814 *data, int track)
+static inline unsigned short *raceStatsCoins(tSaveData *data, int track)
 {
     return &data->raceStats[track].coinsFound;
 }
 
-static inline unsigned short *stuntStatsCoins(anon_nameChecksum_id_814 *data, int track)
+static inline unsigned short *stuntStatsCoins(tSaveData *data, int track)
 {
     return &data->stuntStats[track].coinsFound;
 }
@@ -541,15 +541,15 @@ int CountBits(unsigned int data, unsigned char numBits)
 }
 
 /* 0x80017f78, size 0x1b4 */
-void AddPlayerScores(anon_ll_fileh_4c **player)
+void AddPlayerScores(tPlayerProfile **player)
 {
-    anon_nameChecksum_id_814 *data;
+    tSaveData *data;
     int track;
     int type;
     int scoreIdx;
     float *scores;
     float *totalScores;
-    anon_ll_fileh_4c ***totalNames;
+    tPlayerProfile ***totalNames;
     int totalIdx;
     int i;
     if (!(*player)->datah) return;
@@ -576,9 +576,9 @@ void AddPlayerScores(anon_ll_fileh_4c **player)
 }
 
 /* 0x8001812c, size 0x560 */
-void AddPlayerStats(anon_ll_fileh_4c **player)
+void AddPlayerStats(tPlayerProfile **player)
 {
-    anon_nameChecksum_id_814 *data;
+    tSaveData *data;
     int trackIdx;
     int circuitIdx;
     int stuntIdx;
@@ -635,12 +635,12 @@ void AddPlayerStats(anon_ll_fileh_4c **player)
 }
 
 /* 0x8001868c, size 0x194 */
-void RemovePlayerScores(anon_ll_fileh_4c **player)
+void RemovePlayerScores(tPlayerProfile **player)
 {
     int track;
     int type;
     float *totalScores;
-    anon_ll_fileh_4c ***totalNames;
+    tPlayerProfile ***totalNames;
     int totalIdx;
     int i;
     for (track = 0; track < 12; track++) {
@@ -654,7 +654,7 @@ void RemovePlayerScores(anon_ll_fileh_4c **player)
                         totalNames[i] = totalNames[i+1];
                     }
                     totalScores[i] = 0.0f;
-                    totalNames[i] = (anon_ll_fileh_4c **)-1;
+                    totalNames[i] = (tPlayerProfile **)-1;
                     totalIdx--;
                 }
             }
@@ -665,7 +665,7 @@ void RemovePlayerScores(anon_ll_fileh_4c **player)
 /* 0x80018820, size 0xacc */
 void CalcUnlockedStuff(void)
 {
-    anon_nameChecksum_id_814 *player;
+    tSaveData *player;
     short carIdx;
     short trackIdx;
     short p;
@@ -910,7 +910,7 @@ int FindTempNameIdx(char *name)
     for (trk = 0; trk < 12; trk++) {
         for (t = 0; t < 3; t++) {
             for (i = 0; i < 5; i++) {
-                if (gTotalNames[trk][t][i] == (anon_ll_fileh_4c **)oldest) gTotalNames[trk][t][i] = 0;
+                if (gTotalNames[trk][t][i] == (tPlayerProfile **)oldest) gTotalNames[trk][t][i] = 0;
             }
         }
     }

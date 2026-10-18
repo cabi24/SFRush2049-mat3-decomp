@@ -10,7 +10,7 @@ int gMaxObjects;
 int gNumMatrices;
 int gMaxMatrices;
 signed short ObjHead;
-static anon_mat3_mat4_30 gMatrices[300];
+static tUVMatrix gMatrices[300];
 anon_flags_culling_60 ObjInstanceList[600];
 
 /* 0x80061ec0, size 0x4 */
@@ -40,15 +40,15 @@ void ZOID_Init(void)
 }
 
 /* 0x80061f2c, size 0x1c */
-anon_mat3_mat4_30 *ZOID_FindMatrix(signed short objnum)
+tUVMatrix *ZOID_FindMatrix(signed short objnum)
 {
     return ObjInstanceList[objnum].mat;
 }
 
 /* 0x80061f48, size 0x74 */
-anon_mat3_mat4_30 *ZOID_NewMatrix(void)
+tUVMatrix *ZOID_NewMatrix(void)
 {
-    anon_mat3_mat4_30 *mat; /* r31 */
+    tUVMatrix *mat; /* r31 */
 
     {
         int n = ++gNumMatrices; /* a register temporary (not in the DWARF) */
@@ -68,7 +68,7 @@ anon_mat3_mat4_30 *ZOID_NewMatrix(void)
 /* 0x80061fbc, size 0x68 */
 void ZOID_UpdateObject(signed short objnum, float *pos, float (*uvs)[3])
 {
-    anon_mat3_mat4_30 *mat; /* r6 */
+    tUVMatrix *mat; /* r6 */
 
     mat = ObjInstanceList[objnum].mat;
     if (pos) {
@@ -192,7 +192,7 @@ void ZOID_InsertObject(signed short objnum, signed short parent)
 }
 
 /* 0x800622d0, size 0x120 */
-signed short ZOID_AddObject(int objidx, anon_mat3_mat4_30 *mat, signed short parent, unsigned int flags)
+signed short ZOID_AddObject(int objidx, tUVMatrix *mat, signed short parent, unsigned int flags)
 {
     unsigned int objnum; /* r0 */
     int i; /* r31 */

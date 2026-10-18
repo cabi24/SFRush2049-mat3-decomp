@@ -4,13 +4,13 @@
 
 #define SWAP(a, b) ((a) ^= (b), (b) ^= (a), (a) ^= (b))
 
-static anon_used_perm_20 gPaneBlits[16] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
+static tBlitSet gPaneBlits[16] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 
 /* 0x800305e8, size 0x218 */
-anon_used_perm_20 *InitPane(int x1, int y1, int x2, int y2, int alpha, int (*animFunc)(_tBlit_2 *), unsigned int animID, int permanent)
+tBlitSet *InitPane(int x1, int y1, int x2, int y2, int alpha, int (*animFunc)(_tBlit_2 *), unsigned int animID, int permanent)
 {
     int i; /* r3 (the DWARF lists a second i in r21) */
-    anon_used_perm_20 *pane; /* r28 */
+    tBlitSet *pane; /* r28 */
     for (i = 0, pane = gPaneBlits; i < 16; i++, pane++) {
         if (!pane->used) {
             break;
@@ -56,7 +56,7 @@ anon_used_perm_20 *InitPane(int x1, int y1, int x2, int y2, int alpha, int (*ani
 }
 
 /* 0x80030800, size 0x1f0 */
-void ChangePaneSize(anon_used_perm_20 *pane, int x1, int y1, int x2, int y2)
+void ChangePaneSize(tBlitSet *pane, int x1, int y1, int x2, int y2)
 {
     int i; /* r30 */
     if (x1 > x2) {
@@ -91,7 +91,7 @@ void ChangePaneSize(anon_used_perm_20 *pane, int x1, int y1, int x2, int y2)
 }
 
 /* 0x800309f0, size 0xc8 */
-void ChangePaneColor(anon_used_perm_20 *pane, unsigned char *paneColor, unsigned char *borderColor)
+void ChangePaneColor(tBlitSet *pane, unsigned char *paneColor, unsigned char *borderColor)
 {
     int i; /* r30 */
     pane->blackColor[0] = paneColor[0];
@@ -133,7 +133,7 @@ void RemovePanes(int permanent)
 }
 
 /* 0x80030b54, size 0x88 */
-void RemovePane(anon_used_perm_20 *pane)
+void RemovePane(tBlitSet *pane)
 {
     int j; /* r29 */
     if (pane && pane->used) {

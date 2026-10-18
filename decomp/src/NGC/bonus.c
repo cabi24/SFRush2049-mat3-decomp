@@ -5,27 +5,27 @@
 #undef _ReleaseTex
 /* GC target _ReleaseTex reads texDef from r4. Both original callers pass
    the texture name in r3; DWARF omits that unused first parameter. */
-void _ReleaseTex(char *name, anon_tpl_tpl2_4c *texDef);
+void _ReleaseTex(char *name, tTexPair *texDef);
 
-anon_x_y_10 _SprBonusMenu[2] = { 25.0f, 25.0f, 0.0f, 0.0f, 615.0f, 455.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprL[2] = { 82.0f, 30.0f, 0.0f, 0.0f, 102.0f, 70.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprR[2] = { 542.0f, 30.0f, 0.0f, 0.0f, 562.0f, 70.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprHydro1[2] = { 90.0f, 140.0f, 0.0f, 0.0f, 230.0f, 320.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprHydro2[2] = { 240.0f, 140.0f, 0.0f, 0.0f, 380.0f, 320.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprHydro3[2] = { 390.0f, 140.0f, 0.0f, 0.0f, 530.0f, 320.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprHydro4[2] = { 540.0f, 140.0f, 0.0f, 0.0f, 680.0f, 320.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprBigHydro[2] = { 134.0f, 0.0f, 0.0f, 0.0f, 506.0f, 480.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprWindow1[2] = { 30.0f, 100.0f, 0.0f, 0.0f, 290.0f, 365.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprWindow2[2] = { 180.0f, 100.0f, 0.0f, 0.0f, 440.0f, 365.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprWindow3[2] = { 330.0f, 100.0f, 0.0f, 0.0f, 590.0f, 365.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprWindow4[2] = { 480.0f, 100.0f, 0.0f, 0.0f, 740.0f, 365.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprArrowL[2] = { 35.0f, 30.0f, 1.0f, 0.0f, 75.0f, 70.0f, 0.0f, 1.0f };
-anon_x_y_10 _SprArrowR[2] = { 565.0f, 30.0f, 0.0f, 0.0f, 605.0f, 70.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprHistoryBar[2] = { 555.0f, 130.0f, 0.0f, 0.0f, 575.0f, 230.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprHistoryUp[2] = { 555.0f, 115.0f, 0.0f, 0.0f, 575.0f, 140.0f, 1.0f, 1.0f };
-anon_x_y_10 _SprHistoryDown[2] = { 555.0f, 365.0f, 0.0f, 1.0f, 575.0f, 390.0f, 1.0f, 0.0f };
-anon_x_y_10 _SprGalleryRight[2] = { 515.0f, 205.0f, 0.0f, 1.0f, 565.0f, 255.0f, 1.0f, 0.0f };
-anon_x_y_10 _SprGalleryLeft[2] = { 55.0f, 205.0f, 1.0f, 0.0f, 105.0f, 255.0f, 0.0f, 1.0f };
+tVertUV _SprBonusMenu[2] = { 25.0f, 25.0f, 0.0f, 0.0f, 615.0f, 455.0f, 1.0f, 1.0f };
+tVertUV _SprL[2] = { 82.0f, 30.0f, 0.0f, 0.0f, 102.0f, 70.0f, 1.0f, 1.0f };
+tVertUV _SprR[2] = { 542.0f, 30.0f, 0.0f, 0.0f, 562.0f, 70.0f, 1.0f, 1.0f };
+tVertUV _SprHydro1[2] = { 90.0f, 140.0f, 0.0f, 0.0f, 230.0f, 320.0f, 1.0f, 1.0f };
+tVertUV _SprHydro2[2] = { 240.0f, 140.0f, 0.0f, 0.0f, 380.0f, 320.0f, 1.0f, 1.0f };
+tVertUV _SprHydro3[2] = { 390.0f, 140.0f, 0.0f, 0.0f, 530.0f, 320.0f, 1.0f, 1.0f };
+tVertUV _SprHydro4[2] = { 540.0f, 140.0f, 0.0f, 0.0f, 680.0f, 320.0f, 1.0f, 1.0f };
+tVertUV _SprBigHydro[2] = { 134.0f, 0.0f, 0.0f, 0.0f, 506.0f, 480.0f, 1.0f, 1.0f };
+tVertUV _SprWindow1[2] = { 30.0f, 100.0f, 0.0f, 0.0f, 290.0f, 365.0f, 1.0f, 1.0f };
+tVertUV _SprWindow2[2] = { 180.0f, 100.0f, 0.0f, 0.0f, 440.0f, 365.0f, 1.0f, 1.0f };
+tVertUV _SprWindow3[2] = { 330.0f, 100.0f, 0.0f, 0.0f, 590.0f, 365.0f, 1.0f, 1.0f };
+tVertUV _SprWindow4[2] = { 480.0f, 100.0f, 0.0f, 0.0f, 740.0f, 365.0f, 1.0f, 1.0f };
+tVertUV _SprArrowL[2] = { 35.0f, 30.0f, 1.0f, 0.0f, 75.0f, 70.0f, 0.0f, 1.0f };
+tVertUV _SprArrowR[2] = { 565.0f, 30.0f, 0.0f, 0.0f, 605.0f, 70.0f, 1.0f, 1.0f };
+tVertUV _SprHistoryBar[2] = { 555.0f, 130.0f, 0.0f, 0.0f, 575.0f, 230.0f, 1.0f, 1.0f };
+tVertUV _SprHistoryUp[2] = { 555.0f, 115.0f, 0.0f, 0.0f, 575.0f, 140.0f, 1.0f, 1.0f };
+tVertUV _SprHistoryDown[2] = { 555.0f, 365.0f, 0.0f, 1.0f, 575.0f, 390.0f, 1.0f, 0.0f };
+tVertUV _SprGalleryRight[2] = { 515.0f, 205.0f, 0.0f, 1.0f, 565.0f, 255.0f, 1.0f, 0.0f };
+tVertUV _SprGalleryLeft[2] = { 55.0f, 205.0f, 1.0f, 0.0f, 105.0f, 255.0f, 0.0f, 1.0f };
 float _fHistoryTexY = 90.0f;
 int _nBonusTab = 0;
 int _nWindowTab = 0;
@@ -37,23 +37,23 @@ static int _bBlackBG = 0;
 float g_MoveCamX = 0;
 float g_MoveCamY = 0;
 float g_MoveCamZ = 0;
-anon_tpl_tpl2_4c _texWindow;
-anon_tpl_tpl2_4c _texHydro4;
-anon_tpl_tpl2_4c _texHydro3;
-anon_tpl_tpl2_4c _texHydro2;
-anon_tpl_tpl2_4c _texHydro1;
-anon_tpl_tpl2_4c _texBar;
-anon_tpl_tpl2_4c _texArrowRight2;
-anon_tpl_tpl2_4c _texArrowRight;
-anon_tpl_tpl2_4c _texArrowUp;
-anon_tpl_tpl2_4c _texR;
-anon_tpl_tpl2_4c _texL;
-anon_tpl_tpl2_4c _texVideo;
-anon_tpl_tpl2_4c _texGalley;
-anon_tpl_tpl2_4c _texHistory;
+tTexPair _texWindow;
+tTexPair _texHydro4;
+tTexPair _texHydro3;
+tTexPair _texHydro2;
+tTexPair _texHydro1;
+tTexPair _texBar;
+tTexPair _texArrowRight2;
+tTexPair _texArrowRight;
+tTexPair _texArrowUp;
+tTexPair _texR;
+tTexPair _texL;
+tTexPair _texVideo;
+tTexPair _texGalley;
+tTexPair _texHistory;
 
 /* 0x800b2d40, size 0xd0 */
-void _LoadTex(char *name, anon_tpl_tpl2_4c *texDef, int mask)
+void _LoadTex(char *name, tTexPair *texDef, int mask)
 {
     char FileName[1024];
     sprintf(FileName, "rush2049_data/extra/texture/%s.tpl", name);
@@ -72,7 +72,7 @@ void _LoadTex(char *name, anon_tpl_tpl2_4c *texDef, int mask)
 }
 
 /* 0x800b2e10, size 0x44 */
-void _ReleaseTex(char *name, anon_tpl_tpl2_4c *texDef)
+void _ReleaseTex(char *name, tTexPair *texDef)
 {
     NGCTEXReleasePalette(&texDef->tpl);
     if (texDef->usemask) NGCTEXReleasePalette(&texDef->tpl2);
@@ -117,7 +117,7 @@ void _ReleaseBonusTex(void)
 }
 
 /* 0x800b3054, size 0x64 */
-void _DrawSprite(anon_tpl_tpl2_4c *texDef, anon_x_y_10 *sprite, unsigned long color)
+void _DrawSprite(tTexPair *texDef, tVertUV *sprite, unsigned long color)
 {
     BlitOneTpl_LURDRGBAUV_TEX(sprite[0].x, sprite[0].y, sprite[1].x, sprite[1].y,
         sprite[0].u, sprite[0].v, sprite[1].u, sprite[1].v,

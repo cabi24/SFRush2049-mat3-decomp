@@ -2,7 +2,7 @@
 #include "rush/rush_protos.h"
 
 /* 0x80043108 */
-void InitStatLL(anon_dbl_numElements_18 *list, void *array, int elementSize, int numElements, char dbl)
+void InitStatLL(tStatList *list, void *array, int elementSize, int numElements, char dbl)
 {
     list->list = array;
     list->numElements = numElements;
@@ -12,7 +12,7 @@ void InitStatLL(anon_dbl_numElements_18 *list, void *array, int elementSize, int
 }
 
 /* 0x80043138 */
-void ClearStatLL(anon_dbl_numElements_18 *list)
+void ClearStatLL(tStatList *list)
 {
     char *array;
     int i;
@@ -28,7 +28,7 @@ void ClearStatLL(anon_dbl_numElements_18 *list)
 }
 
 /* 0x80043198 */
-void *GetStatLLE(anon_dbl_numElements_18 *list)
+void *GetStatLLE(tStatList *list)
 {
     tStatLLE *el = list->store;
 
@@ -46,7 +46,7 @@ void *GetStatLLE(anon_dbl_numElements_18 *list)
 }
 
 /* 0x800431e4 */
-void FreeStatLLE(anon_dbl_numElements_18 *list, void *element)
+void FreeStatLLE(tStatList *list, void *element)
 {
     tStatLLE *el;
     tStatLLE *prev;

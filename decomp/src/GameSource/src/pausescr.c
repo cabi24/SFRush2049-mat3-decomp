@@ -43,7 +43,7 @@ extern volatile PauseControllerData gControllerData[4];
 #undef appSleep
 void appSleep(double);
 #undef NewMultiBlit
-_tBlit_2 *NewMultiBlit(signed short, signed short, const anon_texname_dulx_24 *, signed short);
+_tBlit_2 *NewMultiBlit(signed short, signed short, const tBlitDef *, signed short);
 #undef UpdateBlit
 #undef RemoveBlit
 void UpdateBlit(_tBlit_2 *blit);
@@ -90,20 +90,20 @@ static int animSelSureText(void);
 static int animRumbleText(_tBlit_2 *blt);
 static int animRumblePane(_tBlit_2 *blt);
 
-static const anon_texname_dulx_24 DimMultiBlit[1] = { 0, 0, 0, 320, 224, -1, -1, -1, -1, 0, 0x10, (void *)&animPause, 0 };
-static const anon_texname_dulx_24 TitleMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animTitleText, 0 };
-static const anon_texname_dulx_24 SelTitleMultiBlit[1] = {
+static const tBlitDef DimMultiBlit[1] = { 0, 0, 0, 320, 224, -1, -1, -1, -1, 0, 0x10, (void *)&animPause, 0 };
+static const tBlitDef TitleMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animTitleText, 0 };
+static const tBlitDef SelTitleMultiBlit[1] = {
     (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animSelTitleText, 0
 };
-static const anon_texname_dulx_24 PauseMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animPauseText, 0 };
-static const anon_texname_dulx_24 SelPauseMultiBlit[1] = {
+static const tBlitDef PauseMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animPauseText, 0 };
+static const tBlitDef SelPauseMultiBlit[1] = {
     (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animSelPauseText, 0
 };
-static const anon_texname_dulx_24 SureMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animSureText, 0 };
-static const anon_texname_dulx_24 SelSureMultiBlit[1] = {
+static const tBlitDef SureMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animSureText, 0 };
+static const tBlitDef SelSureMultiBlit[1] = {
     (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animSelSureText, 0
 };
-static const anon_texname_dulx_24 RumbleMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animRumbleText, 0 };
+static const tBlitDef RumbleMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&animRumbleText, 0 };
 int g_CurrentControl_t[4] = { 0 }; /* explicit `= { 0 }`: the target keeps this object in initialised data (.data/.sdata), not .bss */
 static anon_x_y_18 gPlayerRects[4][4] = {
     0, 0, 320, 110, 160, 55, 0, 0, 320, 220, 160, 110, 0, 0, 320, 220, 160, 110, 0, 0, 320, 220,
@@ -131,10 +131,10 @@ static int pre_control_PauseState;
 static int _mcID;
 static signed char gYes;
 static signed char gControllerRemoved;
-static anon_used_perm_20 *gSelSurePane;
-static anon_used_perm_20 *gSelMenuPane;
-static anon_used_perm_20 *gSelTitlePane;
-static anon_used_perm_20 *gTitlePane;
+static tBlitSet *gSelSurePane;
+static tBlitSet *gSelMenuPane;
+static tBlitSet *gSelTitlePane;
+static tBlitSet *gTitlePane;
 static _tBlit_2 *RumbleBlit;
 static _tBlit_2 *SelSureBlit;
 static _tBlit_2 *SureBlit;
@@ -177,8 +177,8 @@ static int _animControllerText(void)
 /* 0x80077aa8, size 0x3d0 */
 void updatePauseScreen(void)
 {
-    static const anon_texname_dulx_24 dimMultiBlit[1] = { 0, 0, 0, 320, 224, -1, -1, -1, -1, 0, 0xc0, (void *)&_animControllerDim, 0 };
-    static const anon_texname_dulx_24 titleMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&_animControllerText, 0 };
+    static const tBlitDef dimMultiBlit[1] = { 0, 0, 0, 320, 224, -1, -1, -1, -1, 0, 0xc0, (void *)&_animControllerDim, 0 };
+    static const tBlitDef titleMultiBlit[1] = { (void *)0xffffffff, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, (void *)&_animControllerText, 0 };
     int i;
     if ((gPauseState == 0 || gPauseState == 1 || gPauseState == 6 || gPauseState == 7 || gPauseState == 8) && gSoftReset) {
         gRestartGame = 0;

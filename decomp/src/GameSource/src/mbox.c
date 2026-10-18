@@ -7,11 +7,11 @@ unsigned char gNumModels;
 anon_palDefs_count_8 gPalDefPtrs[64];
 anon_texDefs_count_8 gTexDefPtrs[64];
 
-static int objcmp(const anon_name_radius_48 *obj1, const anon_name_radius_48 *obj2);
-static int texcmp(const anon_name_width_30 *ta, const anon_name_width_30 *tb);
+static int objcmp(const tModelDef *obj1, const tModelDef *obj2);
+static int texcmp(const tTexture *ta, const tTexture *tb);
 
 /* 0x80028b40, size 0x24 */
-signed short MBOX_NewObject(int obj, anon_mat3_mat4_30 *mat, int parent, unsigned int flags)
+signed short MBOX_NewObject(int obj, tUVMatrix *mat, int parent, unsigned int flags)
 {
     signed short dlidx; /* r0 */
     dlidx = ZOID_AddObject(obj, mat, parent, flags);
@@ -19,7 +19,7 @@ signed short MBOX_NewObject(int obj, anon_mat3_mat4_30 *mat, int parent, unsigne
 }
 
 /* 0x80028b64, size 0x38 */
-signed short MBOX_NewObjectCam(int obj, anon_mat3_mat4_30 *mat, signed short camlink, int parent, unsigned int flags)
+signed short MBOX_NewObjectCam(int obj, tUVMatrix *mat, signed short camlink, int parent, unsigned int flags)
 {
     signed short dlidx; /* r0 */
     dlidx = ZOID_AddObject(obj, mat, parent, flags | ((camlink << 8) ^ 0xf00));
@@ -110,7 +110,7 @@ void MBOX_ShowObject(int dlidx, int mode, int camlink)
 }
 
 /* 0x80028e04, size 0x3c */
-static int objcmp(const anon_name_radius_48 *obj1, const anon_name_radius_48 *obj2)
+static int objcmp(const tModelDef *obj1, const tModelDef *obj2)
 {
     if (!obj1 || !obj2) {
         return -1;
@@ -152,8 +152,8 @@ float MBOX_GetObjectRadius(int mbidx)
 int MBOX_FindObject_WORK(const char *name, signed char firstModel, signed char lastModel, int flag)
 {
     int i; /* r27 */
-    anon_name_radius_48 odef; /* stack */
-    anon_name_radius_48 *ptr; /* r31 */
+    tModelDef odef; /* stack */
+    tModelDef *ptr; /* r31 */
     ptr = 0;
     if (!name || !name[0]) {
         strcpy(odef.name, "AAANULLOBJ");
@@ -168,7 +168,7 @@ int MBOX_FindObject_WORK(const char *name, signed char firstModel, signed char l
     }
     for (i = firstModel; i <= lastModel; i++) {
         if (ModelActive(i)) {
-            ptr = bsearch(&odef, gRomObjDefPtrs[i].romObjDefs, gRomObjDefPtrs[i].count, sizeof(anon_name_radius_48),
+            ptr = bsearch(&odef, gRomObjDefPtrs[i].romObjDefs, gRomObjDefPtrs[i].count, sizeof(tModelDef),
                           (int (*)(void *, void *))objcmp);
             if (ptr) {
                 break;
@@ -182,18 +182,18 @@ int MBOX_FindObject_WORK(const char *name, signed char firstModel, signed char l
 }
 
 /* 0x80029098, size 0x20 */
-static int texcmp(const anon_name_width_30 *ta, const anon_name_width_30 *tb)
+static int texcmp(const tTexture *ta, const tTexture *tb)
 {
     return strcmp(ta->name, tb->name);
 }
 
 /* 0x800290b8, size 0x128 */
 /* Callers pass a fifth argument (see overrides.json). */
-anon_name_width_30 *MBOX_FindTexture_WORK(const char *name, unsigned short *index, signed char firstModel, signed char lastModel, int flag)
+tTexture *MBOX_FindTexture_WORK(const char *name, unsigned short *index, signed char firstModel, signed char lastModel, int flag)
 {
     int i; /* r26 */
-    anon_name_width_30 ti; /* stack */
-    anon_name_width_30 *ptr; /* r31 */
+    tTexture ti; /* stack */
+    tTexture *ptr; /* r31 */
     ptr = 0;
     strcpy(ti.name, name);
     if (firstModel < 0) {
@@ -204,7 +204,7 @@ anon_name_width_30 *MBOX_FindTexture_WORK(const char *name, unsigned short *inde
     }
     for (i = firstModel; i <= lastModel; i++) {
         if (ModelActive(i)) {
-            ptr = bsearch(&ti, gTexDefPtrs[i].texDefs, gTexDefPtrs[i].count, sizeof(anon_name_width_30),
+            ptr = bsearch(&ti, gTexDefPtrs[i].texDefs, gTexDefPtrs[i].count, sizeof(tTexture),
                           (int (*)(void *, void *))texcmp);
             if (ptr) {
                 break;
