@@ -1,10 +1,37 @@
-/* resurrect.c - car resurrection after crashes and aborts. Status: Matching. */
+/* resurrect.c - respawning cars after a crash or an abort. Status: Matching.
+ *
+ * Life cycle of a crash (states in rush_flags.h):
+ *   crashflag set by the physics -> CheckCrash: SetResurrectionData(INIT_MODE_CRASH) saves the
+ *     crash point, crash_state = CRASH_WRECKED (the burning hulk is shown)
+ *   3.5 s later (2.25 s in battle) crash_state = CRASH_RESPAWN; mdrive.c _UpdateModel calls
+ *     End_MDrive + Init_MDrive(INIT_MODE_CRASH) -> multiinit -> Resurrect()
+ *   Resurrect: pick the respawn point (the resurrection path near the crash for humans, the
+ *     car's AI path for drones), move it forward by the distance the car would have covered
+ *     meanwhile, and start the respawn flight (moving_state = RES_START)
+ *   UpdateResurrectingCar, every tick: the car flies there on an arc (rises for the first half,
+ *     drops for the second) while its orientation is blended between two quaternions
+ *   then moving_state = RES_DONE; FinishResurrecting re-inits the physics at the point with
+ *     the respawn speed; the car stays non-solid and blinks (BlinkResurrectingCars) until
+ *     _UpdateModel makes it solid again
+ * AbortCar/DetectDroneAbort skip the wreck stage (reset button, falling out of the world,
+ * a stuck AI car).
+ *
+ * Paths: gResPath (the respawn path, plus alternate branches in gResPath.alt[]), gDronePaths[]
+ * (AI racing lines, with a target speed in mph per point) and gCheckpoints, all from the track
+ * data. A checkpoint's pathPts[] gives its point index on each path: [0] = gResPath,
+ * [1 + n] = gDronePaths[n], [5 + n] = gResPath.alt[n] (-1 = the path does not reach it).
+ *
+ * PORT: surface_sqrt below is a PowerPC __frsqrte Newton iteration; use sqrtf.
+ * PORT: `#pragma force_active` is CodeWarrior-only (keeps unreferenced statics); drop it.
+ * PORT: the path and checkpoint tables are read from big-endian track files.
+ */
 
 #include "rush/rush_types.h"
 
 #define MSL_NO_SQRTF
 
 #include "msl_math_inline.h"
+#include "rush_flags.h"
 
 extern tCarData gGameCar[6];
 
@@ -128,8 +155,10 @@ extern int CountdownTimeOut(void);
 
 extern void PassedCP(tModelData *m,float time);
 
-static float res_last_time[4] = {0.0f,0.0f,0.0f,0.0f};
+static float res_last_time[4] = {0.0f,0.0f,0.0f,0.0f}; /* per human: model time of the last in-place respawn */
 
+/* starting-grid offsets in feet (x, y, z) per pole position; rows 6-11 are never read, since
+ * polepos >= 6 (a respawn) gets no offset */
 static const float pole_pos_offset[12][3] = {
     {0,0,0},{17,0,0},{-8.5f,0,-20},{8.5f,0,-20},{0,0,-40},{17,0,-40},
     {-3.4f,0,0},{3.4f,0,0},{-23.8f,0,0},{-17,0,0},{-10.2f,0,0},{10.2f,0,0}
@@ -179,6 +208,7 @@ void AbortCar(signed short drone_index, int death);
 void DetectDroneAbort(void);
 int AreWeSolid(signed short node);
 
+/* Start a car's respawn (or, at race start, place it on the grid); see the file comment. */
 void Resurrect(tModelData *m)
 {
     int inPlace;
@@ -191,21 +221,22 @@ void Resurrect(tModelData *m)
     int human;
     if (gDeathMode && m->resurrect.crash_time != 0.0f && !m->resurrect.autoAbort) return;
     m->resurrect.autoAbort = 0;
-    human = gLink[node].owner == 6;
+    human = gLink[node].owner == LINK_OWNER_HUMAN;
     if (human && m->fastin.modelTime < res_last_time[m->slot]) res_last_time[m->slot] = 0.0f;
     inPlace = 0;
+    /* the respawn-in-place option: at most once every 2 s, never out of water or in death mode */
     if (human && !m->resurrect.waterAbort && gResurrectInPlace &&
         2.0f + res_last_time[m->slot] < m->fastin.modelTime && !gDeathMode) {
         inPlace = 1;
         res_last_time[m->slot] = m->fastin.modelTime;
     }
     m->resurrect.waterAbort = 0;
-    if (m->resurrect.crash_time == 0.0f) {
+    if (m->resurrect.crash_time == 0.0f) { /* race start: drop straight onto the grid slot */
         m->initin.pos[0] = m->resurrect.save_pos[0];
         m->initin.pos[1] = m->resurrect.save_pos[1];
         m->initin.pos[2] = m->resurrect.save_pos[2];
         CopyUV(m->resurrect.uvs,m->initin.uvs);
-        if ((unsigned int)(gRace-kStunt) <= 2 || m->initin.polepos >= 6) {
+        if ((unsigned int)(gRace-kStunt) <= 2 || m->initin.polepos >= 6) { /* stunt, obstacle, battle */
             m->initin.offset[0] = 0.0f;
             m->initin.offset[1] = 0.0f;
             m->initin.offset[2] = 0.0f;
@@ -214,10 +245,10 @@ void Resurrect(tModelData *m)
             m->initin.offset[1] = pole_pos_offset[m->initin.polepos][1];
             m->initin.offset[2] = pole_pos_offset[m->initin.polepos][2];
         }
-        m->resurrect.moving_state = -1;
+        m->resurrect.moving_state = RES_IDLE;
         syminit(m);
-        if (gGameState & 8) {
-            m->resurrect.velocity = (1.4666667f * gDronePaths[gc->mpctl.path].pts[gCheckpoints.points[m->last_cp_index].pathPts[gc->mpctl.path+1]].mph) / 2.0f;
+        if (gGameState & GS_DEMO) { /* attract mode starts rolling at half the path speed */
+            m->resurrect.velocity = (MPH_TO_FTPS * gDronePaths[gc->mpctl.path].pts[gCheckpoints.points[m->last_cp_index].pathPts[gc->mpctl.path+1]].mph) / 2.0f;
             m->v[2] = m->resurrect.velocity;
             for (i = 0;i < 4;i++) {
                 m->tireV[i][2] = m->resurrect.velocity;
@@ -234,11 +265,13 @@ void Resurrect(tModelData *m)
         m->resurrect.velocity = 0;
         if (!FindSurfaceUvsInPlace(m->resurrect.pos,m->reckon.uvs,m->resurrect.uvs)) {
             m->resurrect.pos[1] += 10.0f;
-            m->appearance &= ~0x10;
+            m->appearance &= ~APPEAR_HULK;
             m->crashflag = 0;
             goto finish;
         }
     }
+    /* a car that was solid when it crashed is moved 10% further, one that had only just
+     * respawned (not yet solid) 20% less */
     time_scale = gc->solid ? 1.1f : 0.8f;
     gc->collidable = m->collidable = 0;
     gc->solid = m->solid = 0;
@@ -253,12 +286,13 @@ void Resurrect(tModelData *m)
             m->resurrect.pos[2] = gResPath.alt[startPath].pts[startIdx][2];
             m->resurrect.velocity = 0;
             FindSurfaceUvsFromResPoint(1,startPath,startIdx,m->resurrect.uvs);
-            m->appearance &= ~0x10;
+            m->appearance &= ~APPEAR_HULK;
             m->crashflag = 0;
             goto finish;
         }
     } else FindDroneResPt(m,&startPath,&startIdx);
     m->resurrect.resurrect_time = m->fastin.modelTime;
+    /* flight time: near-instant in single race, practice, circuit, ghost and obstacle */
     if (gRace == kObstacle || (unsigned int)gRace <= 1 || gRace == kCircuit || gRace == kGhost)
         resurrectTime = 0.01f;
     else resurrectTime = 1.5f;
@@ -269,16 +303,17 @@ void Resurrect(tModelData *m)
         m->resurrect.velocity = 1;
     } else if (human) {
         i = FindClosestPathPt(startPath >= 0 ? gResPath.alt[startPath].pts[startIdx] : gResPath.pts[startIdx],0);
-        m->resurrect.velocity = 1.4666667f * gDronePaths[0].pts[i].mph;
+        m->resurrect.velocity = MPH_TO_FTPS * gDronePaths[0].pts[i].mph;
     } else {
-        m->resurrect.velocity = 1.4666667f * gDronePaths[startPath].pts[startIdx].mph;
+        m->resurrect.velocity = MPH_TO_FTPS * gDronePaths[startPath].pts[startIdx].mph;
     }
-    if (m->resurrect.velocity > 146.66667f) m->resurrect.velocity = 146.66667f;
+    if (m->resurrect.velocity > 146.66667f) m->resurrect.velocity = 146.66667f; /* 100 mph */
+    /* skip ahead the distance covered at that speed while wrecked and flying (path points ~20 ft apart?) */
     jumpPts = crash_time * (m->resurrect.velocity * time_scale) / 20.0f;
     if (m->next_cp_index == gCheckpoints.finishPt && m->laps == gNumLaps - 1 &&
         gRace != kPractice && gRace != kStunt && gRace != kBattle && gRace != kObstacle) {
         numPts = NumPtsToCheckpoint(human,startPath,startIdx,m->next_cp_index) / 2;
-        if (jumpPts > numPts) jumpPts = numPts;
+        if (jumpPts > numPts) jumpPts = numPts; /* last lap: never skip past half the way to the line */
     }
     TracePathPtForward(human,startPath,startIdx,jumpPts,&endPath,&endIdx);
     if (endPath >= 0) {
@@ -308,7 +343,7 @@ void Resurrect(tModelData *m)
              !CountdownTimeOut()) PassedCP(m,m->fastin.modelTime);
     }
     if (gRace != kPractice && gRace != kBattle && gRace != kStunt && gRace != kObstacle)
-        m->resurrect.velocity = 58;
+        m->resurrect.velocity = 58; /* racing modes always respawn at ~40 mph */
     FindSurfaceUvsFromResPoint(human,endPath,endIdx,m->resurrect.uvs);
 finish:
     m->initin.offset[0] = 0.0f;
@@ -317,7 +352,7 @@ finish:
     MakeQuatFromUvs(m->uvs,m->resurrect.quat_start);
     MakeQuatFromUvs(m->resurrect.uvs,m->resurrect.quat_end);
     FindBestQuat(m->resurrect.quat_start,m->resurrect.quat_end);
-    m->resurrect.moving_state = 0;
+    m->resurrect.moving_state = RES_START;
     CopyUV(m->reckon.uvs,m->initin.uvs);
     m->initin.pos[0] = m->reckon.rwr[0];
     m->initin.pos[1] = m->reckon.rwr[1];
@@ -338,6 +373,8 @@ finish:
     gc->restart = 1;
 }
 
+/* Obstacle course: remember the furthest respawn point car 0 has reached (obResPt). Points come
+ * in pairs; an even point counts once the car is past it along the pair's direction. */
 void GetResPt(void)
 {
     int p,idx;
@@ -369,6 +406,9 @@ void GetResPt(void)
 }
 
 #pragma force_active on
+/* Respawn point for a human car: nearest point on the respawn path (or an alternate branch when
+ * the main path is far), kept between the car's last and next checkpoints. Battle picks the
+ * point furthest from the other players; obstacle uses obResPt. outPath -1 = the main path. */
 static void FindHumanResPt(tModelData *m, int *outPath, int *outIdx)
 {
     int a;
@@ -378,7 +418,7 @@ static void FindHumanResPt(tModelData *m, int *outPath, int *outIdx)
     float min = 1.0e20f;
     float x, y, z;
     float dx, dy, dz, dist;
-    if (gRace == kBattle) {
+    if (gRace == kBattle) { /* battle: the arena point furthest from every other player */
         float min2 = 0.0f;
         int bestfit = 0;
         int pOffset = Random(gResPath.numPts);
@@ -389,7 +429,7 @@ static void FindHumanResPt(tModelData *m, int *outPath, int *outIdx)
             if (pReal >= gResPath.numPts) pReal -= gResPath.numPts;
             for (a = 0; a < gNumPlayers; a++) {
                 if (m->slot == a) continue;
-                if (model[a].resurrect.moving_state >= 0) {
+                if (model[a].resurrect.moving_state >= 0) { /* mid-flight: use where it will land */
                     x = model[a].resurrect.pos[0];
                     z = model[a].resurrect.pos[2];
                 } else {
@@ -420,8 +460,8 @@ static void FindHumanResPt(tModelData *m, int *outPath, int *outIdx)
             dist = dx * dx + dy * dy + dz * dz;
             if (dist < min) { min = dist; idx = p; }
         }
-        if ((unsigned int)(gRace - kStunt) > 1) {
-            if (min > 1600.0f) {
+        if ((unsigned int)(gRace - kStunt) > 1) { /* not stunt or obstacle */
+            if (min > 1600.0f) { /* more than 40 ft off the main path: try the alternate branches */
                 for (a = 0; a < gResPath.numAlt; a++) {
                     if ((gResPath.alt[a].resurrect == 0 && gRace == kPractice) ||
                         (gResPath.alt[a].resurrect == 2 && gRace != kPractice)) continue;
@@ -485,6 +525,7 @@ static void FindHumanResPt(tModelData *m, int *outPath, int *outIdx)
 #pragma force_active reset
 
 #pragma force_active on
+/* Respawn point for an AI car: nearest point of its own racing line between its checkpoints. */
 static void FindDroneResPt(tModelData *m, int *outPath, int *outIdx)
 {
     int pathIndex=((tCarData *)((char *)gGameCar+m->slot*sizeof(tCarData)))->mpctl.path;
@@ -512,6 +553,9 @@ static void FindDroneResPt(tModelData *m, int *outPath, int *outIdx)
 #pragma force_active reset
 
 #pragma force_active on
+/* Orientation (uvs, a 3x3 rotation) for a car placed at a path point: the road surface's
+ * orientation turned to face the next point; pitched along the path if there is no road
+ * underneath. res: 1 = gResPath, 0 = gDronePaths. */
 static void FindSurfaceUvsFromResPoint(int res, int path, int idx, float (*uvs)[3])
 {
     float sine, cosine, yaw, angle;
@@ -587,6 +631,8 @@ static void FindSurfaceUvsFromResPoint(int res, int path, int idx, float (*uvs)[
 #pragma force_active reset
 
 #pragma force_active on
+/* Orientation for an in-place respawn: keep the car's heading on the road below it. Returns 1
+ * if that surface is flagged 0x2000, which Resurrect treats as unusable (? water). */
 static int FindSurfaceUvsInPlace(float *inPos, float (*inUvs)[3], float (*uvs)[3])
 {
     float sine, cosine, inYaw, outYaw;
@@ -610,6 +656,7 @@ static int FindSurfaceUvsInPlace(float *inPos, float (*inUvs)[3], float (*uvs)[3
 }
 #pragma force_active reset
 
+/* Rotation matrix from a quaternion q[0..3] = (w, x, y, z), normalising on the fly. */
 void MakeUvsFromQuat(float *q, float (*uvs)[3])
 {
     float Nq;
@@ -631,6 +678,7 @@ void MakeUvsFromQuat(float *q, float (*uvs)[3])
     uvs[2][2]=Nq*(q11-q22-q33+q44);
 }
 
+/* Unnormalised quaternion from a rotation matrix (MakeUvsFromQuat normalises). */
 void MakeQuatFromUvs(float (*uvs)[3], float *q)
 {
     if (uvs[0][0] >= 0.0f) {
@@ -661,6 +709,7 @@ void MakeQuatFromUvs(float (*uvs)[3], float *q)
 }
 
 #pragma force_active on
+/* q and -q are the same rotation: flip q2 so the blend from q1 takes the short way round. */
 static void FindBestQuat(float *q1, float *q2)
 {
     signed short i;
@@ -680,6 +729,7 @@ static void FindBestQuat(float *q1, float *q2)
 }
 #pragma force_active reset
 
+/* Linear interpolation of p_size floats: value inab on the scale vala..valb. */
 void Interpolate(float *pointa, float *pointb, signed short p_size,
                  float vala, float valb, float inab, float *pointab)
 {
@@ -691,12 +741,14 @@ void Interpolate(float *pointa, float *pointb, signed short p_size,
         pointab[i] = pointa[i] + scale * (pointb[i] - pointa[i]);
 }
 
+/* Record where a car will respawn from: the race start point (demo path point, arena
+ * checkpoint, or the last checkpoint), or the crash point and time. `abort` is unused. */
 void SetResurrectionData(signed short mode,tModelData *m,int abort)
 {
     int p;
     switch(mode) {
-    case 0:
-        if(gGameState&8) {
+    case INIT_MODE_START:
+        if(gGameState&GS_DEMO) {
             FindSurfaceUvsFromResPoint(1,-1,gDemoPathPt,m->resurrect.uvs);
             for(p=gCheckpoints.numPoints-1;p>=0;p--) {
                 if(gDemoPathPt>=gCheckpoints.points[p].pathPts[0]) {
@@ -709,7 +761,7 @@ void SetResurrectionData(signed short mode,tModelData *m,int abort)
             m->resurrect.save_pos[0]=gDronePaths[gGameCar[m->slot].mpctl.path].pts[gGameCar[m->slot].mpctl.idx].pos[0];
             m->resurrect.save_pos[1]=gDronePaths[gGameCar[m->slot].mpctl.path].pts[gGameCar[m->slot].mpctl.idx].pos[1];
             m->resurrect.save_pos[2]=gDronePaths[gGameCar[m->slot].mpctl.path].pts[gGameCar[m->slot].mpctl.idx].pos[2];
-        } else if(gRace==kBattle || gRace==kStunt) {
+        } else if(gRace==kBattle || gRace==kStunt) { /* arena modes: start at checkpoint 0/2/1/3 by slot */
             m->resurrect.save_pos[0]=gCheckpoints.points[(m->slot==0 ? 0 : m->slot==1 ? 2 : m->slot==2 ? 1 : 3)].pos[0];
             m->resurrect.save_pos[1]=gCheckpoints.points[(m->slot==0 ? 0 : m->slot==1 ? 2 : m->slot==2 ? 1 : 3)].pos[1];
             m->resurrect.save_pos[2]=gCheckpoints.points[(m->slot==0 ? 0 : m->slot==1 ? 2 : m->slot==2 ? 1 : 3)].pos[2];
@@ -735,9 +787,9 @@ void SetResurrectionData(signed short mode,tModelData *m,int abort)
         }
         m->resurrect.crash_time=0.0f;
         break;
-    case 1:
+    case INIT_MODE_KEEP:
         break;
-    case 2:
+    case INIT_MODE_CRASH:
         m->resurrect.save_pos[0]=m->reckon.rwr[0];
         m->resurrect.save_pos[1]=m->reckon.rwr[1];
         m->resurrect.save_pos[2]=m->reckon.rwr[2];
@@ -746,6 +798,7 @@ void SetResurrectionData(signed short mode,tModelData *m,int abort)
     }
 }
 
+/* Attract mode: cycle through a few starting points along each track (and reversed track). */
 void InitDemoPathPoint(void)
 {
     static signed short track1[]={0,242,494};
@@ -771,44 +824,47 @@ void InitDemoPathPoint(void)
     gDemoPathPt=demo_path_points[track][dindex];
 }
 
+/* Crash bookkeeping, once per tick: crashflag -> wreck -> respawn after 3.5 s (battle 2.25 s). */
 void CheckCrash(signed short drone_index)
 {
     tCarData *gc=&gGameCar[drone_index];
     tModelData *m=&model[drone_index];
     switch (gc->crash_state) {
-    case 2:
+    case CRASH_RESPAWN:
         break;
-    case 0:
-        if (gc->dead <= 0 && m->crashflag) {
+    case CRASH_NONE:
+        if (gc->dead <= CAR_ALIVE && m->crashflag) {
             gc->restart=-1;
-            SetResurrectionData(2,m,0);
-            gc->crash_state=1;
+            SetResurrectionData(INIT_MODE_CRASH,m,0);
+            gc->crash_state=CRASH_WRECKED;
             gc->crashtime=m->fastin.modelTime;
         }
         break;
-    case 1:
+    case CRASH_WRECKED:
         if (gRace == kBattle) {
             if (m->fastin.modelTime-gc->crashtime > 2.25f)
-                gc->crash_state=2;
+                gc->crash_state=CRASH_RESPAWN;
         } else {
             if (m->fastin.modelTime-gc->crashtime > 3.5f)
-                gc->crash_state=2;
+                gc->crash_state=CRASH_RESPAWN;
         }
         break;
     }
 }
 
+/* End of the respawn flight: re-init the physics at the point, set gear and wheel speeds for
+ * the respawn velocity, and restart the car. */
 void FinishResurrecting(tModelData *m)
 {
-    if (m->resurrect.moving_state == -2) {
+    if (m->resurrect.moving_state == RES_DONE) {
         m->fastin.modelrun=0;
-        m->resurrect.moving_state=-1;
+        m->resurrect.moving_state=RES_IDLE;
         m->initin.pos[0]=m->resurrect.pos[0];
         m->initin.pos[1]=m->resurrect.pos[1];
         m->initin.pos[2]=m->resurrect.pos[2];
         CopyUV(m->resurrect.uvs,m->initin.uvs);
         syminit(m);
-        if ((float)m->resurrect.velocity >= 44.0f) {
+        if ((float)m->resurrect.velocity >= 44.0f) { /* 30 mph: 2nd gear */
             m->gear=m->commandgear=m->mainin.gear=2;
         } else {
             m->gear=m->commandgear=m->mainin.gear=1;
@@ -826,6 +882,7 @@ void FinishResurrecting(tModelData *m)
     }
 }
 
+/* One tick of the respawn flight: position along the arc and blended orientation. */
 void UpdateResurrectingCar(tModelData *m)
 {
     static float save_pos[6][3];
@@ -833,7 +890,7 @@ void UpdateResurrectingCar(tModelData *m)
     float f32_state,temp,scale;
     float uvs[3][3],quat[4];
     signed short i,node=m->slot;
-    if(m->resurrect.moving_state==0) {
+    if(m->resurrect.moving_state==RES_START) { /* first tick: the arc's apex, raised by 1/8 of the distance (max 100 ft) */
         pos2[0]=m->initin.pos[0]-m->resurrect.pos[0];
         pos2[1]=m->initin.pos[1]-m->resurrect.pos[1];
         pos2[2]=m->initin.pos[2]-m->resurrect.pos[2];
@@ -842,23 +899,23 @@ void UpdateResurrectingCar(tModelData *m)
         if(temp>100.0f) temp=100.0f;
         Interpolate(m->initin.pos,m->resurrect.pos,3,0.0f,resurrectTime,resurrectTime/2.0f,save_pos[node]);
         save_pos[node][1]+=temp;
-        m->appearance&=~8;
+        m->appearance&=~APPEAR_INVISIBLE;
     }
     m->resurrect.moving_state++;
     f32_state=m->fastin.modelTime-m->resurrect.resurrect_time;
     if(f32_state>resurrectTime) {
-        if(m->appearance&16) m->appearance&=~16;
-        m->resurrect.moving_state=-2;
-        if(gLink[node].owner==6 || m->we_control) m->hide_car=0;
+        if(m->appearance&APPEAR_HULK) m->appearance&=~APPEAR_HULK;
+        m->resurrect.moving_state=RES_DONE;
+        if(gLink[node].owner==LINK_OWNER_HUMAN || m->we_control) m->hide_car=0;
     } else {
-        if(m->appearance&16) m->appearance&=~16;
-        if(f32_state<resurrectTime/2.0f) {
+        if(m->appearance&APPEAR_HULK) m->appearance&=~APPEAR_HULK;
+        if(f32_state<resurrectTime/2.0f) { /* first half: rise to the apex and turn; the human car's velocity bleeds off */
             scale=2.0f*f32_state*f32_state/resurrectTime;
             Interpolate(m->initin.pos,save_pos[node],3,0.0f,resurrectTime/2.0f,scale,pos);
             Interpolate(m->resurrect.quat_start,m->resurrect.quat_end,4,0.0f,resurrectTime/2.0f,scale,quat);
             MakeUvsFromQuat(quat,uvs);
             scale=1.0f-2.0f*scale/resurrectTime;
-            if(gLink[node].owner==6) {
+            if(gLink[node].owner==LINK_OWNER_HUMAN) {
                 for(i=0;i<3;i++) {
                     if(fabs(m->rwv[i]*=scale)<0.01f) m->rwv[i]=0.0f;
                 }
@@ -874,6 +931,7 @@ void UpdateResurrectingCar(tModelData *m)
     }
 }
 
+/* Blink non-solid (just respawned) cars; the hidden phase shortens after 2 s and 4 s. */
 void BlinkResurrectingCars(void)
 {
     signed short i;
@@ -885,37 +943,44 @@ void BlinkResurrectingCars(void)
                 if (--gGameCar[i].collide_count < 0) {
                     if (++gGameCar[i].collide_state & 1) {
                         gGameCar[i].collide_count = 0;
-                        model[i].appearance &= ~8;
+                        model[i].appearance &= ~APPEAR_INVISIBLE;
                     } else {
+                        /* hidden phase: longest in the first 2 s, shorter up to 4 s, then one frame */
                         switch ((int)delta_time) {
                         case 0: case 1: gGameCar[i].collide_count = 2; break;
                         case 2: case 3: gGameCar[i].collide_count = 1; break;
                         default: gGameCar[i].collide_count = 0; break;
                         }
-                        if (gGameCar[i].dead <= 0)
-                            model[i].appearance |= 8;
+                        if (gGameCar[i].dead <= CAR_ALIVE)
+                            model[i].appearance |= APPEAR_INVISIBLE;
                     }
                 }
             } else {
-                model[i].appearance &= ~8;
+                model[i].appearance &= ~APPEAR_INVISIBLE;
             }
         }
     }
 }
 
+/* Respawn a car now, skipping the wreck (abort control, fell out of the world). Resets stunt
+ * and battle state for the car. With `death` set in death mode the car is knocked out instead
+ * (dead = CAR_ALIVE makes Init_MDrive switch it to CAR_DYING). */
 void AbortCar(signed short drone_index, int death)
 {
-    if (gModelTime < 5.0f) return;
+    if (gModelTime < 5.0f) return; /* no aborts in the first 5 s of a race */
     if (gRace == kStunt) CrashedStunt(drone_index);
     if (gRace == kBattle) InitBattlePlayer(drone_index);
-    SetResurrectionData(2,&model[drone_index],1);
-    gGameCar[drone_index].crash_state=2;
+    SetResurrectionData(INIT_MODE_CRASH,&model[drone_index],1);
+    gGameCar[drone_index].crash_state=CRASH_RESPAWN;
     if (gDeathMode && death)
-        gGameCar[drone_index].dead=0;
+        gGameCar[drone_index].dead=CAR_ALIVE;
     else
-        gGameCar[drone_index].dead=-1;
+        gGameCar[drone_index].dead=CAR_ABORTED;
 }
 
+/* Per tick: abort cars that fell out of the world or that the AI says are stuck, and for each
+ * human measure how far they point away from the road ahead when not making progress for 2 s
+ * (strayAngle; hud.c shows WRONG WAY beyond +-90 degrees). */
 void DetectDroneAbort(void)
 {
     signed short i,node,abort_me;
@@ -934,27 +999,30 @@ void DetectDroneAbort(void)
     for(i=0;i<gNumActiveCars;i++) {
         node=model[i].slot;
         m=&model[node];
-        if(m->we_control || gLink[node].owner==6) {
+        if(m->we_control || gLink[node].owner==LINK_OWNER_HUMAN) {
             gc=&gGameCar[node];
             abort_me=m->please_abort_me;
-            if(gc->dr_pos[1]<-190.0f && !gc->dead && !gc->crash_state && m->resurrect.moving_state==-1) {
+            /* fell out of the world */
+            if(gc->dr_pos[1]<-190.0f && !gc->dead && !gc->crash_state && m->resurrect.moving_state==RES_IDLE) {
                 m->resurrect.autoAbort=1;
                 AbortCar(m->slot,0);
                 return;
             }
-            if((unsigned int)(gRace-kStunt)>kObstacle-kStunt && gRace!=kBattle) {
-                if((gGameState&0x400008) && gRace!=kPractice && !gNoAutoAbort && !gEndGame && !gCoastFlag &&
+            if((unsigned int)(gRace-kStunt)>kObstacle-kStunt && gRace!=kBattle) { /* not stunt, obstacle or battle */
+                if((gGameState&(GS_RACING|GS_DEMO)) && gRace!=kPractice && !gNoAutoAbort && !gEndGame && !gCoastFlag &&
                    gc->place_locked!=1 && AreWeSolid(m->slot) && m->drone_scale>0.1f &&
                    (m->magvel<25.0f || abort_me)) {
+                    /* ORIGINAL: both branches store the same value and stuck_time is never read, so a
+                     * slow car alone is never aborted; only maxpath.c's please_abort_me does it */
                     if(!abort_me) {
                         if(m->stuck_time==0.0f) m->stuck_time=m->fastin.modelTime;
                         else m->stuck_time=m->fastin.modelTime;
                     }
                     if(abort_me) {
-                        SetResurrectionData(2,m,1);
-                        gc->crash_state=2;
+                        SetResurrectionData(INIT_MODE_CRASH,m,1);
+                        gc->crash_state=CRASH_RESPAWN;
                         m->stuck_time=0.0f;
-                        gc->dead=-1;
+                        gc->dead=CAR_ABORTED;
                         m->resurrect.autoAbort=1;
                     }
                 } else m->stuck_time=0.0f;
@@ -992,10 +1060,11 @@ void DetectDroneAbort(void)
     }
 }
 
+/* Car is driving normally: not crashed, not respawning, solid and visible. */
 int AreWeSolid(signed short node)
 {
     tModelData *m = &model[node];
     tCarData *gc = &gGameCar[node];
-    return gc->crash_state == 0 && m->crashflag == 0 &&
-           m->resurrect.moving_state == -1 && m->solid && !m->hide_car;
+    return gc->crash_state == CRASH_NONE && m->crashflag == 0 &&
+           m->resurrect.moving_state == RES_IDLE && m->solid && !m->hide_car;
 }
