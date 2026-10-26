@@ -55,3 +55,7 @@ secrets*
 .DS_Store
 Thumbs.db
 writeup.md
+# the retail disc image and everything extracted from it
+vanila/
+# listing of the retail PC DATA.GDF archive (local reference, like the rush_d_*.csv dumps)
+/DATA_GDF_contents.csv
