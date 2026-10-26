@@ -47,6 +47,7 @@ Run `python -B tools/status.py` in `decomp/` for the live figures.
 | [`tools/`](tools) | Recovery scripts: symbol extraction, DWARF decoding, header generation, local asset generation |
 | [`docs/`](docs) | [Building and verifying](docs/BUILDING.md), the template's licence and the 2026-10-16 publication review |
 | [`HANDOFF.md`](HANDOFF.md) | Working notes for whoever continues: resume steps, open work, compiler lessons |
+| [`n64-helper.md`](n64-helper.md) | A guide for the separate N64 decompilation: how to use this C as a reference to name and understand N64 functions |
 
 Most source files start with a one-line summary, the file's original path on the developers'
 machine (`D:\rush_ngc\Rush_NGC\...`) and its matching status. Each function has its original

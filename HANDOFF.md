@@ -50,8 +50,9 @@ Read this first, then `writeup.md`: the full knowledge base, local-only and not 
 | `C:\rush2049-pc` | The Windows PC port. A git clone on branch `pc-port`, remote `decomp` = this checkout; not on GitHub. Its own `pc/README.md` explains it. **Never do port work in this checkout.** |
 | `C:\rush2049-dreamcast` | The separate Dreamcast decomp. |
 
-`n64-helper.md` (local, untracked) is a guide for an agent working on the N64 decomp: where to find
-things here and how to use this C as a reference.
+`n64-helper.md` is a guide for the agent working on the separate N64 decomp: where to find things
+here and how to use this C as a reference. Keep its status figures and paths current when they
+change.
 
 Never run `configure.py` without the tool-path flags below: it re-downloads dtk/objdiff into
 `build/tools`.
