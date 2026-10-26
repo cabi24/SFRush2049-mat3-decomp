@@ -1,5 +1,9 @@
 # Research — no matching credit
 
+> **Historical.** These are experiments against the 2026-10-16 snapshot. Every function this page
+> lists as partial matched on 2026-10-17, so the patches no longer apply to current sources. Kept
+> for the record; see the [README](../README.md) for the current state.
+
 The four `wave26-*-research-only.patch` files are optional experiments. They are **not applied** to the published primary sources. Each applies to the corresponding accepted cumulative source under `decomp/src/GameSource/src/`; inspect its paths and use a separate scratch copy. `research-index.json` pins each base source, research source and historical object hash. Do not apply these to an older canonical source or combine them into a promotion.
 
 | Function | Native/target size | Different words | Status |

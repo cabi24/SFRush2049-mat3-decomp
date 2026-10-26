@@ -34,7 +34,7 @@ On Windows use the corresponding `.exe` paths. On supported non-Windows systems 
 
 The generator can create download edges for open-source auxiliary tools if paths are omitted. Provide explicit tool paths to avoid those edges. Some local verification helpers retain the established Windows-relative `build/tools/*.exe` layout and placeholder paths for unused binutils/sjiswrap; adjust arguments or arrange your local tools as described by each helper's `--help`. The local `build/` tree is never committed.
 
-Default matching builds link unimplemented/NonMatching units from the original split objects. `--non-matching` changes that behavior and must not be used to claim matching progress. The five partial lanes (`hud`, `resurrect`, `mdrive`, `maxpath`, `stree`) remain NonMatching. The inherited `gamerecords` Matching flag and CylinderInSurf symbol mapping are preserved.
+Default matching builds link unimplemented/NonMatching units from the original split objects. `--non-matching` changes that behavior and must not be used to claim matching progress. Since 2026-10-17 only `visuals` and `ngcZoid` remain NonMatching (`decomp/configure.py` is the authoritative list).
 
 ## Verification and scope
 

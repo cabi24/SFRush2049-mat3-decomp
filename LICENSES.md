@@ -1,7 +1,16 @@
 # Rights and attribution
 
-No new blanket license is granted for this source reconstruction or for third-party game material. The repository does not grant permission to download or redistribute game files, extracted assets, Nintendo SDKs, or proprietary CodeWarrior tools. Provide your own authorized originals and toolchains.
+**No licence is granted** for this source reconstruction, nor for any third-party material it
+relates to. In particular, this repository gives no permission to download or redistribute the
+game, its files or extracted assets, the Nintendo SDK, or the CodeWarrior tools. Bring your own
+lawfully obtained originals and toolchain.
 
-The build scaffold and shared helper scripts derive from [encounter/dtk-template](https://github.com/encounter/dtk-template) and related decompilation tooling. The original scaffold's CC0 text is retained at `docs/licenses/dtk-template-CC0.txt` for that scaffold; it is not presented as a license for game-derived material. Existing per-file notices remain intact, including the Apache notice in `ninja_syntax.py`.
+**Build scaffold.** The build system and some shared helper scripts come from
+[encounter/dtk-template](https://github.com/encounter/dtk-template) and related decompilation
+tooling. The template's CC0 dedication is kept in `docs/licenses/dtk-template-CC0.txt` and covers
+that scaffold only, not anything derived from the game. Per-file notices are kept as they are, for
+example the Apache notice in `decomp/tools/ninja_syntax.py`. Each upstream tool keeps its own
+licence and terms.
 
-Project facts and verification provenance are documented in `docs/REVIEW.md`. Individual upstream tools retain their own licenses and terms.
+**Provenance** of the published source snapshot (2026-10-16) is recorded in `docs/REVIEW.md` and
+`docs/provenance/`.

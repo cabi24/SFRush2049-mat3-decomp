@@ -1,37 +1,60 @@
-# Handoff — Rush 2049 (GameCube, MAT3) matching decomp
+# Handoff: Rush 2049 (GameCube, MAT3) matching decomp
 
-Last session: 2026-10-17 (Claude Code, sprint review + continuation). Read this first, then `writeup.md` (local-only, not in git).
+Working notes for whoever picks this up next (people and agents). Last updated 2026-10-26.
+Read this first, then `writeup.md`: the full knowledge base, local-only and not in git.
 
 ## Where things stand
 
-- **Status (2026-10-17):** 1,841 / 1,844 functions, 713,440 / 715,968 code bytes (99.65%),
-  **146 / 148 files** linked from C. The GC/2.7 relink passes `decomp/tools/verify_link.py`
-  (only the 5 recorded `.dtors`/copy-table bytes differ; built DOL SHA-256
-  `eae81eee681311baaa8c2dfe1c262d2d8b8a6c44d471ef8d6929a67818485fd5`) on every commit.
-- **Branch:** `main` == `ngcblit-match` on <https://github.com/cabi24/SFRush2049-mat3-decomp>
-  (private), pushed 2026-10-17. The 2026-10-17 review/continuation commits (`8e42d11..1a625c0`,
-  22 commits) promoted playerscr, carscr, controlscr, pakscr, drivetra, ngcTexture, ngcHelper,
-  recordscr, maxpath, game, ngcAudio, resurrect, gameoverscr, mdrive, drones, trackscr, videoscr,
-  smoke, hud, targets and stree, and added one `block_relocations` entry to
-  `config/2049LE/config.yml` (commit `9957440`: a Bink LogoData word that dtk read as a pointer
-  into `CylinderInSurf`, which had forced the static global and renamed it).
-- **Readability (2026-10-17):** minified units reformatted, every matching hack commented in place, the 40
-  most-used anonymous types named; all under the unchanged DOL hash. See writeup "Readability pass".
-- **Not matched (3 functions, 2 NonMatching units):** `GetCarsIRColor` (visuals, 21/179 words),
-  `Blits` and `Blits_First` (ngcZoid, 32/234 and 19/219 words at the exact size). All three now have the
-  original's statement layout (DWARF `.line` table, `tools/lines.py`) and DWARF local lists; only register
-  colouring remains. `ContinueCircuit`
-  matched 2026-10-17 (writeup: pointer locals naming hoisted `&a[i].field` addresses).
-  All register-allocation / codegen-shape residue; see "Open work".
-- **Repo layout on this PC:** `C:\rush2049-mat3` *is* the git checkout (source-only). Originals
-  (`Rush2049.iso`, `DATA.GDF`, `rush_d.elf`, `rush_d_*.csv`, `rush_d_dwarf.c`), compilers,
-  `decomp/build`, `decomp/orig`, `work/`, `writeup.md` are local and git-ignored — never commit
-  them. The review worktree `C:\rush2049-mat3-review` (branch `review-sprint-20261017`, junctions
-  for `build/compilers` and `build/tools`) holds `review/` (local-only: REVIEW-REPORT.md,
-  LESSONS.md, agent notes, patches) and `work/<unit>-rev*/`. Never run `configure.py` without the
-  tool-path flags below: it re-downloads dtk/objdiff into `build/tools`. Codex pushes its own waves
-  to GitHub, so **`git fetch` first**; GitHub may be ahead of disk. Repo-local git identity is set
-  (`cabi24 <cabi24@gmail.com>`).
+- **Status:**
+  - 1,841 / 1,844 functions; 713,440 / 715,968 code bytes (99.65%); 146 / 148 files linked from C.
+  - Unchanged since the 2026-10-17 matching round.
+  - The GC/2.7 relink passes `decomp/tools/verify_link.py` on every commit. Only the 5 recorded
+    `.dtors`/copy-table bytes differ. The built DOL's SHA-256 is
+    `eae81eee681311baaa8c2dfe1c262d2d8b8a6c44d471ef8d6929a67818485fd5`.
+- **Not matched:** 3 functions in the 2 NonMatching units.
+  - `GetCarsIRColor` (visuals): 21/179 words differ.
+  - `Blits` and `Blits_First` (ngcZoid): 32/234 and 19/219 words, at the exact size.
+  - All three have the original's statement layout (DWARF `.line` table, `tools/lines.py`) and
+    DWARF local lists. Only register colouring remains; see "Open work".
+- **Git:** `main` on <https://github.com/cabi24/SFRush2049-mat3-decomp> (private), pushed
+  2026-10-26. Since the matching round:
+  - `3207e28` (2026-10-19): the annotation pilot. `decomp/include/rush_flags.h`, plus header blocks
+    and `PORT:` notes in `mdrive.c` and `resurrect.c`; DOL hash unchanged.
+  - `ac161d6` (2026-10-26): `.gitignore` now covers `vanila/` and `DATA_GDF_contents.csv`; the
+    CSV is untracked but kept on disk.
+  - `ngcblit-match` and `review-sprint-20261017` are older branches.
+  - Codex used to push its own waves to GitHub, so **`git fetch` first**: GitHub may be ahead of
+    disk.
+  - Repo-local git identity: `cabi24 <cabi24@gmail.com>`.
+- **The 2026-10-17 round**, commits `8e42d11..1a625c0`:
+  - Promoted playerscr, carscr, controlscr, pakscr, drivetra, ngcTexture, ngcHelper, recordscr,
+    maxpath, game, ngcAudio, resurrect, gameoverscr, mdrive, drones, trackscr, videoscr, smoke,
+    hud, targets and stree.
+  - Added one `block_relocations` entry to `config/2049LE/config.yml` (commit `9957440`). dtk had
+    read a Bink LogoData word as a pointer into `CylinderInSurf`, which forced that static to be
+    global and renamed it.
+  - Reformatted the minified units, commented every matching hack in place and named the 40
+    most-used anonymous types, all under the unchanged DOL hash (writeup "Readability pass").
+  - `ContinueCircuit` matched (writeup: pointer locals naming hoisted `&a[i].field` addresses).
+- **Stale published files:** `progress.json`, `docs/REVIEW.md`, `docs/file-allowlist.json`,
+  `docs/provenance/` and `research/` still describe the 2026-10-16 snapshot (60%). Every partial
+  body listed in `research/` has matched since. `tools/audit_publication.py` fails on the stale
+  allowlist hashes, not on content. See "Open work" item 5.
+
+## Folders on this PC
+
+| Folder | What it is |
+|---|---|
+| `C:\rush2049-mat3` | This git checkout. The originals beside it are local and git-ignored, never to be committed: `Rush2049.iso`, `rush_d.elf`, `rush_d_*.csv`, `rush_d_dwarf.c`, `rush.exe`/`DATA.GDF` (the PC build), `vanila/` (retail MAT3 USA disc image and extracted files). So are compilers, `decomp/build`, `decomp/orig`, `work/` and `writeup.md`. |
+| `C:\rush2049-mat3-review` | Review worktree, branch `review-sprint-20261017`, with junctions for `build/compilers` and `build/tools`. Holds `review/` (local-only: REVIEW-REPORT.md, LESSONS.md, agent notes, patches) and `work/<unit>-rev*/`. |
+| `C:\rush2049-pc` | The Windows PC port. A git clone on branch `pc-port`, remote `decomp` = this checkout; not on GitHub. Its own `pc/README.md` explains it. **Never do port work in this checkout.** |
+| `C:\rush2049-dreamcast` | The separate Dreamcast decomp. |
+
+`n64-helper.md` (local, untracked) is a guide for an agent working on the N64 decomp: where to find
+things here and how to use this C as a reference.
+
+Never run `configure.py` without the tool-path flags below: it re-downloads dtk/objdiff into
+`build/tools`.
 
 ## Resume checklist
 
@@ -98,8 +121,23 @@ list only the CHECK step. Identifier renames must also cover the hand-written he
    in `.rodata` must be `static const`, (i) function-pointer table initialisers left as `/* TODO */`,
    (j) a `const` global is not `const` in the header until added to `overrides.json`
    `const_variables`.
+5. **Refresh the published snapshot files** before the repository is made public:
+   - Regenerate `progress.json` from the current objdiff report (`decomp/build/2049LE/report.json`).
+   - Update `docs/file-allowlist.json` and `docs/provenance/source-baseline.json`, so that
+     `tools/audit_publication.py --git git` passes again.
+   - Retire or archive `research/`; everything it lists has matched.
+   - The tracked-but-unlisted files were checked by hand on 2026-10-26: no secrets, binaries, private
+     paths or embedded data.
+   - `DATA_GDF_contents.csv` is untracked but still in the history before `ac161d6`. Purging it
+     needs a history rewrite and force push: only worth it for a public release.
+6. **Annotation pass** (readability for porting; DOL hash must stay unchanged). The pilot
+   (`3207e28`) set the pattern:
+   - Named constants in `decomp/include/rush_flags.h`: macros of the same type and value as the
+     literal they replace.
+   - A header block per file: purpose, frame flow, `PORT:` notes.
+   Extend it file by file; `rush_flags.h` explains the matching rule for constants.
 
-## Workflow that worked today (per file, ~1–2 h wall clock)
+## Per-file matching workflow (how the 146 units were done; ~1–2 h each)
 
 1. `python tools/skel.py NGC/<unit> > src/NGC/<unit>.c`; `python tools/check.py NGC/<unit>
    --output-root ../work/<unit>/check-base` until the skeleton compiles (dedupe locals etc.).
@@ -118,7 +156,7 @@ list only the CHECK step. Identifier renames must also cover the hand-written he
 5. `mark.py Matching`, full rebuild, `verify_link.py`, `status.py`, add lessons to `writeup.md`,
    commit on the branch, push.
 
-## Rules learned today (details and more in `writeup.md`, sections dated 2026-10-16)
+## CodeWarrior codegen rules (summary; details and more in `writeup.md`, sections dated 2026-10-16/17)
 
 - **Data emission order:** CodeWarrior emits an *explicitly initialised* static (even `= 0`, still
   `.sbss`) at its declaration point in declaration order, and defers every *uninitialised* static
@@ -187,13 +225,14 @@ list only the CHECK step. Identifier renames must also cover the hand-written he
 
 - `writeup.md` (repo root, local-only): the full knowledge base — compiler facts, per-file lessons,
   tool table, status/linker notes. Keep adding to it.
-- `work/<unit>/BRIEF.md`, `work/<unit>/agent*/NOTES.md`: today's agent briefs and findings
-  (local-only). `work/targets/BRIEF.md` is the latest template (per-function literal map from the `.s`,
+- `work/<unit>/BRIEF.md`, `work/<unit>/agent*/NOTES.md`: the agent briefs and findings from the matching
+  rounds (local-only). `work/targets/BRIEF.md` is the latest template (per-function literal map from the `.s`,
   type offsets, layout facts, the fresh-shell `cd` note); `work/targets/merge.py` the latest merge script;
   `work/targets/litmap.py` maps every `@NNN` literal to the function that references it; `agentA/qd.py`
   is the fastest per-function diff (GC 2.6 compile + dtk disassembly against the target `.s`).
-- `decomp/docs/verification-baseline.md`, `docs/REVIEW.md`, `research/README.md`: Codex's
-  verification rules and remaining-work notes (in git).
+- `decomp/docs/verification-baseline.md`: Codex's verification rules (the exact 5-byte gate), still
+  current. `docs/REVIEW.md` and `research/README.md`: the 2026-10-16 snapshot review and its
+  remaining-work list, now historical (open work item 5).
 - `decomp/include/rush/overrides.json`: qualifiers, prototypes, externs and **`type_names`** (chosen names
   for anonymous DWARF types, keyed by the synthetic `anon_<m1>_<m2>_<size>` name; 40 named so far, 318
   references to rarer ones remain). Regenerate headers with `python -B tools/dwarftypes.py rush_d.elf

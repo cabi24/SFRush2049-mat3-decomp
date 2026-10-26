@@ -1,5 +1,9 @@
 # Reviewed source state
 
+> **Historical.** This describes the source-only snapshot published and reviewed on 2026-10-16 (60%
+> of code). The project reached 99.65% on 2026-10-17; see the [README](../README.md) for the current
+> state.
+
 The export uses the sealed cumulative wave26 project as its source, rather than applying a two-file patch directly onto the older canonical checkout. Every selected source/header/config/script and research patch was checked against the private seal before copying. The original checkout and private packages were left unchanged.
 
 The private review seal SHA-256 is `af8e508257fe03d2498a39316c4b72b8f82cbb28264cd12cd70c2cfe9a1a332c`; the delivery-manifest SHA-256 is `8ef574e17bd4300af3a34c644293d5aeba4766d3f74825e8677a099847408849`. Compact derived receipts are in `provenance/`. These fingerprints identify the retained private evidence; they do not make the omitted packet publicly reproducible.
